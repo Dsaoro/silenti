@@ -1,0 +1,20 @@
+{
+    "@@locale": "en",
+    "@@author": "dsaoro",
+    "income_transaction": "register transaction",
+    "@income_transaction": {
+        "description": "add a new transaction"
+    },
+    "home": "home",
+    "@home": {
+        "description": "income"
+    },
+    "income": "income",
+    "@income": {
+        "description": "income"
+    },
+    "outcome": "outcome",
+    "@outcome": {
+        "description": "aoutcome"
+    }
+}
