@@ -1,5 +1,7 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
+import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/income_page.dart';
 import 'package:silenti/presentation/outcome_page.dart';
@@ -40,28 +42,190 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget home = Center(
+    //incomes
+    List<Widget> lastTransactions = [
+      Card(
+        child: Container(
+          height: 30,
+          width: MediaQuery.of(context).size.width,
+        ),
+      ),
+      SizedBox(
+        height: 5,
+      ),
+      Card(
+        child: Container(
+          height: 30,
+          width: MediaQuery.of(context).size.width,
+        ),
+      ),
+      SizedBox(
+        height: 5,
+      ),
+    ];
+    Widget incomes = SizedBox(
+      width: MediaQuery.of(context).size.width * 0.44,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            height: MediaQuery.of(context).size.height * 0.25,
-            child: Text(S.current.income),
+        children: [
+          Text(
+            "Income",
+            style: SilentiStyles.subtitleTextStyle,
           ),
-          Card(
-            color: SilentiColors.gray,
-            child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.62),
-          )
+          Text(
+            "\$ 100.000,00",
+            style: TextStyle(
+              color: SilentiColors.ok,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
+    //expenses
+    Widget expenses = SizedBox(
+      width: MediaQuery.of(context).size.width * 0.44,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Expenses",
+            style: SilentiStyles.subtitleTextStyle,
+          ),
+          Text(
+            "\$ 0,00",
+            style: TextStyle(
+              color: SilentiColors.warning,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+    //balance
+    Widget balance = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Balance",
+          style: SilentiStyles.titleTextStyle,
+        ),
+        Text(
+          "\$ 100.000,00",
+          style: TextStyle(
+            color: SilentiColors.gray,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+    Widget home = Stack(children: [
+      Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            stops: [
+              0.1,
+              0.7,
+            ],
+            colors: [
+              SilentiColors.primary,
+              SilentiColors.dark,
+            ],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+          ),
+        ),
+      ),
+      Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              height: MediaQuery.of(context).size.height * 0.25,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25 * 0.6,
+                    child: balance,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25 * 0.4,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: incomes,
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: expenses,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Card(
+              color: SilentiColors.gray,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.62,
+                child: Column(
+                  //TODO add a list view
+                  children: [
+                    Card(
+                      color: SilentiColors.gray,
+                      child: Container(
+                        height: 200,
+                        width: MediaQuery.of(context).size.width,
+                        child: LineChart(
+                          LineChartData(
+                            titlesData: FlTitlesData(show: false),
+                            borderData: FlBorderData(show: false),
+                            gridData: FlGridData(show: false),
+                            lineBarsData: [
+                              LineChartBarData(
+                                preventCurveOverShooting: true,
+                                spots: [
+                                  FlSpot(0, 1),
+                                  FlSpot(1, 3),
+                                  FlSpot(2, 2),
+                                  FlSpot(3, 4),
+                                  FlSpot(4, 3.5),
+                                ],
+                                isCurved: true,
+                                // colors: [Colors.blueAccent],
+                                color: SilentiColors.secondary,
+                                dotData: FlDotData(show: false),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    ListView(
+                      children: lastTransactions,
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      )
+    ]);
 
     return Scaffold(
-      backgroundColor: SilentiColors.secondary,
+      backgroundColor: SilentiColors.dark,
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
