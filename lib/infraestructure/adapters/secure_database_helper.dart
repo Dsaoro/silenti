@@ -1,4 +1,5 @@
 import 'package:sqflite_sqlcipher/sqflite.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -17,19 +18,21 @@ class SecureDatabaseHelper {
     return _database!;
   }
 
-  Future<Database> _initDB() async {
+  Future<Database> _initDB({String? password}) async {
     final directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, 'ssilenti.db');
+    String path =
+        join(directory.path, 'ssilenti.db'); //TODO add a user base DB name
 
     return await openDatabase(
       path,
-      password:
-          'TuClaveSegura123!', // Asegúrate de almacenar esto de forma segura
+      password: password,
       version: 1,
       onCreate: (db, version) async {
         await db.execute(_createTransactionsTable);
         await db.execute(_createBudgetCategoriesTable);
         await db.execute(_createNotificationsTable);
+        await db.execute(_createFinancialAssetsTable);
+        await db.execute(_createProfitsTable);
       },
     );
   }
@@ -64,6 +67,25 @@ class SecureDatabaseHelper {
       status TEXT CHECK(estado IN ('pending', 'send', 'read')) NOT NULL,
       transaction_id INTEGER,
       FOREIGN KEY (transaccion_id) REFERENCES transactions (id) ON DELETE CASCADE
+    )
+  ''';
+  static const String _createFinancialAssetsTable = '''
+    CREATE TABLE accounts(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      account_balance REAL NOT NULL,
+      included_on_balance INTEGER NOT NULL,
+      interes_rate REAL,
+      payment_frequency TEXT
+    )
+  ''';
+  static const String _createProfitsTable = '''
+    CREATE TABLE profits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      account_id INTEGER NOT NULL,
+      date TEXT NOT NULL,
+      ammount REAL NOT NULL,
+      FOREIGN KEY (account_id) REFERENCES accounts(id)
     )
   ''';
 }

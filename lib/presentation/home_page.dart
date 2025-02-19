@@ -1,9 +1,15 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/generated/l10n.dart';
-import 'package:silenti/presentation/income_page.dart';
+import 'package:silenti/presentation/budget_page.dart';
+import 'package:silenti/presentation/components/card_graph_item.dart';
+import 'package:silenti/presentation/components/category_button.dart';
+import 'package:silenti/presentation/assets_page.dart';
+import 'package:silenti/presentation/components/shimmer.dart';
+import 'package:silenti/presentation/components/shimmer_loading.dart'
+    show ShimmerLoading;
+import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
 import 'package:silenti/presentation/outcome_page.dart';
 import 'package:silenti/presentation/transaction_alert.dart';
 
@@ -25,8 +31,17 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+const _shimmerGradient = LinearGradient(
+  colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
+  stops: [0.1, 0.3, 0.4],
+  begin: Alignment(-1.0, -0.3),
+  end: Alignment(1.0, 0.3),
+  tileMode: TileMode.clamp,
+);
+
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 1;
+  bool isLoading = true;
 
   void registerTransaction() {
     AlertDialog alert = AlertDialog(
@@ -45,7 +60,7 @@ class _HomePageState extends State<HomePage> {
     //incomes
     List<Widget> lastTransactions = [
       Card(
-        child: Container(
+        child: SizedBox(
           height: 30,
           width: MediaQuery.of(context).size.width,
         ),
@@ -54,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         height: 5,
       ),
       Card(
-        child: Container(
+        child: SizedBox(
           height: 30,
           width: MediaQuery.of(context).size.width,
         ),
@@ -84,6 +99,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     //expenses
+
     Widget expenses = SizedBox(
       width: MediaQuery.of(context).size.width * 0.44,
       child: Column(
@@ -122,107 +138,72 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
-    Widget home = Stack(children: [
-      Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            stops: [
-              0.1,
-              0.7,
-            ],
-            colors: [
-              SilentiColors.primary,
-              SilentiColors.dark,
-            ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
+    Widget summary = Container(
+      alignment: Alignment.center,
+      height: 174,
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.topCenter,
+            height: 100,
+            child: balance,
           ),
-        ),
-      ),
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              height: MediaQuery.of(context).size.height * 0.25,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.25 * 0.6,
-                    child: balance,
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.25 * 0.4,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          onPressed: () {},
-                          child: incomes,
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: expenses,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Card(
-              color: SilentiColors.gray,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.62,
-                child: Column(
-                  //TODO add a list view
-                  children: [
-                    Card(
-                      color: SilentiColors.gray,
-                      child: Container(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width,
-                        child: LineChart(
-                          LineChartData(
-                            titlesData: FlTitlesData(show: false),
-                            borderData: FlBorderData(show: false),
-                            gridData: FlGridData(show: false),
-                            lineBarsData: [
-                              LineChartBarData(
-                                preventCurveOverShooting: true,
-                                spots: [
-                                  FlSpot(0, 1),
-                                  FlSpot(1, 3),
-                                  FlSpot(2, 2),
-                                  FlSpot(3, 4),
-                                  FlSpot(4, 3.5),
-                                ],
-                                isCurved: true,
-                                // colors: [Colors.blueAccent],
-                                color: SilentiColors.secondary,
-                                dotData: FlDotData(show: false),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    ListView(
-                      children: lastTransactions,
-                    )
-                  ],
+          SizedBox(
+            height: 70,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ShimmerLoading(
+                    isLoading: isLoading,
+                    child: CategoryButton(
+                      onPressed: (() {}),
+                      child: incomes,
+                    )),
+                SizedBox(
+                  width: 16,
                 ),
+                ShimmerLoading(
+                  isLoading: isLoading,
+                  child: CategoryButton(
+                    onPressed: () {},
+                    child: expenses,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+
+    Widget home = Shimmer(
+        linearGradient: _shimmerGradient,
+        child: WrapGradientBackground(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              summary,
+              ShimmerLoading(
+                isLoading: isLoading,
+                child: CardGraphItem(isLoading: isLoading),
               ),
-            )
-          ],
-        ),
-      )
-    ]);
+              SizedBox(
+                height: 10,
+              ),
+              //  ShimmerLoading(
+              //    isLoading: isLoading,
+              //    child: ResumeCard(
+              //      children: [
+              //        Column(
+              //         children: lastTransactions,
+              //       ),
+              //    ],
+              //  ),
+              //),
+            ],
+          ),
+        ));
 
     return Scaffold(
       backgroundColor: SilentiColors.dark,
@@ -266,9 +247,10 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: <Widget>[
-        IncomePage(),
+        //IncomePage(),
+        AssetsPage(),
         home,
-        OutcomePage(),
+        BudgetPage(),
       ][currentPageIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: registerTransaction,
