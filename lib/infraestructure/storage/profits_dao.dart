@@ -1,13 +1,13 @@
-import 'package:silenti/infraestructure/adapters/secure_database_helper.dart';
+import 'package:silenti/infraestructure/adapters/secure_database_helper_pc.dart';
 
 class ProfitsDAO {
   Future<int> insertProfit(Map<String, dynamic> data) async {
-    final db = await SecureDatabaseHelper().database;
+    final db = await SecureDatabaseHelperPC().database;
     return await db.insert('profits', data);
   }
 
   Future<List<Map<String, dynamic>>> getprofits(int accountId) async {
-    final db = await SecureDatabaseHelper().database;
+    final db = await SecureDatabaseHelperPC().database;
     return await db.query(
       'profits',
       where: 'account_id = ?',

@@ -29,7 +29,9 @@ dependencies:
 
   intl: any
   cupertino_icons: ^1.0.8 # check if it is usefull 
-  sqflite_sqlcipher: ^3.1.0+1
+  sqlite3: ^2.7.4
+  sqflite_common_ffi: ^2.3.5
+  #sqflite_sqlcipher: ^3.1.0+1
   encrypt: ^5.0.3
   path_provider: ^2.1.5
   fl_chart: ^0.70.2

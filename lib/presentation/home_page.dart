@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:silenti/application/storage/open_secure_database_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/generated/l10n.dart';
@@ -10,8 +12,9 @@ import 'package:silenti/presentation/components/shimmer.dart';
 import 'package:silenti/presentation/components/shimmer_loading.dart'
     show ShimmerLoading;
 import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
-import 'package:silenti/presentation/outcome_page.dart';
 import 'package:silenti/presentation/transaction_alert.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+// import 'package:sqflite_sqlcipher/sqflite.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -53,6 +56,32 @@ class _HomePageState extends State<HomePage> {
         return alert;
       },
     );
+  }
+
+  Future<Database?> _connectToDatabase() async {
+    OpenSecureDatabaseUseCase openDB = OpenSecureDatabaseUseCase();
+    try {
+      await Future.delayed(Duration(seconds: 2));
+      Database db = await openDB.execute(password: "");
+      setState(() {
+        isLoading = false;
+      });
+      if (kDebugMode) {
+        print("Base de datos abierta con éxito: ${db.path}");
+      }
+      return db;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _connectToDatabase();
   }
 
   @override

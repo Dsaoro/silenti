@@ -13,6 +13,9 @@ class SilentiColors {
   ///Violet
   static const Color primary = Color.fromARGB(255, 127, 0, 255);
 
+  ///Blue
+  static const Color blue = Color.fromARGB(255, 34, 136, 231);
+
   ///Wisteria
   static const Color secondary = Color.fromARGB(255, 177, 156, 217);
 
