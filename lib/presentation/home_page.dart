@@ -1,5 +1,9 @@
+import 'dart:ffi';
+
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/application/storage/open_secure_database_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
@@ -12,7 +16,7 @@ import 'package:silenti/presentation/components/shimmer.dart';
 import 'package:silenti/presentation/components/shimmer_loading.dart'
     show ShimmerLoading;
 import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
-import 'package:silenti/presentation/transaction_alert.dart';
+import 'package:silenti/presentation/operation_alert.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 // import 'package:sqflite_sqlcipher/sqflite.dart';
 
@@ -46,11 +50,11 @@ class _HomePageState extends State<HomePage> {
   int currentPageIndex = 1;
   bool isLoading = true;
 
-  void registerTransaction() {
+  Future<HandleResult<bool>?> registerOperation() async {
     AlertDialog alert = AlertDialog(
-      content: TransactionAlert(),
+      content: OperationAlert(),
     );
-    showDialog(
+    return await showDialog<HandleResult<bool>?>(
       context: context,
       builder: (context) {
         return alert;
@@ -61,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   Future<Database?> _connectToDatabase() async {
     OpenSecureDatabaseUseCase openDB = OpenSecureDatabaseUseCase();
     try {
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(milliseconds: 300));
       Database db = await openDB.execute(password: "");
       setState(() {
         isLoading = false;
@@ -86,27 +90,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //incomes
-    List<Widget> lastTransactions = [
-      Card(
-        child: SizedBox(
-          height: 30,
-          width: MediaQuery.of(context).size.width,
-        ),
-      ),
-      SizedBox(
-        height: 5,
-      ),
-      Card(
-        child: SizedBox(
-          height: 30,
-          width: MediaQuery.of(context).size.width,
-        ),
-      ),
-      SizedBox(
-        height: 5,
-      ),
-    ];
     Widget incomes = SizedBox(
       width: MediaQuery.of(context).size.width * 0.44,
       child: Column(
@@ -225,7 +208,7 @@ class _HomePageState extends State<HomePage> {
               //    child: ResumeCard(
               //      children: [
               //        Column(
-              //         children: lastTransactions,
+              //         children: lastOperations,
               //       ),
               //    ],
               //  ),
@@ -282,8 +265,29 @@ class _HomePageState extends State<HomePage> {
         BudgetPage(),
       ][currentPageIndex],
       floatingActionButton: FloatingActionButton(
-        onPressed: registerTransaction,
-        tooltip: S.current.income_transaction,
+        onPressed: () async {
+          await registerOperation();
+          await Future.delayed(Duration(milliseconds: 150));
+          final snackBar = SnackBar(
+            /// need to set following properties for best effect of awesome_snackbar_content
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'On Hey!',
+              message:
+                  'This is an example error message that will be shown in the body of snackbar!',
+
+              /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+              contentType: ContentType.success,
+            ),
+          );
+
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(snackBar);
+        },
+        tooltip: S.current.income_Operation,
         child: Icon(
           Icons.add,
           color: SilentiColors.primary,

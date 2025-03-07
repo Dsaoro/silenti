@@ -30,8 +30,8 @@
 //       onCreate: (db, version) async {
 //         await db.execute(_createUsersTable);
 //         await db.execute(_initUsers);
-//         await db.execute(_createTransactionsTable);
-//         await db.execute(_initTransactions);
+//         await db.execute(_createOperationsTable);
+//         await db.execute(_initOperations);
 //         await db.execute(_createBudgetCategoriesTable);
 //         await db.execute(_initBudgetCategories);
 //         await db.execute(_createNotificationsTable);
@@ -44,8 +44,8 @@
 //     );
 //   }
 
-//   static const String _createTransactionsTable = '''
-//     CREATE TABLE transactions (
+//   static const String _createOperationsTable = '''
+//     CREATE TABLE Operations (
 //       id INTEGER PRIMARY KEY AUTOINCREMENT,
 //       amount REAL NOT NULL,
 //       date TEXT NOT NULL,
@@ -72,8 +72,8 @@
 //       message TEXT NOT NULL,
 //       date TEXT NOT NULL,
 //       status TEXT CHECK(estado IN ('pending', 'send', 'read')) NOT NULL,
-//       transaction_id INTEGER,
-//       FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
+//       Operation_id INTEGER,
+//       FOREIGN KEY (Operation_id) REFERENCES Operations(id) ON DELETE CASCADE
 //     )
 //   ''';
 //   static const String _createFinancialAssetsTable = '''
@@ -117,8 +117,8 @@
 //     INSERT INTO budgetcategories (source, amount, frequency, firstTime)
 //     VALUES ('Salary', 0, 'monthly', '2021-01-01')
 //   ''';
-//   static const String _initTransactions = '''
-//     INSERT INTO transactions (amount, date, description, category, type)
+//   static const String _initOperations = '''
+//     INSERT INTO Operations (amount, date, description, category, type)
 //     VALUES (0, '2021-01-01', 'Initial balance', 'Salary', 'income')
 //   ''';
 //   static const String _initProfits = '''
@@ -126,7 +126,7 @@
 //     VALUES (1, '2021-01-01', 0)
 //   ''';
 //   static const String _initNotifications = '''
-//     INSERT INTO notifications (message, date, status, transaction_id)
+//     INSERT INTO notifications (message, date, status, Operation_id)
 //     VALUES ('Initial balance', '2021-01-01', 'send', 1)
 //   ''';
 // }

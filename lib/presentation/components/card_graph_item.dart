@@ -5,9 +5,10 @@ import 'package:silenti/core/enums/silenti_styles.dart';
 import '../../core/enums/silenti_colors.dart';
 
 class CardGraphItem extends StatelessWidget {
-  const CardGraphItem({super.key, required this.isLoading});
+  CardGraphItem({super.key, required this.isLoading, this.title = ""});
 
   final bool isLoading;
+  String title;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,7 @@ class CardGraphItem extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.fromLTRB(8, 2, 8, 4),
         child: Text(
-          'Graph Title',
+          title,
           style: SilentiStyles.titleTextStyle,
         ),
       );

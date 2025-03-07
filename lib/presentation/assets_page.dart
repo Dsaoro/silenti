@@ -1,4 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:silenti/application/financial_assets/get_financial_assets.dart';
+import 'package:silenti/core/models/financial_asset.dart';
+import 'package:silenti/core/models/operation.dart';
+import 'package:silenti/presentation/components/resume_card.dart';
 import 'components/card_graph_item.dart';
 import 'components/notification_card_list_item.dart';
 import 'components/circle_list_item.dart';
@@ -22,6 +27,9 @@ const _shimmerGradient = LinearGradient(
 
 class _AssetsPageState extends State<AssetsPage> {
   bool _isLoading = true;
+  List<FinancialAsset> assets = [];
+  List<Operation> operations = [];
+  int currentSelectedIndex = 0;
 
   void _toggleLoading() {
     setState(() {
@@ -29,34 +37,58 @@ class _AssetsPageState extends State<AssetsPage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return //Scaffold(
-        //body:
-        Shimmer(
-      linearGradient: _shimmerGradient,
-      child: ListView(
-        physics: _isLoading ? const NeverScrollableScrollPhysics() : null,
-        children: [
-          const SizedBox(height: 16),
-          _buildTopRowList(),
-          const SizedBox(height: 16),
-          _buildGraphItem(),
-          const SizedBox(height: 16),
-          _buildListItem(),
-          _buildListItem(),
-          _buildListItem(),
-        ],
-      ),
-    );
-    //floatingActionButton: FloatingActionButton(
-    //  onPressed: _toggleLoading,
-    //  child: Icon(_isLoading ? Icons.hourglass_full : Icons.hourglass_bottom),
-    //),
-    //);
+  _getDataFromDB() async {
+    await _requestAssets();
+    if (assets.isNotEmpty) {
+      var response = await _requestAssetOperations()
+          .byFinancialAssetLimited(assets.first.id);
+      operations = response.model;
+    }
+    setState(() {
+      _toggleLoading();
+    });
   }
 
-  Widget _buildTopRowList() {
+  _requestAssets() async {
+    var response = await GetFinancialAssets().execute();
+    if (!response.status) {
+    } else {
+      assets = response.model;
+    }
+  }
+
+  _requestAssetOperations() async {
+    var response = await GetFinancialAssets().execute();
+    if (!response.status) {
+    } else {
+      setState(() {
+        _toggleLoading();
+        assets = response.model;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _getDataFromDB();
+    super.initState();
+  }
+
+  Widget _buildTopRowList(List<FinancialAsset> assets) {
+    List<Widget> children = [
+      const SizedBox(width: 16),
+    ];
+    if (kDebugMode) {
+      print("build top row list  ${assets.isNotEmpty}");
+    }
+    if (assets.isNotEmpty) {
+      for (var asset in assets) {
+        if (kDebugMode) {
+          print(" get asset ${asset.name}");
+        }
+        children.add(_buildTopRowItem());
+      }
+    }
     return SizedBox(
       height: 72,
       child: ListView(
@@ -65,15 +97,7 @@ class _AssetsPageState extends State<AssetsPage> {
             : const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
-        children: [
-          const SizedBox(width: 16),
-          _buildTopRowItem(),
-          _buildTopRowItem(),
-          _buildTopRowItem(),
-          _buildTopRowItem(),
-          _buildTopRowItem(),
-          _buildTopRowItem(),
-        ],
+        children: children,
       ),
     );
   }
@@ -83,6 +107,15 @@ class _AssetsPageState extends State<AssetsPage> {
   }
 
   Widget _buildGraphItem() {
+    if (assets.isNotEmpty) {
+      return ShimmerLoading(
+        isLoading: _isLoading,
+        child: CardGraphItem(
+          isLoading: _isLoading,
+          title: assets[currentSelectedIndex].name,
+        ),
+      );
+    }
     return ShimmerLoading(
       isLoading: _isLoading,
       child: CardGraphItem(isLoading: _isLoading),
@@ -93,6 +126,31 @@ class _AssetsPageState extends State<AssetsPage> {
     return ShimmerLoading(
       isLoading: _isLoading,
       child: NotificationCardListItem(isLoading: _isLoading),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> operationsResume = [];
+    for (var operation in operations) {
+      operationsResume.add(_buildListItem());
+    }
+    List<Widget> children = [
+      SizedBox(height: 16),
+      _buildTopRowList(assets),
+      const SizedBox(height: 16),
+      _buildGraphItem(),
+      const SizedBox(height: 16),
+      ResumeCard(isLoading: _isLoading, children: [_buildListItem()])
+    ];
+    return //Scaffold(
+        //body:
+        Shimmer(
+      linearGradient: _shimmerGradient,
+      child: ListView(
+        physics: _isLoading ? const NeverScrollableScrollPhysics() : null,
+        children: children,
+      ),
     );
   }
 }
