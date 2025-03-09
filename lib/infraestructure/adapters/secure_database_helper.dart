@@ -80,8 +80,8 @@
 //     CREATE TABLE accounts(
 //       id INTEGER PRIMARY KEY AUTOINCREMENT,
 //       name TEXT NOT NULL,
-//       account_balance REAL NOT NULL,
-//       included_on_balance INTEGER NOT NULL,
+//       balance REAL NOT NULL,
+//       included INTEGER NOT NULL,
 //       interes_rate REAL,
 //       payment_frequency TEXT
 //     )
@@ -89,10 +89,10 @@
 //   static const String _createProfitsTable = '''
 //     CREATE TABLE profits (
 //       id INTEGER PRIMARY KEY AUTOINCREMENT,
-//       account_id INTEGER NOT NULL,
+//       financialAsset INTEGER NOT NULL,
 //       date TEXT NOT NULL,
 //       amount REAL NOT NULL,
-//       FOREIGN KEY (account_id) REFERENCES accounts(id)
+//       FOREIGN KEY (financialAsset) REFERENCES accounts(id)
 //     )
 //   ''';
 //   static const String _createUsersTable = '''
@@ -110,7 +110,7 @@
 //     VALUES (1, 1, 'admin', '
 //   ''';
 //   static const String _initAccounts = '''
-//     INSERT INTO accounts (name, account_balance, included_on_balance, interes_rate, payment_frequency)
+//     INSERT INTO accounts (name, balance, included, interes_rate, payment_frequency)
 //     VALUES ('Cash', 0, 1, 0, 'once')
 //   ''';
 //   static const String _initBudgetCategories = '''
@@ -122,7 +122,7 @@
 //     VALUES (0, '2021-01-01', 'Initial balance', 'Salary', 'income')
 //   ''';
 //   static const String _initProfits = '''
-//     INSERT INTO profits (account_id, date, amount)
+//     INSERT INTO profits (financialAsset, date, amount)
 //     VALUES (1, '2021-01-01', 0)
 //   ''';
 //   static const String _initNotifications = '''

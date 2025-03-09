@@ -51,8 +51,9 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
 
   Future<HandleResult<bool>?> registerOperation() async {
-    AlertDialog alert = AlertDialog(
-      content: OperationAlert(),
+    Dialog alert = Dialog(
+      // title: Text("Registrar operación"),
+      child: OperationAlert(),
     );
     return await showDialog<HandleResult<bool>?>(
       context: context,

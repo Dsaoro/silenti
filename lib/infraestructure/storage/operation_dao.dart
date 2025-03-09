@@ -19,14 +19,16 @@ class OperationDAO {
   Future<List<Map<String, dynamic>>> getOperationsByAssetId(int assetId) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.query('Operations',
-        where: 'account_id = ?', whereArgs: [assetId], orderBy: 'fecha DESC');
+        where: 'financialAsset = ?',
+        whereArgs: [assetId],
+        orderBy: 'fecha DESC');
   }
 
   Future<List<Map<String, dynamic>>> getOperationsByAssetIdLimited(int assetId,
       {int? limit = 10}) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.query('Operations',
-        where: 'account_id = ?',
+        where: 'financialAsset = ?',
         limit: limit,
         whereArgs: [assetId],
         orderBy: 'fecha DESC');

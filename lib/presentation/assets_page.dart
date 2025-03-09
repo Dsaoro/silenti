@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
+import 'package:silenti/application/transactions/get_operations_use_case.dart';
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/presentation/components/resume_card.dart';
@@ -40,9 +41,7 @@ class _AssetsPageState extends State<AssetsPage> {
   _getDataFromDB() async {
     await _requestAssets();
     if (assets.isNotEmpty) {
-      var response = await _requestAssetOperations()
-          .byFinancialAssetLimited(assets.first.id);
-      operations = response.model;
+      await _requestAssetOperations(currentSelectedIndex);
     }
     setState(() {
       _toggleLoading();
@@ -57,13 +56,14 @@ class _AssetsPageState extends State<AssetsPage> {
     }
   }
 
-  _requestAssetOperations() async {
-    var response = await GetFinancialAssets().execute();
+  _requestAssetOperations(int assetId) async {
+    var response =
+        await GetOperations().byFinancialAssetLimited(assetId, limit: 6);
     if (!response.status) {
     } else {
       setState(() {
         _toggleLoading();
-        assets = response.model;
+        operations = response.model;
       });
     }
   }
@@ -140,7 +140,7 @@ class _AssetsPageState extends State<AssetsPage> {
       _buildTopRowList(assets),
       const SizedBox(height: 16),
       _buildGraphItem(),
-      const SizedBox(height: 16),
+      const SizedBox(height: 8),
       ResumeCard(isLoading: _isLoading, children: [_buildListItem()])
     ];
     return //Scaffold(

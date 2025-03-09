@@ -21,18 +21,18 @@ CREATE TABLE users (
 CREATE TABLE financial_assets(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  account_balance REAL NOT NULL,
-  included_on_balance INTEGER NOT NULL,
-  interest_rate REAL,
+  balance REAL NOT NULL,
+  included INTEGER NOT NULL,
+  interestRate REAL,
   frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL
 )
 
 CREATE TABLE profits (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  account_id INTEGER NOT NULL,
+  financialAsset INTEGER NOT NULL,
   date TEXT NOT NULL,
   amount REAL NOT NULL,
-  FOREIGN KEY (account_id) REFERENCES financial_assets(id) 
+  FOREIGN KEY (financialAsset) REFERENCES financial_assets(id) 
 )
 
 CREATE TABLE budget_categories (
@@ -46,21 +46,21 @@ CREATE TABLE budget_categories (
 
 CREATE TABLE sub_categories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  category_id INTEGER NOT NULL,
+  category INTEGER NOT NULL,
   name TEXT NOT NULL,
   amount REAL NOT NULL,
-  FOREIGN KEY (category_id) REFERENCES budget_categories(id)
+  FOREIGN KEY (category) REFERENCES budget_categories(id)
 )
 
 CREATE TABLE transactions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  account_id INTEGER NOT NULL,
+  financialAsset INTEGER NOT NULL,
   amount REAL NOT NULL,
   date TEXT NOT NULL,
   description TEXT,
   category INTEGER NOT NULL,
   type TEXT CHECK(type IN ('income', 'spent')) NOT NULL,
-  FOREIGN KEY (account_id) REFERENCES financial_assets(id)
+  FOREIGN KEY (financialAsset) REFERENCES financial_assets(id)
   FOREIGN KEY (category) REFERENCES budget_categories(id)
 )
 
@@ -77,10 +77,10 @@ CREATE TABLE notifications (
 INSERT INTO users (mode, mode_group, name, email, password)
   VALUES (1, 1, 'admin', '','')
 
-INSERT INTO financial_assets (name, account_balance, included_on_balance, interest_rate, frequency)
+INSERT INTO financial_assets (name, balance, included, interestRate, frequency)
   VALUES ('Efectivo', 0, 1, 0, 'once')
 
-INSERT INTO profits (account_id, date, amount)
+INSERT INTO profits (financialAsset, date, amount)
   VALUES (0, '2021-01-01', 0)
 
 INSERT INTO budget_categories (type, name, amount, frequency, firstTime)
@@ -89,7 +89,7 @@ INSERT INTO budget_categories (type, name, amount, frequency, firstTime)
 INSERT INTO budget_categories (type, name, amount, frequency, firstTime)
   VALUES ('income','Salario', 0, 'semi-monthly', '2021-01-01')
 
-INSERT INTO transactions (account_id, amount, date, description, category, type)
+INSERT INTO transactions (financialAsset, amount, date, description, category, type)
   VALUES (0, 0, '2021-01-01', 'Initial balance', 'income', 'income')
 
 INSERT INTO notifications (message, date, status, transaction_id)

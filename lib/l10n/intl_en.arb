@@ -16,5 +16,9 @@
     "outcome": "outcome",
     "@outcome": {
         "description": "aoutcome"
+    },
+    "register_operation": "register operation",
+    "@register_operation": {
+        "description": "register operation"
     }
 }

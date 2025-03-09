@@ -7,7 +7,7 @@ class ResumeCard extends StatefulWidget {
     required this.isLoading,
     required this.children,
     this.height = 300,
-    this.background = SilentiColors.gray,
+    this.background = Colors.transparent,
   });
 
   final List<Widget> children;
@@ -48,24 +48,34 @@ class _ResumeCardState extends State<ResumeCard> {
       );
     } else {
       return Container(
-          width: MediaQuery.of(context).size.width * 0.90,
-          height: widget.height,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.8,
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          ),
+          // decoration: BoxDecoration(
+          //   color: Colors.white,
+          //   borderRadius: BorderRadius.circular(4),
+          // ),
+          color: Colors.transparent,
           child: Padding(
-            padding: EdgeInsets.all(3),
-            child: widget.children.isEmpty
-                ? _emptyWidgetResponse
-                : ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 8),
-                    itemCount: widget.children.length,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index) => widget.children[index],
-                  ),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+            child: Card(
+              color: widget.background,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(2),
+                child: widget.children.isEmpty
+                    ? _emptyWidgetResponse
+                    : ListView.separated(
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 6),
+                        itemCount: widget.children.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) => widget.children[index],
+                      ),
+              ),
+            ),
           ));
     }
   }

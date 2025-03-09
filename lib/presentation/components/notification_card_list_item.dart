@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 
 class NotificationCardListItem extends StatelessWidget {
-  const NotificationCardListItem({super.key, required this.isLoading});
+  const NotificationCardListItem({
+    super.key,
+    required this.isLoading,
+    this.tittle = "",
+    this.content = "",
+  });
 
   final bool isLoading;
+  final String tittle;
+  final String content;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildImage(),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      child: Container(
+        alignment: Alignment.center,
+        child: Padding(padding: const EdgeInsets.all(4), child: _buildImage()),
       ),
     );
   }
@@ -25,10 +30,10 @@ class NotificationCardListItem extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           child: _buildText(),
         ),
       ),

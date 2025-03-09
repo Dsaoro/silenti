@@ -12,9 +12,9 @@ class FinancialAsset {
     return FinancialAsset(
       map['id'],
       map['name'],
-      map['account_balance'] ?? 0.0,
-      map['included_on_balance'] ?? 0,
-      map['interest_rate'] ?? 0,
+      map['balance'] ?? 0.0,
+      map['included'] ?? 0,
+      map['interestRate'] ?? 0,
       map['frequency'] ?? "",
     );
   }

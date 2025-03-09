@@ -72,28 +72,28 @@ class SecureDatabaseHelperPC {
   CREATE TABLE financial_assets(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    account_balance REAL NOT NULL,
-    included_on_balance INTEGER NOT NULL,
-    interest_rate REAL,
+    balance REAL NOT NULL,
+    included INTEGER NOT NULL,
+    interestRate REAL,
     frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL
   )
   ''';
   static const String _initFinancialAssets = '''
-  INSERT INTO financial_assets (name, account_balance, included_on_balance, interest_rate, frequency)
+  INSERT INTO financial_assets (name, balance, included, interestRate, frequency)
     VALUES ('Efectivo', 0, 1, 0, 'once')
   ''';
 
   static const String _createProfitsTable = '''
   CREATE TABLE profits (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    account_id INTEGER NOT NULL,
+    financialAsset INTEGER NOT NULL,
     date TEXT NOT NULL,
     amount REAL NOT NULL,
-    FOREIGN KEY (account_id) REFERENCES financial_assets(id) 
+    FOREIGN KEY (financialAsset) REFERENCES financial_assets(id) 
   )
   ''';
   static const String _initProfits = '''
-  INSERT INTO profits (account_id, date, amount)  
+  INSERT INTO profits (financialAsset, date, amount)  
     VALUES (0, '2021-01-01', 0)
   ''';
 
@@ -115,29 +115,29 @@ class SecureDatabaseHelperPC {
   static const String _createSubCategories = '''
   CREATE TABLE sub_categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    category_id INTEGER NOT NULL,
+    category INTEGER NOT NULL,
     name TEXT NOT NULL,
     amount REAL NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES budget_categories(id)
+    FOREIGN KEY (category) REFERENCES budget_categories(id)
   )
   ''';
 
   static const String _createOperationsTable = '''
   CREATE TABLE operations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    account_id INTEGER NOT NULL,
+    financialAsset INTEGER NOT NULL,
     amount REAL NOT NULL,
     date TEXT NOT NULL,
     description TEXT,
     category INTEGER NOT NULL,
     type TEXT CHECK(type IN ('income', 'spent')) NOT NULL,
-    FOREIGN KEY (account_id) REFERENCES financial_assets(id)
+    FOREIGN KEY (financialAsset) REFERENCES financial_assets(id)
     FOREIGN KEY (category) REFERENCES budget_categories(id)
   )
   ''';
 
   static const String _initOperations = '''
-  INSERT INTO Operations (account_id, amount, date, description, category, type)
+  INSERT INTO Operations (financialAsset, amount, date, description, category, type)
     VALUES (0, 0, '2021-01-01', 'Initial balance', 'income', 'income')
   ''';
   static const String _createNotificationsTable = '''

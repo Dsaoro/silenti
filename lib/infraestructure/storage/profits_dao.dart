@@ -6,12 +6,12 @@ class ProfitsDAO {
     return await db.insert('profits', data);
   }
 
-  Future<List<Map<String, dynamic>>> getprofits(int accountId) async {
+  Future<List<Map<String, dynamic>>> getprofits(int financialAsset) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.query(
       'profits',
-      where: 'account_id = ?',
-      whereArgs: [accountId],
+      where: 'financialAsset = ?',
+      whereArgs: [financialAsset],
     );
   }
 }

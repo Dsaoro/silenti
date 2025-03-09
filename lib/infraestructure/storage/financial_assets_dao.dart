@@ -11,23 +11,23 @@ class FinancialAssetsDao {
     return await db.query('financial_assets');
   }
 
-  Future<List<Map<String, dynamic>>> getAccountById(int accountId) async {
+  Future<List<Map<String, dynamic>>> getAccountById(int financialAsset) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.query(
       'financial_assets',
       where: 'id = ?',
-      whereArgs: [accountId],
+      whereArgs: [financialAsset],
     );
   }
 
   Future<int> updateAccountById(
-      int accountId, Map<String, dynamic> data) async {
+      int financialAsset, Map<String, dynamic> data) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.update(
       'financial_assets',
       data,
       where: 'id = ?',
-      whereArgs: [accountId],
+      whereArgs: [financialAsset],
     );
   }
 }
