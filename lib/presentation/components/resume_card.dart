@@ -1,7 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
+import 'package:silenti/generated/l10n.dart';
 
+// ignore: must_be_immutable
 class ResumeCard extends StatefulWidget {
+  final List<Widget> children;
+  final Color background;
+  final bool isLoading;
+  double height;
+
   ResumeCard({
     super.key,
     required this.isLoading,
@@ -10,35 +17,44 @@ class ResumeCard extends StatefulWidget {
     this.background = Colors.transparent,
   });
 
-  final List<Widget> children;
-  final Color background;
-  final bool isLoading;
-  double height;
   @override
   State<ResumeCard> createState() => _ResumeCardState();
 }
 
-Widget _emptyWidgetResponse = SizedBox(
-  height: double.infinity,
-  width: double.infinity,
-  child: Center(
-    child: Text(
-      "There is no available data",
-      overflow: TextOverflow.visible,
-      maxLines: 2,
-    ),
-  ),
-);
-
 class _ResumeCardState extends State<ResumeCard> {
   @override
   Widget build(BuildContext context) {
+    Widget emptyWidgetResponse = ListView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(4),
+          child: Center(
+            child: Text(
+              S.current.unavailableData,
+              overflow: TextOverflow.visible,
+              maxLines: 2,
+            ),
+          ),
+        ),
+      ],
+    );
+    if (widget.children.isEmpty) {
+      if (kDebugMode) {
+        print("empty children properties");
+      }
+    } else {
+      if (kDebugMode) {
+        print("children properties: ${widget.children.length}");
+      }
+    }
     if (widget.isLoading) {
       return ListView(
         children: [
           Container(
-            width: double.infinity,
-            height: double.infinity,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.8,
             decoration: BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.circular(16),
@@ -48,35 +64,37 @@ class _ResumeCardState extends State<ResumeCard> {
       );
     } else {
       return Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.8,
-          alignment: Alignment.center,
-          // decoration: BoxDecoration(
-          //   color: Colors.white,
-          //   borderRadius: BorderRadius.circular(4),
-          // ),
-          color: Colors.transparent,
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-            child: Card(
-              color: widget.background,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(2),
-                child: widget.children.isEmpty
-                    ? _emptyWidgetResponse
-                    : ListView.separated(
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 6),
-                        itemCount: widget.children.length,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) => widget.children[index],
-                      ),
-              ),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.8,
+        alignment: Alignment.center,
+        // decoration: BoxDecoration(
+        //   color: Colors.white,
+        //   borderRadius: BorderRadius.circular(4),
+        // ),
+        color: Colors.transparent,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+          child: Card(
+            color: widget.background,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-          ));
+            child: Padding(
+              padding: EdgeInsets.all(2),
+              child: widget.children.isEmpty
+                  ? emptyWidgetResponse
+                  : ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 1),
+                      itemCount: widget.children.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => widget.children[index],
+                    ),
+            ),
+          ),
+        ),
+      );
     }
   }
 }

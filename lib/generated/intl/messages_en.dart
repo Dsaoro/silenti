@@ -22,11 +22,50 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "home": MessageLookupByLibrary.simpleMessage("home"),
-        "income": MessageLookupByLibrary.simpleMessage("income"),
-        "income_Operation": MessageLookupByLibrary.simpleMessage(
-          "register Operation",
-        ),
-        "outcome": MessageLookupByLibrary.simpleMessage("outcome"),
-      };
+    "account": MessageLookupByLibrary.simpleMessage("Account"),
+    "accountName": MessageLookupByLibrary.simpleMessage("Account name"),
+    "add": MessageLookupByLibrary.simpleMessage("Add"),
+    "amount": MessageLookupByLibrary.simpleMessage("Amount"),
+    "balance": MessageLookupByLibrary.simpleMessage("Balance"),
+    "balanceIncluded": MessageLookupByLibrary.simpleMessage(
+      "included on balance",
+    ),
+    "category": MessageLookupByLibrary.simpleMessage("Category"),
+    "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "depositRegistration": MessageLookupByLibrary.simpleMessage(
+      "Deposit registration",
+    ),
+    "description": MessageLookupByLibrary.simpleMessage("Description"),
+    "frecAnual": MessageLookupByLibrary.simpleMessage("anual"),
+    "frecDaily": MessageLookupByLibrary.simpleMessage("daily"),
+    "frecMonthly": MessageLookupByLibrary.simpleMessage("monthly"),
+    "frecOnce": MessageLookupByLibrary.simpleMessage("once"),
+    "frecSemiMonthly": MessageLookupByLibrary.simpleMessage("semiMonthly"),
+    "frecWeekly": MessageLookupByLibrary.simpleMessage("weekly"),
+    "frequency": MessageLookupByLibrary.simpleMessage("Frecuency"),
+    "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "income": MessageLookupByLibrary.simpleMessage("Income"),
+    "initialAmount": MessageLookupByLibrary.simpleMessage("Initial amount"),
+    "interestRate": MessageLookupByLibrary.simpleMessage("Interest rate"),
+    "newAccount": MessageLookupByLibrary.simpleMessage("New Account"),
+    "operationRegistration": MessageLookupByLibrary.simpleMessage(
+      "Register operation",
+    ),
+    "operations": MessageLookupByLibrary.simpleMessage("Operations"),
+    "register": MessageLookupByLibrary.simpleMessage("Register"),
+    "select": MessageLookupByLibrary.simpleMessage("Select"),
+    "spendRegistration": MessageLookupByLibrary.simpleMessage(
+      "Spend registration",
+    ),
+    "spent": MessageLookupByLibrary.simpleMessage("Spent"),
+    "subCategory": MessageLookupByLibrary.simpleMessage("SubCategory"),
+    "sumary": MessageLookupByLibrary.simpleMessage("Sumary"),
+    "trnasactionRegistration": MessageLookupByLibrary.simpleMessage(
+      "register transaction",
+    ),
+    "unavailableData": MessageLookupByLibrary.simpleMessage("Unavailable data"),
+    "withdrawalRegistration": MessageLookupByLibrary.simpleMessage(
+      "Withdrawal registration",
+    ),
+  };
 }

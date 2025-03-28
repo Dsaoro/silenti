@@ -1,8 +1,7 @@
-import 'dart:ffi';
-
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:silenti/application/financial_assets/get_financial_assets_balance_use_case.dart';
+import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/application/storage/open_secure_database_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
@@ -12,6 +11,8 @@ import 'package:silenti/presentation/budget_page.dart';
 import 'package:silenti/presentation/components/card_graph_item.dart';
 import 'package:silenti/presentation/components/category_button.dart';
 import 'package:silenti/presentation/assets_page.dart';
+import 'package:silenti/presentation/components/operation_card_list_item.dart';
+import 'package:silenti/presentation/components/resume_card.dart';
 import 'package:silenti/presentation/components/shimmer.dart';
 import 'package:silenti/presentation/components/shimmer_loading.dart'
     show ShimmerLoading;
@@ -48,8 +49,12 @@ const _shimmerGradient = LinearGradient(
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 1;
+  bool operationsUpdated = false;
   bool isLoading = true;
-
+  double accountBalance = 0;
+  double spendBalance = 0;
+  double totalBalance = 0;
+  List<Widget> lastOperations = [];
   Future<HandleResult<bool>?> registerOperation() async {
     Dialog alert = Dialog(
       // title: Text("Registrar operación"),
@@ -83,25 +88,84 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  _getMonthBalance() async {
+    var assetsBalance = await GetFinancialAssetsBalanceUseCase().execute();
+    var spentBalance = 0.0;
+    setState(() {
+      if (kDebugMode) {
+        print("assetBalance.model ${assetsBalance.model}");
+      }
+      accountBalance = assetsBalance.model;
+      spendBalance = spentBalance;
+      totalBalance = accountBalance - spentBalance;
+    });
+  }
+
+  // String _getShowableDate(DateTime date) {
+  //   String fecha = date.toIso8601String();
+  //   return fecha.split("T")[0];
+  // }
+
+  _getLastOperations() async {
+    var result = await GetOperations().getLastOperations(limit: 10);
+    if (result.status && result.model.isNotEmpty) {
+      if (kDebugMode) {
+        print("read last ${result.model.length} operations");
+      }
+      List<Widget> operations = [];
+      for (var e in result.model) {
+        operations.add(OperationCardListItem(
+          operation: e,
+          isLoading: false,
+        ));
+      }
+      setState(() {
+        lastOperations = operations;
+      });
+      // setState(() {
+      //   lastOperations = result.model
+      //       .map((e) => OperationCardListItem(
+      //             isLoading: false,
+      //             title:
+      //                 "${e.type}. ${e.category} - ${_getShowableDate(e.date)}",
+      //             content: e.amount.toString(),
+      //           ))
+      //       .toList();
+      // });
+    } else {
+      if (kDebugMode) {
+        print("error retrieving last operations ${result.message}");
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _connectToDatabase();
+    _getMonthBalance();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (currentPageIndex == 1 && !operationsUpdated) {
+      _getLastOperations();
+      operationsUpdated = true;
+    } else {
+      operationsUpdated = false;
+    }
+
     Widget incomes = SizedBox(
       width: MediaQuery.of(context).size.width * 0.44,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Income",
+            S.current.income,
             style: SilentiStyles.subtitleTextStyle,
           ),
           Text(
-            "\$ 100.000,00",
+            "\$ ${accountBalance.toStringAsFixed(2)}",
             style: TextStyle(
               color: SilentiColors.ok,
               fontSize: 16,
@@ -123,7 +187,7 @@ class _HomePageState extends State<HomePage> {
             style: SilentiStyles.subtitleTextStyle,
           ),
           Text(
-            "\$ 0,00",
+            "\$ ${spendBalance.toStringAsFixed(2)}",
             style: TextStyle(
               color: SilentiColors.warning,
               fontSize: 16,
@@ -138,11 +202,11 @@ class _HomePageState extends State<HomePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Balance",
+          S.current.balance,
           style: SilentiStyles.titleTextStyle,
         ),
         Text(
-          "\$ 100.000,00",
+          "\$ ${totalBalance.toStringAsFixed(2)}",
           style: TextStyle(
             color: SilentiColors.gray,
             fontSize: 22,
@@ -167,6 +231,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ShimmerLoading(
+                    //TODO check issue with Null invalid renderbox
                     isLoading: isLoading,
                     child: CategoryButton(
                       onPressed: (() {}),
@@ -190,33 +255,31 @@ class _HomePageState extends State<HomePage> {
     );
 
     Widget home = Shimmer(
-        linearGradient: _shimmerGradient,
-        child: WrapGradientBackground(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              summary,
-              ShimmerLoading(
-                isLoading: isLoading,
-                child: CardGraphItem(isLoading: isLoading),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              //  ShimmerLoading(
-              //    isLoading: isLoading,
-              //    child: ResumeCard(
-              //      children: [
-              //        Column(
-              //         children: lastOperations,
-              //       ),
-              //    ],
-              //  ),
-              //),
-            ],
+      linearGradient: _shimmerGradient,
+      child: WrapGradientBackground(
+        child: ShimmerLoading(
+          isLoading: isLoading,
+          child: Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: ListView(
+              children: [
+                summary,
+                CardGraphItem(
+                  isLoading: isLoading,
+                  title: S.current.sumary,
+                ),
+                ResumeCard(
+                  isLoading: isLoading,
+                  children: lastOperations,
+                ),
+              ],
+            ),
           ),
-        ));
+        ),
+      ),
+    );
 
     return Scaffold(
       backgroundColor: SilentiColors.dark,
@@ -255,7 +318,7 @@ class _HomePageState extends State<HomePage> {
               Icons.paste_outlined,
               color: SilentiColors.white,
             ),
-            label: S.current.outcome,
+            label: S.current.spent,
           ),
         ],
       ),
@@ -268,27 +331,10 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await registerOperation();
-          await Future.delayed(Duration(milliseconds: 150));
-          final snackBar = SnackBar(
-            /// need to set following properties for best effect of awesome_snackbar_content
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'On Hey!',
-              message:
-                  'This is an example error message that will be shown in the body of snackbar!',
-
-              /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-              contentType: ContentType.success,
-            ),
-          );
-
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(snackBar);
+          await _getMonthBalance();
+          operationsUpdated = false;
         },
-        tooltip: S.current.income_Operation,
+        tooltip: S.current.income,
         child: Icon(
           Icons.add,
           color: SilentiColors.primary,

@@ -20,10 +20,18 @@ class BudgetCategory {
   Map<String, dynamic> toJson() =>
       {'id': id, 'type': type, 'name': name, 'amount': amount};
 
+  Map<String, dynamic> toMap() => toJson();
+
   factory BudgetCategory.fromJson(Map<String, dynamic> json) => BudgetCategory(
         id: json['id'],
         type: json['type'],
         name: json['name'],
         amount: json['amount'],
+      );
+  factory BudgetCategory.fromMap(Map<String, dynamic> map) => BudgetCategory(
+        id: map['id'],
+        type: map['type'],
+        name: map['name'],
+        amount: map['amount'],
       );
 }

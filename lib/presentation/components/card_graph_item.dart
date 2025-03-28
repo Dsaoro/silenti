@@ -5,18 +5,22 @@ import 'package:silenti/core/enums/silenti_styles.dart';
 import '../../core/enums/silenti_colors.dart';
 
 class CardGraphItem extends StatelessWidget {
-  CardGraphItem({super.key, required this.isLoading, this.title = ""});
+  const CardGraphItem({super.key, required this.isLoading, this.title = ""});
 
   final bool isLoading;
-  String title;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildGraph(), const SizedBox(height: 16), _buildTitle()],
+        children: [
+          _buildGraph(),
+          const SizedBox(height: 4),
+          _buildTitle(),
+        ],
       ),
     );
   }
@@ -37,7 +41,7 @@ class CardGraphItem extends StatelessWidget {
           ),
           child: LineChart(
             LineChartData(
-              titlesData: FlTitlesData(show: false),
+              titlesData: FlTitlesData(show: true),
               borderData: FlBorderData(show: false),
               gridData: FlGridData(show: false),
               lineBarsData: [
@@ -49,6 +53,20 @@ class CardGraphItem extends StatelessWidget {
                     FlSpot(2, 2),
                     FlSpot(3, 4),
                     FlSpot(4, 3.5),
+                  ],
+                  isCurved: true,
+                  // colors: [Colors.blueAccent],
+                  color: SilentiColors.primary,
+                  dotData: FlDotData(show: false),
+                ),
+                LineChartBarData(
+                  preventCurveOverShooting: true,
+                  spots: [
+                    FlSpot(0, 3.5),
+                    FlSpot(1, 3),
+                    FlSpot(2, 2),
+                    FlSpot(3, 1.5),
+                    FlSpot(4, 1),
                   ],
                   isCurved: true,
                   // colors: [Colors.blueAccent],

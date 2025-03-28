@@ -1,3 +1,32 @@
+import 'package:silenti/generated/l10n.dart';
+
+class FinancialAssetFrequency {
+  // 'daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once'
+  static const String daily = "daily";
+  static const String weekly = "weekly";
+  static const String monthly = "monthly";
+  static const String semiMonthly = "semi-monthly";
+  static const String anual = "anual";
+  static const String once = "once";
+
+  static const List<String> list = [
+    daily,
+    weekly,
+    semiMonthly,
+    monthly,
+    anual,
+    once
+  ];
+  static Map<String, String> getMap = {
+    S.current.frecDaily: daily,
+    S.current.frecWeekly: weekly,
+    S.current.frecMonthly: monthly,
+    S.current.frecSemiMonthly: semiMonthly,
+    S.current.frecAnual: anual,
+    S.current.frecOnce: once,
+  };
+}
+
 class FinancialAsset {
   final int id;
   String name;
@@ -5,6 +34,7 @@ class FinancialAsset {
   int includedOnBalance;
   double interest;
   String frequency;
+
   FinancialAsset(this.id, this.name, this.accountBalance,
       this.includedOnBalance, this.interest, this.frequency);
 
@@ -17,5 +47,15 @@ class FinancialAsset {
       map['interestRate'] ?? 0,
       map['frequency'] ?? "",
     );
+  }
+  toMap() {
+    return {
+      // 'id': id,
+      'name': name,
+      'balance': accountBalance,
+      'included': includedOnBalance,
+      'interestRate': interest,
+      'frequency': frequency,
+    };
   }
 }

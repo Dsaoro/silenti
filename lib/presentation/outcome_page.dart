@@ -20,7 +20,7 @@ class _OutcomePageState extends State<OutcomePage> {
           Container(
             alignment: Alignment.center,
             height: MediaQuery.of(context).size.height * 0.35,
-            child: Text(S.current.outcome),
+            child: Text(S.current.spent),
           ),
           Card(
             color: SilentiColors.gray,

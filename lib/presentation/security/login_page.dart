@@ -113,15 +113,15 @@ class _LoginPageState extends State<LoginPage> {
                             if (kDebugMode) {
                               print(e);
                             }
-                            //TODO: show error message and remove navigator push
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(
-                                  title: "silenti",
-                                ),
-                              ),
-                            );
+                            // //TODO: show error message and remove navigator push
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => HomePage(
+                            //       title: "silenti",
+                            //     ),
+                            //   ),
+                            // );
                           }
                         }
                         setState(() {});

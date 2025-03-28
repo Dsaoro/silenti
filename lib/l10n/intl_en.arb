@@ -1,24 +1,136 @@
 {
     "@@locale": "en",
     "@@author": "dsaoro",
-    "income_transaction": "register transaction",
-    "@income_transaction": {
+    "trnasactionRegistration": "register transaction",
+    "@trnasactionRegistration": {
         "description": "add a new transaction"
     },
-    "home": "home",
+    "home": "Home",
     "@home": {
-        "description": "income"
+        "description": "home"
     },
-    "income": "income",
+    "income": "Income",
     "@income": {
         "description": "income"
     },
-    "outcome": "outcome",
-    "@outcome": {
-        "description": "aoutcome"
+    "spent": "Spent",
+    "@spent": {
+        "description": "outcome"
     },
-    "register_operation": "register operation",
-    "@register_operation": {
+    "operationRegistration": "Register operation",
+    "@operationRegistration": {
         "description": "register operation"
+    },
+    "depositRegistration": "Deposit registration",
+    "@depositRegistration": {
+        "description": "deposit registration"
+    },
+    "spendRegistration": "Spend registration",
+    "@spendRegistration": {
+        "description": "spend registration"
+    },
+    "withdrawalRegistration": "Withdrawal registration",
+    "@withdrawalRegistration": {
+        "description": "withdrawal registration"
+    },
+    "amount": "Amount",
+    "@amount": {
+        "description": ""
+    },
+    "initialAmount": "Initial amount",
+    "@initialAmount": {
+        "description": ""
+    },
+    "account": "Account",
+    "@account": {
+        "description": ""
+    },
+    "accountName": "Account name",
+    "@accountName": {
+        "description": ""
+    },
+    "category": "Category",
+    "@category": {
+        "description": ""
+    },
+    "register": "Register",
+    "@register": {
+        "description": "label"
+    },
+    "date": "Date",
+    "@date": {
+        "description": ""
+    },
+    "select": "Select",
+    "@select": {
+        "description": "label"
+    },
+    "description": "Description",
+    "@description": {
+        "description": "label"
+    },
+    "subCategory": "SubCategory",
+    "@subCategory": {
+        "description": "label"
+    },
+    "balance": "Balance",
+    "@balance": {
+        "description": "label"
+    },
+    "sumary": "Sumary",
+    "@sumary": {
+        "description": "label"
+    },
+    "add": "Add",
+    "@add": {
+        "description": "label"
+    },
+    "operations": "Operations",
+    "@operations": {
+        "description": "label"
+    },
+    "frequency": "Frecuency",
+    "@frequency": {
+        "description": "label"
+    },
+    "frecDaily": "daily",
+    "@frecDaily": {
+        "description": "label"
+    },
+    "frecWeekly": "weekly",
+    "@frecWeekly": {
+        "description": "label"
+    },
+    "frecSemiMonthly": "semiMonthly",
+    "@frecSemiMonthly": {
+        "description": "label"
+    },
+    "frecMonthly": "monthly",
+    "@frecMonthly": {
+        "description": "label"
+    },
+    "frecAnual": "anual",
+    "@frecAnual": {
+        "description": "label"
+    },
+    "frecOnce": "once",
+    "@frecOnce": {
+        "description": "label"
+    },
+    "interestRate": "Interest rate",
+    "@interestRate": {
+        "description": "label"
+    },
+    "unavailableData": "Unavailable data",
+    "@unavailableData": {
+        "description": "message"
+    },
+    "balanceIncluded": "included on balance",
+    "@balanceIncluded": {
+        "description": "message"
+    },
+    "newAccount": "New Account",
+    "@newAccount": {
+        "description": "message"
     }
 }

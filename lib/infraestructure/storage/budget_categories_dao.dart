@@ -1,6 +1,6 @@
 import 'package:silenti/infraestructure/adapters/secure_database_helper_pc.dart';
 
-class IngresoDAO {
+class BudgetCategoriesDAO {
   Future<int> insertBudgetCategory(Map<String, dynamic> category) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.insert(

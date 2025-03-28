@@ -1,11 +1,23 @@
 class Operation {
+  // id INTEGER PRIMARY KEY AUTOINCREMENT,
+  // financialAsset INTEGER NOT NULL,
+  // amount REAL NOT NULL,
+  // date TEXT NOT NULL,
+  // description TEXT,
+  // category INTEGER NOT NULL,
+  // type TEXT CHECK(type IN ('income', 'spent')) NOT NULL,
+  // FOREIGN KEY (financialAsset) REFERENCES financial_assets(id)
+  // FOREIGN KEY (category) REFERENCES budget_categories(id)
+
   final int id;
   final int financialAsset;
   final double amount;
   final DateTime date;
   final String description;
-  final String category;
+  final int category;
   final String type; // "ingreso" o "gasto"
+  static const String income = "income";
+  static const String expense = "spent";
 
   Operation({
     required this.id,
@@ -36,8 +48,8 @@ class Operation {
         type: map['type'],
       );
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
+  Map<String, dynamic> toMap() => {
+        //The 'id': id, field is set for autoincrement and shouldn't be sent to DB
         'financialAsset': financialAsset,
         'amount': amount,
         'date': date.toIso8601String(),
@@ -46,5 +58,5 @@ class Operation {
         'type': type,
       };
 
-  Map<String, dynamic> toMap() => toJson();
+  Map<String, dynamic> toJson() => toMap();
 }

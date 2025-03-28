@@ -80,7 +80,7 @@ class SecureDatabaseHelperPC {
   ''';
   static const String _initFinancialAssets = '''
   INSERT INTO financial_assets (name, balance, included, interestRate, frequency)
-    VALUES ('Efectivo', 0, 1, 0, 'once')
+    VALUES ('Efectivo', 5000, 1, 0, 'once')
   ''';
 
   static const String _createProfitsTable = '''
@@ -109,11 +109,11 @@ class SecureDatabaseHelperPC {
   ''';
   static const String _initBudgetCategories = '''
   INSERT INTO budget_categories (type, name, amount, frequency, firstTime)
-    VALUES ('spent','various', 0, 'monthly', '2021-01-01')
+    VALUES ('spent','various', 0, 'monthly', '2025-03-01')
   ''';
 
   static const String _createSubCategories = '''
-  CREATE TABLE sub_categories (
+  CREATE TABLE spend_sub_categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     category INTEGER NOT NULL,
     name TEXT NOT NULL,
@@ -138,7 +138,7 @@ class SecureDatabaseHelperPC {
 
   static const String _initOperations = '''
   INSERT INTO Operations (financialAsset, amount, date, description, category, type)
-    VALUES (0, 0, '2021-01-01', 'Initial balance', 'income', 'income')
+    VALUES (0, 0, '2021-01-01', 'Initial balance', 1, 'income')
   ''';
   static const String _createNotificationsTable = '''
   CREATE TABLE notifications (

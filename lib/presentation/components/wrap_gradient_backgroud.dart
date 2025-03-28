@@ -17,7 +17,7 @@ class WrapGradientBackground extends StatelessWidget {
         0.7,
       ],
       colors: [
-        SilentiColors.primary,
+        SilentiColors.dark,
         SilentiColors.dark,
       ],
       begin: Alignment.topRight,
