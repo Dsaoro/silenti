@@ -135,9 +135,19 @@ class S {
     );
   }
 
+  /// `Account balance`
+  String get accountBalance {
+    return Intl.message(
+      'Account balance',
+      name: 'accountBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Account`
-  String get account {
-    return Intl.message('Account', name: 'account', desc: '', args: []);
+  String get asset {
+    return Intl.message('Account', name: 'asset', desc: '', args: []);
   }
 
   /// `Account name`
@@ -158,6 +168,16 @@ class S {
   /// `Register`
   String get register {
     return Intl.message('Register', name: 'register', desc: 'label', args: []);
+  }
+
+  /// `Update`
+  String get update {
+    return Intl.message('Update', name: 'update', desc: 'label', args: []);
+  }
+
+  /// `Update`
+  String get type {
+    return Intl.message('Update', name: 'type', desc: 'label', args: []);
   }
 
   /// `Date`
@@ -205,6 +225,16 @@ class S {
     return Intl.message('Add', name: 'add', desc: 'label', args: []);
   }
 
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: 'label', args: []);
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: 'label', args: []);
+  }
+
   /// `Operations`
   String get operations {
     return Intl.message(
@@ -225,54 +255,74 @@ class S {
     );
   }
 
-  /// `daily`
+  /// `Daily`
   String get frecDaily {
-    return Intl.message('daily', name: 'frecDaily', desc: 'label', args: []);
+    return Intl.message('Daily', name: 'frecDaily', desc: 'label', args: []);
   }
 
-  /// `weekly`
+  /// `Weekly`
   String get frecWeekly {
-    return Intl.message('weekly', name: 'frecWeekly', desc: 'label', args: []);
+    return Intl.message('Weekly', name: 'frecWeekly', desc: 'label', args: []);
   }
 
-  /// `semiMonthly`
+  /// `SemiMonthly`
   String get frecSemiMonthly {
     return Intl.message(
-      'semiMonthly',
+      'SemiMonthly',
       name: 'frecSemiMonthly',
       desc: 'label',
       args: [],
     );
   }
 
-  /// `monthly`
+  /// `Monthly`
   String get frecMonthly {
     return Intl.message(
-      'monthly',
+      'Monthly',
       name: 'frecMonthly',
       desc: 'label',
       args: [],
     );
   }
 
-  /// `anual`
+  /// `Anual`
   String get frecAnual {
-    return Intl.message('anual', name: 'frecAnual', desc: 'label', args: []);
+    return Intl.message('Anual', name: 'frecAnual', desc: 'label', args: []);
   }
 
-  /// `once`
+  /// `Once`
   String get frecOnce {
-    return Intl.message('once', name: 'frecOnce', desc: 'label', args: []);
+    return Intl.message('Once', name: 'frecOnce', desc: 'label', args: []);
   }
 
-  /// `Interest rate`
+  /// `Items per page`
+  String get itemsPerPage {
+    return Intl.message(
+      'Items per page',
+      name: 'itemsPerPage',
+      desc: 'label',
+      args: [],
+    );
+  }
+
+  /// `Details`
+  String get details {
+    return Intl.message('Details', name: 'details', desc: 'label', args: []);
+  }
+
+  /// `Interest rate(E.A.)`
   String get interestRate {
     return Intl.message(
-      'Interest rate',
+      'Interest rate(E.A.)',
       name: 'interestRate',
       desc: 'label',
       args: [],
     );
+  }
+
+  /// `Warning`
+  String get warning {
+    return Intl.message('Warning', name: 'warning', desc: 'label', args: []);
   }
 
   /// `Unavailable data`
@@ -285,13 +335,23 @@ class S {
     );
   }
 
-  /// `included on balance`
+  /// `Show on balance`
   String get balanceIncluded {
     return Intl.message(
-      'included on balance',
+      'Show on balance',
       name: 'balanceIncluded',
       desc: 'message',
       args: [],
+    );
+  }
+
+  /// `By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?`
+  String deleteWarning(Object item) {
+    return Intl.message(
+      'By deleting this $item all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?',
+      name: 'deleteWarning',
+      desc: 'message',
+      args: [item],
     );
   }
 

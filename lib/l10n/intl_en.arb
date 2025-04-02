@@ -41,8 +41,12 @@
     "@initialAmount": {
         "description": ""
     },
-    "account": "Account",
-    "@account": {
+    "accountBalance": "Account balance",
+    "@accountBalance": {
+        "description": ""
+    },
+    "asset": "Account",
+    "@asset": {
         "description": ""
     },
     "accountName": "Account name",
@@ -55,6 +59,14 @@
     },
     "register": "Register",
     "@register": {
+        "description": "label"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "label"
+    },
+    "type": "Update",
+    "@type": {
         "description": "label"
     },
     "date": "Date",
@@ -85,6 +97,14 @@
     "@add": {
         "description": "label"
     },
+    "delete": "Delete",
+    "@delete": {
+        "description": "label"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "label"
+    },
     "operations": "Operations",
     "@operations": {
         "description": "label"
@@ -93,41 +113,62 @@
     "@frequency": {
         "description": "label"
     },
-    "frecDaily": "daily",
+    "frecDaily": "Daily",
     "@frecDaily": {
         "description": "label"
     },
-    "frecWeekly": "weekly",
+    "frecWeekly": "Weekly",
     "@frecWeekly": {
         "description": "label"
     },
-    "frecSemiMonthly": "semiMonthly",
+    "frecSemiMonthly": "SemiMonthly",
     "@frecSemiMonthly": {
         "description": "label"
     },
-    "frecMonthly": "monthly",
+    "frecMonthly": "Monthly",
     "@frecMonthly": {
         "description": "label"
     },
-    "frecAnual": "anual",
+    "frecAnual": "Anual",
     "@frecAnual": {
         "description": "label"
     },
-    "frecOnce": "once",
+    "frecOnce": "Once",
     "@frecOnce": {
         "description": "label"
     },
-    "interestRate": "Interest rate",
+    "itemsPerPage": "Items per page",
+    "@itemsPerPage": {
+        "description": "label"
+    },
+    "details": "Details",
+    "@details": {
+        "description": "label"
+    },
+    "interestRate": "Interest rate(E.A.)",
     "@interestRate": {
+        "description": "label"
+    },
+    "warning": "Warning",
+    "@warning": {
         "description": "label"
     },
     "unavailableData": "Unavailable data",
     "@unavailableData": {
         "description": "message"
     },
-    "balanceIncluded": "included on balance",
+    "balanceIncluded": "Show on balance",
     "@balanceIncluded": {
         "description": "message"
+    },
+    "deleteWarning": "By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?",
+    "@deleteWarning": {
+        "description": "message",
+        "placeholders": {
+            "item": {
+                "example": "asset"
+            }
+        }
     },
     "newAccount": "New Account",
     "@newAccount": {

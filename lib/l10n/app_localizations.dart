@@ -156,8 +156,14 @@ abstract class AppLocalizations {
   ///
   ///
   /// In en, this message translates to:
+  /// **'Account balance'**
+  String get accountBalance;
+
+  ///
+  ///
+  /// In en, this message translates to:
   /// **'Account'**
-  String get account;
+  String get asset;
 
   ///
   ///
@@ -176,6 +182,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Register'**
   String get register;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get type;
 
   ///
   ///
@@ -222,6 +240,18 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// label
+  ///
+  /// In en, this message translates to:
   /// **'Operations'**
   String get operations;
 
@@ -234,44 +264,62 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'daily'**
+  /// **'Daily'**
   String get frecDaily;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'weekly'**
+  /// **'Weekly'**
   String get frecWeekly;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'semiMonthly'**
+  /// **'SemiMonthly'**
   String get frecSemiMonthly;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'monthly'**
+  /// **'Monthly'**
   String get frecMonthly;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'anual'**
+  /// **'Anual'**
   String get frecAnual;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'once'**
+  /// **'Once'**
   String get frecOnce;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Interest rate'**
+  /// **'Items per page'**
+  String get itemsPerPage;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate(E.A.)'**
   String get interestRate;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get warning;
 
   /// message
   ///
@@ -282,8 +330,14 @@ abstract class AppLocalizations {
   /// message
   ///
   /// In en, this message translates to:
-  /// **'included on balance'**
+  /// **'Show on balance'**
   String get balanceIncluded;
+
+  /// message
+  ///
+  /// In en, this message translates to:
+  /// **'By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?'**
+  String deleteWarning(Object item);
 
   /// message
   ///

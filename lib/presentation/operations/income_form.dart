@@ -100,7 +100,10 @@ class _IncomeFormState extends State<IncomeForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(
+        horizontal: 32,
+        vertical: 16,
+      ),
       width: MediaQuery.of(context).size.width * 0.8,
       child: ListView(
         children: [
@@ -168,7 +171,7 @@ class _IncomeFormState extends State<IncomeForm> {
                   padding: EdgeInsets.all(8),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    S.current.account,
+                    S.current.asset,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

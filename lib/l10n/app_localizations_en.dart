@@ -39,7 +39,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get initialAmount => 'Initial amount';
 
   @override
-  String get account => 'Account';
+  String get accountBalance => 'Account balance';
+
+  @override
+  String get asset => 'Account';
 
   @override
   String get accountName => 'Account name';
@@ -49,6 +52,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get register => 'Register';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get type => 'Update';
 
   @override
   String get date => 'Date';
@@ -72,37 +81,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add => 'Add';
 
   @override
+  String get delete => 'Delete';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
   String get operations => 'Operations';
 
   @override
   String get frequency => 'Frecuency';
 
   @override
-  String get frecDaily => 'daily';
+  String get frecDaily => 'Daily';
 
   @override
-  String get frecWeekly => 'weekly';
+  String get frecWeekly => 'Weekly';
 
   @override
-  String get frecSemiMonthly => 'semiMonthly';
+  String get frecSemiMonthly => 'SemiMonthly';
 
   @override
-  String get frecMonthly => 'monthly';
+  String get frecMonthly => 'Monthly';
 
   @override
-  String get frecAnual => 'anual';
+  String get frecAnual => 'Anual';
 
   @override
-  String get frecOnce => 'once';
+  String get frecOnce => 'Once';
 
   @override
-  String get interestRate => 'Interest rate';
+  String get itemsPerPage => 'Items per page';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get interestRate => 'Interest rate(E.A.)';
+
+  @override
+  String get warning => 'Warning';
 
   @override
   String get unavailableData => 'Unavailable data';
 
   @override
-  String get balanceIncluded => 'included on balance';
+  String get balanceIncluded => 'Show on balance';
+
+  @override
+  String deleteWarning(Object item) {
+    return 'By deleting this $item all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?';
+  }
 
   @override
   String get newAccount => 'New Account';

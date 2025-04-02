@@ -20,33 +20,40 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(item) =>
+      "By deleting this ${item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "account": MessageLookupByLibrary.simpleMessage("Account"),
+    "accountBalance": MessageLookupByLibrary.simpleMessage("Account balance"),
     "accountName": MessageLookupByLibrary.simpleMessage("Account name"),
     "add": MessageLookupByLibrary.simpleMessage("Add"),
     "amount": MessageLookupByLibrary.simpleMessage("Amount"),
+    "asset": MessageLookupByLibrary.simpleMessage("Account"),
     "balance": MessageLookupByLibrary.simpleMessage("Balance"),
-    "balanceIncluded": MessageLookupByLibrary.simpleMessage(
-      "included on balance",
-    ),
+    "balanceIncluded": MessageLookupByLibrary.simpleMessage("Show on balance"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "category": MessageLookupByLibrary.simpleMessage("Category"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "deleteWarning": m0,
     "depositRegistration": MessageLookupByLibrary.simpleMessage(
       "Deposit registration",
     ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
-    "frecAnual": MessageLookupByLibrary.simpleMessage("anual"),
-    "frecDaily": MessageLookupByLibrary.simpleMessage("daily"),
-    "frecMonthly": MessageLookupByLibrary.simpleMessage("monthly"),
-    "frecOnce": MessageLookupByLibrary.simpleMessage("once"),
-    "frecSemiMonthly": MessageLookupByLibrary.simpleMessage("semiMonthly"),
-    "frecWeekly": MessageLookupByLibrary.simpleMessage("weekly"),
+    "details": MessageLookupByLibrary.simpleMessage("Details"),
+    "frecAnual": MessageLookupByLibrary.simpleMessage("Anual"),
+    "frecDaily": MessageLookupByLibrary.simpleMessage("Daily"),
+    "frecMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
+    "frecOnce": MessageLookupByLibrary.simpleMessage("Once"),
+    "frecSemiMonthly": MessageLookupByLibrary.simpleMessage("SemiMonthly"),
+    "frecWeekly": MessageLookupByLibrary.simpleMessage("Weekly"),
     "frequency": MessageLookupByLibrary.simpleMessage("Frecuency"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "income": MessageLookupByLibrary.simpleMessage("Income"),
     "initialAmount": MessageLookupByLibrary.simpleMessage("Initial amount"),
-    "interestRate": MessageLookupByLibrary.simpleMessage("Interest rate"),
+    "interestRate": MessageLookupByLibrary.simpleMessage("Interest rate(E.A.)"),
+    "itemsPerPage": MessageLookupByLibrary.simpleMessage("Items per page"),
     "newAccount": MessageLookupByLibrary.simpleMessage("New Account"),
     "operationRegistration": MessageLookupByLibrary.simpleMessage(
       "Register operation",
@@ -63,7 +70,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "trnasactionRegistration": MessageLookupByLibrary.simpleMessage(
       "register transaction",
     ),
+    "type": MessageLookupByLibrary.simpleMessage("Update"),
     "unavailableData": MessageLookupByLibrary.simpleMessage("Unavailable data"),
+    "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "warning": MessageLookupByLibrary.simpleMessage("Warning"),
     "withdrawalRegistration": MessageLookupByLibrary.simpleMessage(
       "Withdrawal registration",
     ),

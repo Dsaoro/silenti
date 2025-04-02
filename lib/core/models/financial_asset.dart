@@ -17,13 +17,22 @@ class FinancialAssetFrequency {
     anual,
     once
   ];
+  static final List<String> listNames = [
+    S.current.select,
+    S.current.frecOnce,
+    S.current.frecDaily,
+    S.current.frecWeekly,
+    S.current.frecMonthly,
+    S.current.frecSemiMonthly,
+    S.current.frecAnual,
+  ];
   static Map<String, String> getMap = {
+    S.current.frecOnce: once,
     S.current.frecDaily: daily,
     S.current.frecWeekly: weekly,
     S.current.frecMonthly: monthly,
     S.current.frecSemiMonthly: semiMonthly,
     S.current.frecAnual: anual,
-    S.current.frecOnce: once,
   };
 }
 

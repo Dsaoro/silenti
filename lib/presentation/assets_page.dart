@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
+import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
-import 'package:silenti/presentation/assets/new_asset_form.dart';
+import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
+import 'package:silenti/presentation/assets/asset_form.dart';
+import 'package:silenti/presentation/components/silenti_datatable.dart';
 import 'components/card_graph_item.dart';
 import 'components/operation_card_list_item.dart';
 import 'components/circle_list_item.dart';
@@ -40,6 +43,18 @@ class _AssetsPageState extends State<AssetsPage> {
       // _isLoading = !_isLoading;
       _isLoading = false;
     });
+  }
+
+  Widget _assetsOperationTable() {
+    return SilentiDatatable(
+      columns: [
+        DataColumn(label: Text(S.current.date)),
+        DataColumn(label: Text(S.current.amount)),
+        DataColumn(label: Text(S.current.type)),
+        DataColumn(label: Text(S.current.description)),
+      ],
+      rows: [],
+    );
   }
 
   _getDataFromDB() async {
@@ -78,6 +93,17 @@ class _AssetsPageState extends State<AssetsPage> {
     super.initState();
   }
 
+  _createNewAsset(FinancialAsset asset) async {
+    FinancialAssetsDao dao = FinancialAssetsDao();
+    if (kDebugMode) {
+      print(asset.toMap());
+    }
+    dao.insertAccount(asset.toMap());
+    //TODO save log for Asset Creation
+
+    await Future.delayed(Duration(seconds: 2));
+  }
+
   Widget _buildTopRowList(List<FinancialAsset> assets) {
     List<Widget> children = [
       const SizedBox(width: 16),
@@ -99,7 +125,26 @@ class _AssetsPageState extends State<AssetsPage> {
     children.add(
       _buildTopRowItem(Icons.add, S.current.add, () {
         Dialog alert = Dialog(
-          child: NewAssetForm(),
+          child: Scaffold(
+            appBar: AppBar(
+              foregroundColor: SilentiColors.primary,
+            ),
+            body: Container(
+              padding: EdgeInsets.all(16),
+              width: MediaQuery.of(context).size.width,
+              child: AssetForm(
+                onSave: (value) {
+                  if (value.runtimeType == FinancialAsset) {
+                    _createNewAsset(value);
+                  }
+                  _createNewAsset(value);
+                },
+                asset: FinancialAsset(
+                    0, "", 0.0, 1, 0.0, FinancialAssetFrequency.once),
+                buttonText: S.current.register,
+              ),
+            ),
+          ),
         );
         showDialog(
           context: context,
@@ -109,6 +154,7 @@ class _AssetsPageState extends State<AssetsPage> {
         );
       }, false),
     );
+
     return SizedBox(
       height: 96,
       child: ListView(
@@ -173,75 +219,157 @@ class _AssetsPageState extends State<AssetsPage> {
       return Container();
     }
     FinancialAsset asset = assets[currentSelectedIndex - 1];
+    if (kDebugMode) {
+      print(
+          "details for asset index ${currentSelectedIndex - 1}, named: ${asset.name}");
+    }
     return Container(
       alignment: Alignment.center,
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    alignment: Alignment.centerLeft,
-                    child: TextField(
-                      readOnly: !_isEditing,
-                      decoration: InputDecoration(
-                        hintText: asset.name,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _isEditing = !_isEditing;
-                      setState(() {});
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.6,
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.40,
+            child: AssetForm(
+              onSave: (value) {
+                if (value.runtimeType == FinancialAsset) {
+                  if (kDebugMode) {
+                    print("asset in edting mode:\n${value.toMap()}");
+                  }
+                }
+              },
+              asset: asset,
+              readOnly: !_isEditing,
+              showHead: false,
+              showName: false,
+              showButton: _isEditing,
+              buttonText: S.current.update,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith(
+                    (states) {
+                      return SilentiColors.secondary;
                     },
-                    icon: _isEditing
-                        ? Icon(
-                            Icons.edit,
-                            color: SilentiColors.primary,
-                          )
-                        : Icon(Icons.edit),
                   ),
-                ],
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              DataTable(
-                headingRowHeight: 0,
-                columns: [
-                  DataColumn(
-                    label: Text(""),
-                  ),
-                  DataColumn(
-                    label: Text(""),
-                  ),
-                ],
-                rows: [
-                  DataRow(cells: [
-                    DataCell(
-                      Text(
-                        S.current.account,
+                ),
+                onPressed: () {
+                  AlertDialog confirmation = AlertDialog(
+                    content: Container(
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        children: [
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              S.current.warning,
+                              style: SilentiStyles.titleTextStyleDark,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Text(S.current.deleteWarning(S.current.asset))
+                        ],
                       ),
                     ),
-                    DataCell(
-                      TextField(
-                        readOnly: !_isEditing,
-                        decoration: InputDecoration(
-                          hintText: asset.name,
-                        ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(S.current.cancel),
                       ),
-                    )
-                  ])
-                ],
-              ),
-            ],
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                        },
+                        child: Text(S.current.delete),
+                      ),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return confirmation;
+                      });
+                },
+                child: Text(S.current.delete)),
+          )
+        ],
+      ),
+    );
+    // return
+    // Container(
+    //   alignment: Alignment.center,
+    //   width: MediaQuery.of(context).size.width,
+    //   height: MediaQuery.of(context).size.height * 0.5,
+    //   child: AssetForm(
+    //     onSave: (value) {
+    //       if (value.runtimeType == FinancialAsset) {
+    //         if (kDebugMode) {
+    //           print("asset in edting mode:\n${value.toMap()}");
+    //         }
+    //       }
+    //     },
+    //     asset: asset,
+    //     readOnly: !_isEditing,
+    //     showHead: false,
+    //     showName: false,
+    //     showButton: _isEditing,
+    //     buttonText: S.current.update,
+    //   ),
+    // );
+  }
+
+  Widget categoryResume() {
+    Widget resume = Icon(Icons.reset_tv);
+    return resume;
+  }
+
+  Widget categoryOperations() {
+    Widget resume = Icon(Icons.plumbing);
+    return resume;
+  }
+
+  Widget _buildAssetCard() {
+    return Container(
+      height: 500,
+      width: MediaQuery.of(context).size.width * 0.5,
+      padding: EdgeInsets.all(3),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(
+                  child: Text(S.current.details),
+                ),
+                Tab(
+                  child: Text(S.current.operations),
+                )
+              ],
+            ),
+          ),
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: TabBarView(
+              children: [
+                _buildDetailsTable(),
+                _assetsOperationTable(),
+              ],
+            ),
           ),
         ),
       ),
@@ -262,7 +390,7 @@ class _AssetsPageState extends State<AssetsPage> {
       const SizedBox(height: 16),
       _buildGraphItem(),
       const SizedBox(height: 8),
-      _buildDetailsTable(),
+      _buildAssetCard(),
     ];
 
     return Shimmer(

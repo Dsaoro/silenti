@@ -178,7 +178,7 @@ class _SpendFormState extends State<SpendForm> {
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             child: Text(
-              S.current.account,
+              S.current.asset,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
