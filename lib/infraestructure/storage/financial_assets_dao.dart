@@ -7,6 +7,12 @@ class FinancialAssetsDao {
     return await db.insert('financial_assets', data);
   }
 
+  Future<int> deleteAccountById(int id) async {
+    final db = await SecureDatabaseHelperPC().database;
+    return await db
+        .delete('financial_assets', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<List<Map<String, dynamic>>> getAccounts() async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.query('financial_assets');

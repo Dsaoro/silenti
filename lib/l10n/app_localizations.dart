@@ -168,6 +168,12 @@ abstract class AppLocalizations {
   ///
   ///
   /// In en, this message translates to:
+  /// **'Budget'**
+  String get budget;
+
+  ///
+  ///
+  /// In en, this message translates to:
   /// **'Account name'**
   String get accountName;
 

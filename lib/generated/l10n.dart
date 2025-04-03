@@ -150,6 +150,11 @@ class S {
     return Intl.message('Account', name: 'asset', desc: '', args: []);
   }
 
+  /// `Budget`
+  String get budget {
+    return Intl.message('Budget', name: 'budget', desc: '', args: []);
+  }
+
   /// `Account name`
   String get accountName {
     return Intl.message(

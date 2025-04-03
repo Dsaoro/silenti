@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
 import 'package:silenti/application/budgets/get_expenses_sub_categories_use_Case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
@@ -9,7 +8,8 @@ import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_date_picker.dart';
-import 'package:silenti/presentation/components/single_period_enforcer.dart';
+import 'package:silenti/presentation/components/silenti_text_field.dart';
+import 'package:silenti/utils/currency_formater.dart';
 
 class SpendForm extends StatefulWidget {
   const SpendForm({super.key});
@@ -21,7 +21,7 @@ class SpendForm extends StatefulWidget {
 class _SpendFormState extends State<SpendForm> {
   int category = 0;
   int subCategory = 0;
-  double amount = 0.0;
+  double amount = 0;
   int financialAssetId = 1;
   String description = "";
 
@@ -154,21 +154,13 @@ class _SpendFormState extends State<SpendForm> {
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             // height: 50,
-            child: TextField(
-              onChanged: (value) {
+            child: SilentiTextField(
+              isMoney: true,
+              input: CurrencyFormater.convert(amount),
+              onChange: (value) {
                 amount = double.parse(value);
               },
-              controller: TextEditingController(),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[\d\.]')),
-                SinglePeriodEnforcer()
-              ],
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              textAlign: TextAlign.left,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: "1.000.000.00",
-              ),
             ),
           ),
           SizedBox(
@@ -367,7 +359,12 @@ class _SpendFormState extends State<SpendForm> {
               Container(
                 width: MediaQuery.of(context).size.width * 0.8,
                 alignment: Alignment.topCenter,
-                child: TextField(
+                child: SilentiTextField(
+                  input: description,
+                  onChange: (value) {
+                    description = value;
+                  },
+                  keyboardType: TextInputType.text,
                   maxLines: 3,
                 ),
               )

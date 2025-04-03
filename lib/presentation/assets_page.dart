@@ -1,5 +1,8 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:silenti/application/financial_assets/create_financial_asset_use_case.dart';
+import 'package:silenti/application/financial_assets/delete_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
@@ -7,9 +10,10 @@ import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
-import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 import 'package:silenti/presentation/assets/asset_form.dart';
+import 'package:silenti/presentation/components/notification_popper.dart';
 import 'package:silenti/presentation/components/silenti_datatable.dart';
+import 'package:silenti/presentation/components/silenti_text_field.dart';
 import 'components/card_graph_item.dart';
 import 'components/operation_card_list_item.dart';
 import 'components/circle_list_item.dart';
@@ -36,7 +40,7 @@ class _AssetsPageState extends State<AssetsPage> {
   bool _isEditing = false;
   List<FinancialAsset> assets = [];
   List<Operation> operations = [];
-  int currentSelectedIndex = 1;
+  int currentSelectedIndex = 0;
 
   void _toggleLoading() {
     setState(() {
@@ -93,14 +97,61 @@ class _AssetsPageState extends State<AssetsPage> {
     super.initState();
   }
 
-  _createNewAsset(FinancialAsset asset) async {
-    FinancialAssetsDao dao = FinancialAssetsDao();
-    if (kDebugMode) {
-      print(asset.toMap());
+  _deleteAsset(FinancialAsset asset) async {
+    var response = await DeleteFinancialAssetUseCase().execute(asset.id);
+    if (response.status && response.model > 0) {
+      await _getDataFromDB();
+      if (currentSelectedIndex >= assets.length) {
+        if (kDebugMode) {
+          print("current selected index: $currentSelectedIndex");
+          print("current assets.length: ${assets.length}");
+        }
+        currentSelectedIndex = assets.indexOf(assets.last);
+        if (kDebugMode) {
+          print(
+              "current selected index after operation: $currentSelectedIndex");
+        }
+      } else {
+        if (kDebugMode) {
+          print("currentSelectedIndex >= assets.length False");
+          print("current selected index: $currentSelectedIndex");
+          print("current assets.length: ${assets.length}");
+        }
+      }
+      NotificationPopper(
+        contentType: ContentType.success,
+        title: "Sucess",
+        message: "Account ${asset.name} deleted.",
+      ).pop(context);
+    } else {
+      NotificationPopper(
+        contentType: ContentType.failure,
+        title: "Error",
+        message: "Account ${asset.name} couldn´t be deleted, please try again.",
+        // ignore: use_build_context_synchronously
+      ).pop(context);
     }
-    dao.insertAccount(asset.toMap());
-    //TODO save log for Asset Creation
+  }
 
+  _createNewAsset(FinancialAsset asset) async {
+    var response = await CreateFinancialAssetUseCase().execute(asset);
+    if (response.status && response.model > 0) {
+      setState(() {
+        _getDataFromDB();
+        NotificationPopper(
+          contentType: ContentType.success,
+          title: "Sucess",
+          message: "New account ${asset.name} added.",
+        ).pop(context);
+      });
+    } else {
+      NotificationPopper(
+        contentType: ContentType.failure,
+        title: "Error",
+        message: "Account ${asset.name} couldn´t be added, please try again.",
+        // ignore: use_build_context_synchronously
+      ).pop(context);
+    }
     await Future.delayed(Duration(seconds: 2));
   }
 
@@ -116,9 +167,10 @@ class _AssetsPageState extends State<AssetsPage> {
         children.add(
           _buildTopRowItem(Icons.attach_money, asset.name, () {
             setState(() {
-              currentSelectedIndex = asset.id;
+              currentSelectedIndex = assets.indexOf(asset);
+              _isEditing = false;
             });
-          }, currentSelectedIndex == asset.id),
+          }, currentSelectedIndex == assets.indexOf(asset)),
         );
       }
     }
@@ -137,7 +189,6 @@ class _AssetsPageState extends State<AssetsPage> {
                   if (value.runtimeType == FinancialAsset) {
                     _createNewAsset(value);
                   }
-                  _createNewAsset(value);
                 },
                 asset: FinancialAsset(
                     0, "", 0.0, 1, 0.0, FinancialAssetFrequency.once),
@@ -192,9 +243,7 @@ class _AssetsPageState extends State<AssetsPage> {
         isLoading: _isLoading,
         child: CardGraphItem(
           isLoading: _isLoading,
-          title:
-              assets[currentSelectedIndex <= 0 ? 0 : currentSelectedIndex - 1]
-                  .name,
+          title: assets[currentSelectedIndex].name,
         ),
       );
     }
@@ -218,7 +267,7 @@ class _AssetsPageState extends State<AssetsPage> {
     if (assets.isEmpty) {
       return Container();
     }
-    FinancialAsset asset = assets[currentSelectedIndex - 1];
+    FinancialAsset asset = assets[currentSelectedIndex];
     if (kDebugMode) {
       print(
           "details for asset index ${currentSelectedIndex - 1}, named: ${asset.name}");
@@ -231,9 +280,61 @@ class _AssetsPageState extends State<AssetsPage> {
       child: Column(
         children: [
           Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+            alignment: Alignment.centerLeft,
+            height: 60,
+            child: Row(
+              children: [
+                if (_isEditing)
+                  SizedBox(
+                    width: 100,
+                    height: 60,
+                    child: SilentiTextField(
+                      input: asset.name,
+                      onChange: () {},
+                      keyboardType: TextInputType.text,
+                      readOnly: !_isEditing,
+                    ),
+                  ),
+                if (!_isEditing)
+                  SizedBox(
+                    width: 100,
+                    height: 50,
+                    child: Text(
+                      asset.name,
+                      style: SilentiStyles.titleTextStyleDark,
+                    ),
+                  ),
+                SizedBox(
+                  width: 32,
+                ),
+                SizedBox(
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isEditing = !_isEditing;
+                      });
+                    },
+                    icon: _isEditing
+                        ? Icon(
+                            Icons.edit,
+                            size: 28,
+                            color: SilentiColors.dark,
+                          )
+                        : Icon(
+                            Icons.edit,
+                            size: 28,
+                            color: SilentiColors.primary,
+                          ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.40,
+            height: MediaQuery.of(context).size.height * 0.3,
             child: AssetForm(
               onSave: (value) {
                 if (value.runtimeType == FinancialAsset) {
@@ -254,56 +355,83 @@ class _AssetsPageState extends State<AssetsPage> {
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
             alignment: Alignment.centerLeft,
             child: TextButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith(
-                    (states) {
-                      return SilentiColors.secondary;
-                    },
-                  ),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith(
+                  (states) {
+                    return SilentiColors.secondary;
+                  },
                 ),
-                onPressed: () {
-                  AlertDialog confirmation = AlertDialog(
-                    content: Container(
-                      height: MediaQuery.of(context).size.height * 0.15,
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              S.current.warning,
-                              style: SilentiStyles.titleTextStyleDark,
-                            ),
+              ),
+              onPressed: () {
+                AlertDialog confirmation = AlertDialog(
+                  content: Container(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            S.current.warning,
+                            style: SilentiStyles.titleTextStyleDark,
                           ),
-                          SizedBox(
-                            height: 12,
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          S.current.deleteWarning(
+                            S.current.asset,
                           ),
-                          Text(S.current.deleteWarning(S.current.asset))
-                        ],
+                        )
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        S.current.cancel,
                       ),
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(S.current.cancel),
+                    TextButton(
+                      onPressed: () async {
+                        if (currentSelectedIndex == 0 && assets.length == 1) {
+                          NotificationPopper(
+                            contentType: ContentType.warning,
+                            title: "Error",
+                            message:
+                                "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
+                            // ignore: use_build_context_synchronously
+                          ).pop(context);
+                          return;
+                        }
+                        await _deleteAsset(asset);
+                        // ignore: use_build_context_synchronously
+                        setState(() {});
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        S.current.delete,
                       ),
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                        },
-                        child: Text(S.current.delete),
-                      ),
-                    ],
-                  );
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return confirmation;
-                      });
-                },
-                child: Text(S.current.delete)),
+                    ),
+                  ],
+                );
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return confirmation;
+                    });
+              },
+              child: Text(
+                S.current.delete,
+                style: TextStyle(
+                  color: SilentiColors.dark,
+                ),
+              ),
+            ),
           )
         ],
       ),
@@ -343,8 +471,8 @@ class _AssetsPageState extends State<AssetsPage> {
 
   Widget _buildAssetCard() {
     return Container(
-      height: 500,
-      width: MediaQuery.of(context).size.width * 0.5,
+      height: MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width * 0.7,
       padding: EdgeInsets.all(3),
       child: DefaultTabController(
         length: 2,
@@ -363,7 +491,7 @@ class _AssetsPageState extends State<AssetsPage> {
           ),
           body: Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.7,
             child: TabBarView(
               children: [
                 _buildDetailsTable(),

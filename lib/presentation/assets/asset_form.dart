@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/generated/l10n.dart';
-import 'package:silenti/presentation/components/single_period_enforcer.dart';
+import 'package:silenti/presentation/components/silenti_text_field.dart';
+import 'package:silenti/utils/currency_formater.dart';
 
 // ignore: must_be_immutable
 class AssetForm extends StatefulWidget {
@@ -85,9 +85,11 @@ class _AssetFormState extends State<AssetForm> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: TextField(
+                child: SilentiTextField(
+                  input: editingAsset.name,
                   maxLength: 15,
-                  onChanged: (value) {
+                  keyboardType: TextInputType.text,
+                  onChange: (value) {
                     editingAsset.name = value;
                   },
                 ),
@@ -119,28 +121,15 @@ class _AssetFormState extends State<AssetForm> {
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             // height: 50,
-            child: TextField(
+            child: SilentiTextField(
+              input: CurrencyFormater.convert(editingAsset.accountBalance),
               readOnly: widget.readOnly,
-              onChanged: (value) {
+              onChange: (value) {
                 // setState(() {
                 editingAsset.accountBalance = double.parse(value);
                 // });
               },
-              controller: TextEditingController(),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'[\d\.]'),
-                ),
-                SinglePeriodEnforcer()
-              ],
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              textAlign: TextAlign.left,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: editingAsset.accountBalance != 0
-                    ? editingAsset.accountBalance.toStringAsPrecision(3)
-                    : "1.000.000.00",
-              ),
             ),
           ),
         ]),
@@ -277,9 +266,10 @@ class _AssetFormState extends State<AssetForm> {
                 padding: EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
                 // height: 50,
-                child: TextField(
+                child: SilentiTextField(
+                  input: editingAsset.interest.toStringAsPrecision(3),
                   readOnly: widget.readOnly,
-                  onChanged: (value) {
+                  onChange: (value) {
                     if (value == "") {
                       value = "0";
                     }
@@ -288,20 +278,8 @@ class _AssetFormState extends State<AssetForm> {
                     }
                     editingAsset.interest = double.parse(value);
                   },
-                  controller: TextEditingController(),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'[\d\.]'),
-                    ),
-                    SinglePeriodEnforcer()
-                  ],
+                  isDouble: true,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  textAlign: TextAlign.left,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.percent_sharp),
-                    hintText:
-                        "${editingAsset.interest.toStringAsPrecision(3)}%",
-                  ),
                 ),
               ),
             ]),

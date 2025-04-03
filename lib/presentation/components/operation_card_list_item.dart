@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/operation.dart';
+import 'package:silenti/utils/currency_formater.dart';
 
 class OperationCardListItem extends StatelessWidget {
   const OperationCardListItem({
@@ -28,7 +29,7 @@ class OperationCardListItem extends StatelessWidget {
     result = operation.amount.toString();
     if (operation.type == Operation.expense) {
       return Text(
-        "-\$ ${operation.amount.toStringAsPrecision(7)}",
+        "-\$${CurrencyFormater.convert(operation.amount)}",
         style: TextStyle(
           color: SilentiColors.warning,
           fontWeight: FontWeight.w500,
@@ -36,7 +37,8 @@ class OperationCardListItem extends StatelessWidget {
       );
     } else if (operation.type == Operation.income) {
       return Text(
-        "\$ ${operation.amount.toStringAsPrecision(7)}",
+        // "\$ ${operation.amount.toStringAsPrecision(7)}",
+        "\$${CurrencyFormater.convert(operation.amount)}",
         style: TextStyle(
           color: SilentiColors.ok,
           fontWeight: FontWeight.w500,

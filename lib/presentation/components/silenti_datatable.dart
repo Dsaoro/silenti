@@ -81,6 +81,7 @@ class _SilentiDatatableState extends State<SilentiDatatable> {
                       itemsPerPage = int.parse(value);
                     },
                     hintText: itemsPerPage.toString(),
+                    keyboardType: TextInputType.number,
                   ),
                 )
               ],

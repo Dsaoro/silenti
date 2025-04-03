@@ -49,6 +49,10 @@
     "@asset": {
         "description": ""
     },
+    "budget": "Budget",
+    "@budget": {
+        "description": ""
+    },
     "accountName": "Account name",
     "@accountName": {
         "description": ""

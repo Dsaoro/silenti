@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "asset": MessageLookupByLibrary.simpleMessage("Account"),
     "balance": MessageLookupByLibrary.simpleMessage("Balance"),
     "balanceIncluded": MessageLookupByLibrary.simpleMessage("Show on balance"),
+    "budget": MessageLookupByLibrary.simpleMessage("Budget"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "category": MessageLookupByLibrary.simpleMessage("Category"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
