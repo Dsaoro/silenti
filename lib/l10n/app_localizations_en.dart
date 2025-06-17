@@ -126,6 +126,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warning => 'Warning';
 
   @override
+  String get monthlyBudget => 'Monthly budget';
+
+  @override
+  String get budgetName => 'Budget name';
+
+  @override
+  String get newBudget => 'New budget ';
+
+  @override
+  String get status => 'Status ';
+
+  @override
   String get unavailableData => 'Unavailable data';
 
   @override

@@ -330,6 +330,41 @@ class S {
     return Intl.message('Warning', name: 'warning', desc: 'label', args: []);
   }
 
+  /// `Monthly budget`
+  String get monthlyBudget {
+    return Intl.message(
+      'Monthly budget',
+      name: 'monthlyBudget',
+      desc: 'label',
+      args: [],
+    );
+  }
+
+  /// `Budget name`
+  String get budgetName {
+    return Intl.message(
+      'Budget name',
+      name: 'budgetName',
+      desc: 'label',
+      args: [],
+    );
+  }
+
+  /// `New budget `
+  String get newBudget {
+    return Intl.message(
+      'New budget ',
+      name: 'newBudget',
+      desc: 'label',
+      args: [],
+    );
+  }
+
+  /// `Status `
+  String get status {
+    return Intl.message('Status ', name: 'status', desc: 'label', args: []);
+  }
+
   /// `Unavailable data`
   String get unavailableData {
     return Intl.message(

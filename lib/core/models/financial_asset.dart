@@ -10,22 +10,23 @@ class FinancialAssetFrequency {
   static const String once = "once";
 
   static const List<String> list = [
+    once,
     daily,
     weekly,
     semiMonthly,
     monthly,
     anual,
-    once
   ];
+
   static final List<String> listNames = [
-    S.current.select,
     S.current.frecOnce,
     S.current.frecDaily,
     S.current.frecWeekly,
-    S.current.frecMonthly,
     S.current.frecSemiMonthly,
+    S.current.frecMonthly,
     S.current.frecAnual,
   ];
+
   static Map<String, String> getMap = {
     S.current.frecOnce: once,
     S.current.frecDaily: daily,
@@ -44,8 +45,14 @@ class FinancialAsset {
   double interest;
   String frequency;
 
-  FinancialAsset(this.id, this.name, this.accountBalance,
-      this.includedOnBalance, this.interest, this.frequency);
+  FinancialAsset(
+    this.id,
+    this.name,
+    this.accountBalance,
+    this.includedOnBalance,
+    this.interest,
+    this.frequency,
+  );
 
   factory FinancialAsset.fromMap(Map<String, dynamic> map) {
     return FinancialAsset(

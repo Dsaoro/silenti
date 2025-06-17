@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:silenti/core/models/balance_history.dart';
 import 'package:silenti/infraestructure/adapters/secure_database_helper_pc.dart';
+import 'package:silenti/infraestructure/storage/balance_history_dao.dart';
 
 class FinancialAssetsDao {
   Future<int> insertAccount(Map<String, dynamic> data) async {
@@ -47,7 +49,9 @@ class FinancialAssetsDao {
   }
 
   Future<List<Map<String, Object?>>> deposit(
-      {required int financialAsset, required double amount}) async {
+      {required int financialAsset,
+      required double amount,
+      int? operationId}) async {
     final db = await SecureDatabaseHelperPC().database;
     var check = await db.query(
       'financial_assets',
@@ -59,13 +63,44 @@ class FinancialAssetsDao {
       if (kDebugMode) {
         print("financial asset not found $financialAsset");
       }
+      return [];
     }
-    return db.rawQuery('''UPDATE financial_assets SET balance = balance + 
+
+    // Actualizar balance
+    var result =
+        await db.rawQuery('''UPDATE financial_assets SET balance = balance + 
     $amount WHERE id=$financialAsset;''');
+
+    // Obtener el nuevo balance
+    var updatedAsset = await db.query(
+      'financial_assets',
+      where: 'id = ?',
+      whereArgs: [financialAsset],
+    );
+
+    if (updatedAsset.isNotEmpty) {
+      double newBalance = updatedAsset.first['balance'] as double;
+
+      // Registrar en el historial
+      BalanceHistoryDAO balanceHistoryDAO = BalanceHistoryDAO();
+      await balanceHistoryDAO.insertBalanceHistory(
+        BalanceHistory(
+          id: 0, // Se auto-incrementa
+          financialAssetId: financialAsset,
+          balance: newBalance,
+          date: DateTime.now(),
+          operationId: operationId,
+        ),
+      );
+    }
+
+    return result;
   }
 
   Future<List<Map<String, Object?>>> withdraw(
-      {required int financialAsset, required double amount}) async {
+      {required int financialAsset,
+      required double amount,
+      int? operationId}) async {
     final db = await SecureDatabaseHelperPC().database;
     var check = await db.query(
       'financial_assets',
@@ -77,8 +112,37 @@ class FinancialAssetsDao {
       if (kDebugMode) {
         print("financial asset not found $financialAsset");
       }
+      return [];
     }
-    return db.rawQuery('''UPDATE financial_assets SET balance = balance - 
+
+    // Actualizar balance
+    var result =
+        await db.rawQuery('''UPDATE financial_assets SET balance = balance - 
     $amount WHERE id=$financialAsset;''');
+
+    // Obtener el nuevo balance
+    var updatedAsset = await db.query(
+      'financial_assets',
+      where: 'id = ?',
+      whereArgs: [financialAsset],
+    );
+
+    if (updatedAsset.isNotEmpty) {
+      double newBalance = updatedAsset.first['balance'] as double;
+
+      // Registrar en el historial
+      BalanceHistoryDAO balanceHistoryDAO = BalanceHistoryDAO();
+      await balanceHistoryDAO.insertBalanceHistory(
+        BalanceHistory(
+          id: 0, // Se auto-incrementa
+          financialAssetId: financialAsset,
+          balance: newBalance,
+          date: DateTime.now(),
+          operationId: operationId,
+        ),
+      );
+    }
+
+    return result;
   }
 }

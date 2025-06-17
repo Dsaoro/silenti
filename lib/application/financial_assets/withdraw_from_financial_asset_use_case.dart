@@ -6,33 +6,41 @@ import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class WithdrawFromFinancialAssetUseCase extends BaseUseCase {
-  WithdrawFromFinancialAssetUseCase() : super("DepositInFinancialAssetUseCase");
+  WithdrawFromFinancialAssetUseCase()
+      : super("WithdrawFromFinancialAssetUseCase");
   Future<HandleResult<bool>> execute(Operation operation) async {
     HandleResult<bool> result = HandleResult<bool>();
     if (operation.type != "spent") {
+      result.setError("Operation type must be 'spent' for withdrawals");
       return result;
     }
+
+    // Primero guardamos la operación para obtener el ID
+    var saveOperationResponse = await SaveOperationUSeCase().execute(
+      operation: operation,
+    );
+
+    if (!saveOperationResponse.status) {
+      result.setError("Failed to save operation");
+      return result;
+    }
+
+    // Luego actualizamos el balance del activo financiero con el ID de la operación
     FinancialAssetsDao dao = FinancialAssetsDao();
     var withdrawResponse = await dao.withdraw(
-        financialAsset: operation.financialAsset, amount: operation.amount);
+      financialAsset: operation.financialAsset,
+      amount: operation.amount,
+      operationId:
+          saveOperationResponse.model, // Usar el ID de la operación guardada
+    );
+
     if (kDebugMode) {
-      print(" response from withdraw ${withdrawResponse.toString()}");
+      print("Response from withdraw ${withdrawResponse.toString()}");
+      print(
+          "Operation stored successfully with ID: ${saveOperationResponse.model}");
     }
-    // if (withdrawResponse.isEmpty) {
-    //   result.setError("withdraw cannot be executed, please try again");
-    //   if (kDebugMode) {
-    //     print(result.message);
-    //   }
-    //   return result;
-    // }
-    var response = await SaveOperationUSeCase().execute(operation: operation);
+
     result.setData(true);
-    if (kDebugMode) {
-      print("Store operation sucessfuly");
-    }
-    if (kDebugMode) {
-      print(response);
-    }
     return result;
   }
 }

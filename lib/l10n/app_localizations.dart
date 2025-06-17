@@ -327,6 +327,30 @@ abstract class AppLocalizations {
   /// **'Warning'**
   String get warning;
 
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get monthlyBudget;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Budget name'**
+  String get budgetName;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'New budget '**
+  String get newBudget;
+
+  /// label
+  ///
+  /// In en, this message translates to:
+  /// **'Status '**
+  String get status;
+
   /// message
   ///
   /// In en, this message translates to:

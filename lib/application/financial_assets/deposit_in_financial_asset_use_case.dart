@@ -10,31 +10,36 @@ class DepositInFinancialAssetUseCase extends BaseUseCase {
   Future<HandleResult<bool>> execute(Operation operation) async {
     HandleResult<bool> result = HandleResult<bool>();
     if (operation.type != "income") {
+      result.setError("Operation type must be 'income' for deposits");
       return result;
     }
-    FinancialAssetsDao dao = FinancialAssetsDao();
-    var depositResponse = await dao.deposit(
-        financialAsset: operation.financialAsset, amount: operation.amount);
-    if (kDebugMode) {
-      print(" response from deposit ${depositResponse.toString()}");
-    }
-    // if (depositResponse.isEmpty) {
-    //   result.setError("deposit cannot be added, please try again");
-    //   if (kDebugMode) {
-    //     print(result.message);
-    //   }
-    //   return result;
-    // }
-    var response = await SaveOperationUSeCase().execute(
+
+    // Primero guardamos la operación para obtener el ID
+    var saveOperationResponse = await SaveOperationUSeCase().execute(
       operation: operation,
     );
+
+    if (!saveOperationResponse.status) {
+      result.setError("Failed to save operation");
+      return result;
+    }
+
+    // Luego actualizamos el balance del activo financiero con el ID de la operación
+    FinancialAssetsDao dao = FinancialAssetsDao();
+    var depositResponse = await dao.deposit(
+      financialAsset: operation.financialAsset,
+      amount: operation.amount,
+      operationId:
+          saveOperationResponse.model, // Usar el ID de la operación guardada
+    );
+
+    if (kDebugMode) {
+      print("Response from deposit ${depositResponse.toString()}");
+      print(
+          "Operation stored successfully with ID: ${saveOperationResponse.model}");
+    }
+
     result.setData(true);
-    if (kDebugMode) {
-      print("Store operation sucessfuly");
-    }
-    if (kDebugMode) {
-      print(response);
-    }
     return result;
   }
 }

@@ -41,6 +41,7 @@ class SecureDatabaseHelperPC {
         await db.execute(_createBudgetCategoriesTable);
         await db.execute(_createSubCategories);
         await db.execute(_createOperationsTable);
+        await db.execute(_createBalanceHistoryTable);
         await db.execute(_createNotificationsTable);
 
         await db.execute(_initUsers);
@@ -48,6 +49,7 @@ class SecureDatabaseHelperPC {
         await db.execute(_initProfits);
         await db.execute(_initBudgetCategories);
         await db.execute(_initOperations);
+        await db.execute(_initBalanceHistory);
         await db.execute(_initNotifications);
       },
     );
@@ -154,5 +156,22 @@ class SecureDatabaseHelperPC {
   static const String _initNotifications = '''
   INSERT INTO notifications (message, date, status, Operation_id)
     VALUES ('Initial balance', '2021-01-01', 'send', 1)
+  ''';
+
+  static const String _createBalanceHistoryTable = '''
+  CREATE TABLE balance_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    financialAssetId INTEGER NOT NULL,
+    balance REAL NOT NULL,
+    date TEXT NOT NULL,
+    operationId INTEGER,
+    FOREIGN KEY (financialAssetId) REFERENCES financial_assets(id),
+    FOREIGN KEY (operationId) REFERENCES operations(id)
+  )
+  ''';
+
+  static const String _initBalanceHistory = '''
+  INSERT INTO balance_history (financialAssetId, balance, date, operationId)
+    VALUES (1, 5000, '2021-01-01', 1)
   ''';
 }

@@ -157,6 +157,22 @@
     "@warning": {
         "description": "label"
     },
+    "monthlyBudget": "Monthly budget",
+    "@monthlyBudget": {
+        "description": "label"
+    },
+    "budgetName": "Budget name",
+    "@budgetName": {
+        "description": "label"
+    },
+    "newBudget": "New budget ",
+    "@newBudget": {
+        "description": "label"
+    },
+    "status": "Status ",
+    "@status": {
+        "description": "label"
+    },
     "unavailableData": "Unavailable data",
     "@unavailableData": {
         "description": "message"

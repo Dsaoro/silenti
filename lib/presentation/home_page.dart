@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/application/storage/open_secure_database_use_case.dart';
+import 'package:silenti/application/storage/migrate_database_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/budget_page.dart';
@@ -54,6 +55,20 @@ class _HomePageState extends State<HomePage> {
       if (kDebugMode) {
         print("Base de datos abierta con éxito: ${db.path}");
       }
+
+      // Ejecutar migración para usuarios existentes
+      MigrateDatabaseUseCase migration = MigrateDatabaseUseCase();
+      var migrationResult = await migration.execute();
+      if (migrationResult.status) {
+        if (kDebugMode) {
+          print("Database migration completed successfully");
+        }
+      } else {
+        if (kDebugMode) {
+          print("Migration error: ${migrationResult.message}");
+        }
+      }
+
       return db;
     } catch (e) {
       if (kDebugMode) {

@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "balance": MessageLookupByLibrary.simpleMessage("Balance"),
     "balanceIncluded": MessageLookupByLibrary.simpleMessage("Show on balance"),
     "budget": MessageLookupByLibrary.simpleMessage("Budget"),
+    "budgetName": MessageLookupByLibrary.simpleMessage("Budget name"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "category": MessageLookupByLibrary.simpleMessage("Category"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
@@ -55,7 +56,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "initialAmount": MessageLookupByLibrary.simpleMessage("Initial amount"),
     "interestRate": MessageLookupByLibrary.simpleMessage("Interest rate(E.A.)"),
     "itemsPerPage": MessageLookupByLibrary.simpleMessage("Items per page"),
+    "monthlyBudget": MessageLookupByLibrary.simpleMessage("Monthly budget"),
     "newAccount": MessageLookupByLibrary.simpleMessage("New Account"),
+    "newBudget": MessageLookupByLibrary.simpleMessage("New budget "),
     "operationRegistration": MessageLookupByLibrary.simpleMessage(
       "Register operation",
     ),
@@ -66,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Spend registration",
     ),
     "spent": MessageLookupByLibrary.simpleMessage("Spent"),
+    "status": MessageLookupByLibrary.simpleMessage("Status "),
     "subCategory": MessageLookupByLibrary.simpleMessage("SubCategory"),
     "sumary": MessageLookupByLibrary.simpleMessage("Sumary"),
     "trnasactionRegistration": MessageLookupByLibrary.simpleMessage(

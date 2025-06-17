@@ -1,16 +1,18 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:silenti/application/financial_assets/create_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/delete_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
+import 'package:silenti/application/financial_assets/get_asset_chart_data_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
-import 'package:silenti/presentation/assets/asset_form.dart';
+import 'package:silenti/presentation/forms/asset_form.dart';
 import 'package:silenti/presentation/components/notification_popper.dart';
 import 'package:silenti/presentation/components/silenti_datatable.dart';
 import 'package:silenti/presentation/components/silenti_text_field.dart';
@@ -40,6 +42,7 @@ class _AssetsPageState extends State<AssetsPage> {
   bool _isEditing = false;
   List<FinancialAsset> assets = [];
   List<Operation> operations = [];
+  List<FlSpot> chartData = [];
   int currentSelectedIndex = 0;
 
   void _toggleLoading() {
@@ -62,7 +65,7 @@ class _AssetsPageState extends State<AssetsPage> {
   }
 
   _getDataFromDB() async {
-    await _requestAssets();
+    await _getAssets();
     if (assets.isNotEmpty) {
       await _requestAssetOperations(currentSelectedIndex);
     }
@@ -71,12 +74,56 @@ class _AssetsPageState extends State<AssetsPage> {
     });
   }
 
-  _requestAssets() async {
+  _getAssets() async {
     var response = await GetFinancialAssets().execute();
-    if (!response.status) {
+    if (response.status) {
+      setState(() {
+        assets = response.model;
+        if (assets.isNotEmpty) {
+          _loadChartData(assets[currentSelectedIndex].id);
+        }
+      });
     } else {
-      assets = response.model;
+      if (kDebugMode) {
+        print("error getting assets");
+      }
     }
+  }
+
+  _loadChartData(int assetId) async {
+    var chartResponse = await GetAssetChartDataUseCase().executeByPeriod(
+      financialAssetId: assetId,
+      period: ChartPeriod.month, // Mostrar último mes por defecto
+    );
+
+    if (chartResponse.status) {
+      setState(() {
+        chartData = chartResponse.model;
+      });
+    } else {
+      if (kDebugMode) {
+        print("Error loading chart data: ${chartResponse.message}");
+      }
+      setState(() {
+        chartData = [];
+      });
+    }
+  }
+
+  _selectAsset(int index) async {
+    setState(() {
+      currentSelectedIndex = index;
+      _isLoading = true;
+    });
+
+    if (assets.isNotEmpty) {
+      await _loadChartData(assets[index].id);
+      await _requestAssetOperations(assets[index].id);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   _requestAssetOperations(int assetId) async {
@@ -165,9 +212,9 @@ class _AssetsPageState extends State<AssetsPage> {
     if (assets.isNotEmpty) {
       for (var asset in assets) {
         children.add(
-          _buildTopRowItem(Icons.attach_money, asset.name, () {
+          _buildTopRowItem(Icons.attach_money, asset.name, () async {
+            await _selectAsset(assets.indexOf(asset));
             setState(() {
-              currentSelectedIndex = assets.indexOf(asset);
               _isEditing = false;
             });
           }, currentSelectedIndex == assets.indexOf(asset)),
@@ -189,6 +236,7 @@ class _AssetsPageState extends State<AssetsPage> {
                   if (value.runtimeType == FinancialAsset) {
                     _createNewAsset(value);
                   }
+                  Navigator.pop(context);
                 },
                 asset: FinancialAsset(
                     0, "", 0.0, 1, 0.0, FinancialAssetFrequency.once),
@@ -243,13 +291,19 @@ class _AssetsPageState extends State<AssetsPage> {
         isLoading: _isLoading,
         child: CardGraphItem(
           isLoading: _isLoading,
-          title: assets[currentSelectedIndex].name,
+          title: "${assets[currentSelectedIndex].name} - Balance History",
+          chartData: chartData,
+          showGrid: true,
+          showTitles: true,
         ),
       );
     }
     return ShimmerLoading(
       isLoading: _isLoading,
-      child: CardGraphItem(isLoading: _isLoading),
+      child: CardGraphItem(
+        isLoading: _isLoading,
+        chartData: [],
+      ),
     );
   }
 
@@ -436,42 +490,11 @@ class _AssetsPageState extends State<AssetsPage> {
         ],
       ),
     );
-    // return
-    // Container(
-    //   alignment: Alignment.center,
-    //   width: MediaQuery.of(context).size.width,
-    //   height: MediaQuery.of(context).size.height * 0.5,
-    //   child: AssetForm(
-    //     onSave: (value) {
-    //       if (value.runtimeType == FinancialAsset) {
-    //         if (kDebugMode) {
-    //           print("asset in edting mode:\n${value.toMap()}");
-    //         }
-    //       }
-    //     },
-    //     asset: asset,
-    //     readOnly: !_isEditing,
-    //     showHead: false,
-    //     showName: false,
-    //     showButton: _isEditing,
-    //     buttonText: S.current.update,
-    //   ),
-    // );
-  }
-
-  Widget categoryResume() {
-    Widget resume = Icon(Icons.reset_tv);
-    return resume;
-  }
-
-  Widget categoryOperations() {
-    Widget resume = Icon(Icons.plumbing);
-    return resume;
   }
 
   Widget _buildAssetCard() {
     return Container(
-      height: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.7,
       width: MediaQuery.of(context).size.width * 0.7,
       padding: EdgeInsets.all(3),
       child: DefaultTabController(

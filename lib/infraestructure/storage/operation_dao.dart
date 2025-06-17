@@ -40,6 +40,17 @@ class OperationDAO {
         orderBy: 'date DESC');
   }
 
+  Future<List<Map<String, dynamic>>> getOperationsByBudgetCategoryLimited(
+      int budgetId,
+      {int? limit = 10}) async {
+    final db = await SecureDatabaseHelperPC().database;
+    return await db.query('Operations',
+        where: 'category = ?',
+        limit: limit,
+        whereArgs: [budgetId],
+        orderBy: 'date DESC');
+  }
+
   Future<List<Map<String, Object?>>> getSpendByMonth(
       {required int month, required int year}) async {
     final db = await SecureDatabaseHelperPC().database;

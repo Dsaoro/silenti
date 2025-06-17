@@ -5,16 +5,16 @@ import 'package:silenti/infraestructure/storage/operation_dao.dart';
 
 class SaveOperationUSeCase extends BaseUseCase {
   SaveOperationUSeCase() : super('SaveOperation');
-  Future<HandleResult<bool>> execute({required Operation operation}) async {
-    HandleResult<bool> result = HandleResult<bool>();
+  Future<HandleResult<int>> execute({required Operation operation}) async {
+    HandleResult<int> result = HandleResult<int>();
     final dao = OperationDAO();
-    var operationStatus = await dao.insertOperation(
+    var operationId = await dao.insertOperation(
       operation.toMap(),
     );
-    if (operationStatus != 0) {
-      result.setData(true);
+    if (operationId != 0) {
+      result.setData(operationId);
     } else {
-      result.message = "Operation could not be registered";
+      result.setError("Operation could not be registered");
     }
     return result;
   }

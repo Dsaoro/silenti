@@ -2,17 +2,19 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/budgets/add_budget_category_use_case.dart';
+import 'package:silenti/application/budgets/delete_budget_category_use_case.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
-import 'package:silenti/application/financial_assets/delete_financial_asset_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/budget_category.dart';
+import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/notification_popper.dart';
 import 'package:silenti/presentation/components/silenti_datatable.dart';
 import 'package:silenti/presentation/components/silenti_text_field.dart';
+import 'package:silenti/presentation/forms/budget_form.dart';
 import 'components/card_graph_item.dart';
 import 'components/operation_card_list_item.dart';
 import 'components/circle_list_item.dart';
@@ -48,13 +50,33 @@ class _BudgetPageState extends State<BudgetPage> {
     });
   }
 
-  Widget _assetsOperationTable() {
+  Widget _budgetStatus() {
+    return Container();
+  }
+
+  Widget _budgetsOperationTable() {
     return SilentiDatatable(
       columns: [
-        DataColumn(label: Text(S.current.date)),
-        DataColumn(label: Text(S.current.amount)),
-        DataColumn(label: Text(S.current.type)),
-        DataColumn(label: Text(S.current.description)),
+        DataColumn(
+          label: Text(
+            S.current.date,
+          ),
+        ),
+        DataColumn(
+          label: Text(
+            S.current.amount,
+          ),
+        ),
+        DataColumn(
+          label: Text(
+            S.current.type,
+          ),
+        ),
+        DataColumn(
+          label: Text(
+            S.current.description,
+          ),
+        ),
       ],
       rows: [],
     );
@@ -63,7 +85,7 @@ class _BudgetPageState extends State<BudgetPage> {
   _getDataFromDB() async {
     await _requestBudgetCategories();
     if (categories.isNotEmpty) {
-      await _requestAssetOperations(currentSelectedIndex);
+      await _requestBudgetOperations(currentSelectedIndex);
     }
     setState(() {
       _toggleLoading();
@@ -78,9 +100,9 @@ class _BudgetPageState extends State<BudgetPage> {
     }
   }
 
-  _requestAssetOperations(int assetId) async {
+  _requestBudgetOperations(int budgetId) async {
     var response =
-        await GetOperations().byFinancialAssetLimited(assetId, limit: 6);
+        await GetOperations().byBudgetCategoryLimited(budgetId, limit: 6);
     if (!response.status) {
     } else {
       setState(() {
@@ -96,8 +118,8 @@ class _BudgetPageState extends State<BudgetPage> {
     super.initState();
   }
 
-  _deleteAsset(BudgetCategory budget) async {
-    var response = await DeleteFinancialAssetUseCase().execute(budget.id);
+  _deleteBudget(BudgetCategory budget) async {
+    var response = await DeleteBudgetCategoryUseCase().execute(budget);
     if (response.status && response.model > 0) {
       await _getDataFromDB();
       if (currentSelectedIndex >= categories.length) {
@@ -121,6 +143,7 @@ class _BudgetPageState extends State<BudgetPage> {
         contentType: ContentType.success,
         title: "Sucess",
         message: "Account ${budget.name} deleted.",
+        // ignore: use_build_context_synchronously
       ).pop(context);
     } else {
       NotificationPopper(
@@ -133,10 +156,9 @@ class _BudgetPageState extends State<BudgetPage> {
     }
   }
 
-  _createNewAsset(BudgetCategory budget) async {
-    var response =
-        await AddBudgetCategoryUseCase().execute(budgetCategory: budget);
-    if (response.status && response.model) {
+  _createNewBudget(BudgetCategory budget) async {
+    var response = await AddBudgetCategoryUseCase().execute(category: budget);
+    if (response.status && response.model > 0) {
       setState(() {
         _getDataFromDB();
         NotificationPopper(
@@ -185,15 +207,21 @@ class _BudgetPageState extends State<BudgetPage> {
             body: Container(
               padding: EdgeInsets.all(16),
               width: MediaQuery.of(context).size.width,
-              // child: AssetForm(
-              //   onSave: (value) {
-              //     if (value.runtimeType == BudgetCategory) {
-              //       _createNewAsset(value);
-              //     }
-              //   },
-              //   budget: BudgetCategory(),
-              //   buttonText: S.current.register,
-              // ),
+              child: BudgetForm(
+                onSave: (value) {
+                  if (value.runtimeType == BudgetCategory) {
+                    _createNewBudget(value);
+                  }
+                },
+                budget: BudgetCategory(
+                    amount: 50000,
+                    id: 0,
+                    name: "",
+                    type: CategoryType.spent,
+                    firstTime: DateTime.now(),
+                    frequency: FinancialAssetFrequency.monthly),
+                buttonText: S.current.register,
+              ),
             ),
           ),
         );
@@ -270,7 +298,7 @@ class _BudgetPageState extends State<BudgetPage> {
     BudgetCategory budget = categories[currentSelectedIndex];
     if (kDebugMode) {
       print(
-          "details for budget index ${currentSelectedIndex - 1}, named: ${budget.name}");
+          "details for budget index $currentSelectedIndex , named: ${budget.name}");
     }
     return Container(
       alignment: Alignment.center,
@@ -335,21 +363,21 @@ class _BudgetPageState extends State<BudgetPage> {
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.3,
-            // child: AssetForm(
-            //   onSave: (value) {
-            //     if (value.runtimeType == BudgetCategory) {
-            //       if (kDebugMode) {
-            //         print("budget in edting mode:\n${value.toMap()}");
-            //       }
-            //     }
-            //   },
-            //   budget: budget,
-            //   readOnly: !_isEditing,
-            //   showHead: false,
-            //   showName: false,
-            //   showButton: _isEditing,
-            //   buttonText: S.current.update,
-            // ),
+            child: BudgetForm(
+              onSave: (value) {
+                if (value.runtimeType == BudgetCategory) {
+                  if (kDebugMode) {
+                    print("budget in edting mode:\n${value.toMap()}");
+                  }
+                }
+              },
+              budget: budget,
+              readOnly: !_isEditing,
+              showHead: false,
+              showName: false,
+              showButton: _isEditing,
+              buttonText: S.current.update,
+            ),
           ),
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
@@ -409,9 +437,9 @@ class _BudgetPageState extends State<BudgetPage> {
                           ).pop(context);
                           return;
                         }
-                        await _deleteAsset(budget);
-                        // ignore: use_build_context_synchronously
+                        await _deleteBudget(budget);
                         setState(() {});
+                        // ignore: use_build_context_synchronously
                         Navigator.pop(context);
                       },
                       child: Text(
@@ -437,56 +465,34 @@ class _BudgetPageState extends State<BudgetPage> {
         ],
       ),
     );
-    // return
-    // Container(
-    //   alignment: Alignment.center,
-    //   width: MediaQuery.of(context).size.width,
-    //   height: MediaQuery.of(context).size.height * 0.5,
-    //   child: AssetForm(
-    //     onSave: (value) {
-    //       if (value.runtimeType == BudgetCategory) {
-    //         if (kDebugMode) {
-    //           print("budget in edting mode:\n${value.toMap()}");
-    //         }
-    //       }
-    //     },
-    //     budget: budget,
-    //     readOnly: !_isEditing,
-    //     showHead: false,
-    //     showName: false,
-    //     showButton: _isEditing,
-    //     buttonText: S.current.update,
-    //   ),
-    // );
   }
 
-  Widget categoryResume() {
-    Widget resume = Icon(Icons.reset_tv);
-    return resume;
-  }
-
-  Widget categoryOperations() {
-    Widget resume = Icon(Icons.plumbing);
-    return resume;
-  }
-
-  Widget _buildAssetCard() {
+  Widget _buildBudgetCard() {
     return Container(
-      height: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.7,
       width: MediaQuery.of(context).size.width * 0.7,
       padding: EdgeInsets.all(3),
       child: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
               tabs: [
                 Tab(
-                  child: Text(S.current.details),
+                  child: Text(
+                    S.current.status,
+                  ),
                 ),
                 Tab(
-                  child: Text(S.current.operations),
-                )
+                  child: Text(
+                    S.current.operations,
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    S.current.details,
+                  ),
+                ),
               ],
             ),
           ),
@@ -495,8 +501,9 @@ class _BudgetPageState extends State<BudgetPage> {
             height: MediaQuery.of(context).size.height * 0.7,
             child: TabBarView(
               children: [
+                _budgetStatus(),
+                _budgetsOperationTable(),
                 _buildDetailsTable(),
-                _assetsOperationTable(),
               ],
             ),
           ),
@@ -519,7 +526,7 @@ class _BudgetPageState extends State<BudgetPage> {
       const SizedBox(height: 16),
       _buildGraphItem(),
       const SizedBox(height: 8),
-      _buildAssetCard(),
+      _buildBudgetCard(),
     ];
 
     return Shimmer(

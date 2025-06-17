@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets_balance_use_case.dart';
+import 'package:silenti/application/financial_assets/get_total_balance_chart_data_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
@@ -33,6 +35,7 @@ class _HomePageContentState extends State<HomePageContent> {
   double spendBalance = 0;
   double totalBalance = 0;
   List<Widget> lastOperations = [];
+  List<FlSpot> summaryChartData = [];
 
   _getMonthBalance() async {
     var assetsBalance = await GetFinancialAssetsBalanceUseCase().execute();
@@ -47,10 +50,23 @@ class _HomePageContentState extends State<HomePageContent> {
     });
   }
 
-  // String _getShowableDate(DateTime date) {
-  //   String fecha = date.toIso8601String();
-  //   return fecha.split("T")[0];
-  // }
+  _loadSummaryChartData() async {
+    var chartResponse =
+        await GetTotalBalanceChartDataUseCase().executeForHome();
+
+    if (chartResponse.status) {
+      setState(() {
+        summaryChartData = chartResponse.model;
+      });
+    } else {
+      if (kDebugMode) {
+        print("Error loading summary chart data: ${chartResponse.message}");
+      }
+      setState(() {
+        summaryChartData = [];
+      });
+    }
+  }
 
   _getLastOperations() async {
     var result = await GetOperations().getLastOperations(limit: 10);
@@ -68,16 +84,6 @@ class _HomePageContentState extends State<HomePageContent> {
       setState(() {
         lastOperations = operations;
       });
-      // setState(() {
-      //   lastOperations = result.model
-      //       .map((e) => OperationCardListItem(
-      //             isLoading: false,
-      //             title:
-      //                 "${e.type}. ${e.category} - ${_getShowableDate(e.date)}",
-      //             content: e.amount.toString(),
-      //           ))
-      //       .toList();
-      // });
     } else {
       if (kDebugMode) {
         print("error retrieving last operations ${result.message}");
@@ -89,6 +95,7 @@ class _HomePageContentState extends State<HomePageContent> {
   void initState() {
     _getMonthBalance();
     _getLastOperations();
+    _loadSummaryChartData();
     super.initState();
   }
 
@@ -210,7 +217,10 @@ class _HomePageContentState extends State<HomePageContent> {
                 sumary,
                 CardGraphItem(
                   isLoading: isLoading,
-                  title: S.current.sumary,
+                  title: "${S.current.sumary} - Balance Evolution",
+                  chartData: summaryChartData,
+                  showGrid: true,
+                  showTitles: false,
                 ),
                 ResumeCard(
                   isLoading: isLoading,
