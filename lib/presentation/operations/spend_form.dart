@@ -378,9 +378,10 @@ class _SpendFormState extends State<SpendForm> {
             alignment: Alignment.centerRight,
             child: TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    WidgetStateProperty.all(SilentiColors.secondary),
-                foregroundColor: WidgetStateProperty.all(Colors.white),
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.secondary),
+                foregroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.onSurface),
               ),
               onPressed: () {
                 _registerOperation();
@@ -388,7 +389,9 @@ class _SpendFormState extends State<SpendForm> {
               },
               child: Text(
                 S.current.register,
-                style: TextStyle(fontSize: 16, color: SilentiColors.dark),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           )

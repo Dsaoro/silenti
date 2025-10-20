@@ -143,8 +143,10 @@ class _BudgetFormState extends State<BudgetForm> {
           alignment: Alignment.centerRight,
           child: TextButton(
             style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(SilentiColors.secondary),
-              foregroundColor: WidgetStateProperty.all(Colors.white),
+              backgroundColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.secondary),
+              foregroundColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.onSurface),
             ),
             onPressed: () {
               if (editingBudget.name != "") {
@@ -154,7 +156,8 @@ class _BudgetFormState extends State<BudgetForm> {
             },
             child: Text(
               widget.buttonText,
-              style: TextStyle(fontSize: 16, color: SilentiColors.dark),
+              style: TextStyle(
+                  fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         )

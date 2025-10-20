@@ -34,13 +34,14 @@ class _SilentiNavigationBarState extends State<SilentiNavigationBar> {
           _currentPageIndex = index;
         });
       },
-      indicatorColor: SilentiColors.primary,
+      indicatorColor: Theme.of(context).colorScheme.primary,
       selectedIndex: _currentPageIndex,
       destinations: widget.pages
           .asMap()
           .entries
           .map((e) => NavigationDestination(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.home,
+                    color: Theme.of(context).colorScheme.onPrimary),
                 label: widget.titles[e.key],
               ))
           .toList(),

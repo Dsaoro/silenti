@@ -2,8 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 // import 'package:silenti/core/enums/silenti_styles.dart';
 
-import '../../core/enums/silenti_colors.dart';
-
 class CardGraphItem extends StatelessWidget {
   const CardGraphItem({
     super.key,
@@ -27,13 +25,13 @@ class CardGraphItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildGraph(),
+          _buildGraph(context),
           if (title.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               title,
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onBackground,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -44,13 +42,13 @@ class CardGraphItem extends StatelessWidget {
     );
   }
 
-  Widget _buildGraph() {
+  Widget _buildGraph(BuildContext context) {
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(
@@ -58,17 +56,17 @@ class CardGraphItem extends StatelessWidget {
             horizontal: 8,
             vertical: 8,
           ),
-          child: _buildChart(),
+          child: _buildChart(context),
         ),
       ),
     );
   }
 
-  Widget _buildChart() {
+  Widget _buildChart(BuildContext context) {
     if (isLoading) {
       return Center(
         child: CircularProgressIndicator(
-          color: SilentiColors.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
       );
     }
@@ -78,7 +76,7 @@ class CardGraphItem extends StatelessWidget {
         child: Text(
           'No hay datos disponibles',
           style: TextStyle(
-            color: Colors.white54,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             fontSize: 14,
           ),
         ),
@@ -95,11 +93,11 @@ class CardGraphItem extends StatelessWidget {
             preventCurveOverShooting: true,
             spots: chartData,
             isCurved: true,
-            color: SilentiColors.primary,
+            color: Theme.of(context).colorScheme.primary,
             dotData: FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: SilentiColors.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             ),
           ),
         ],

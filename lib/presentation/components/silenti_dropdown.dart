@@ -55,7 +55,9 @@ class _SilentiDropdownState extends State<SilentiDropdown> {
             item,
             style: TextStyle(
               fontSize: 14,
-              color: widget.readOnly ? SilentiColors.dark : Colors.black,
+              color: widget.readOnly
+                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.6)
+                  : Theme.of(context).colorScheme.onSurface,
             ),
           ),
         );

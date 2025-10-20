@@ -7,7 +7,6 @@ import 'package:silenti/application/financial_assets/delete_financial_asset_use_
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/financial_assets/get_asset_chart_data_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/core/models/operation.dart';
@@ -226,7 +225,7 @@ class _AssetsPageState extends State<AssetsPage> {
         Dialog alert = Dialog(
           child: Scaffold(
             appBar: AppBar(
-              foregroundColor: SilentiColors.primary,
+              foregroundColor: Theme.of(context).colorScheme.primary,
             ),
             body: Container(
               padding: EdgeInsets.all(16),
@@ -356,7 +355,7 @@ class _AssetsPageState extends State<AssetsPage> {
                     height: 50,
                     child: Text(
                       asset.name,
-                      style: SilentiStyles.titleTextStyleDark,
+                      style: SilentiStyles.titleTextStyleDark(context),
                     ),
                   ),
                 SizedBox(
@@ -373,12 +372,12 @@ class _AssetsPageState extends State<AssetsPage> {
                         ? Icon(
                             Icons.edit,
                             size: 28,
-                            color: SilentiColors.dark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           )
                         : Icon(
                             Icons.edit,
                             size: 28,
-                            color: SilentiColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                   ),
                 )
@@ -412,7 +411,7 @@ class _AssetsPageState extends State<AssetsPage> {
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith(
                   (states) {
-                    return SilentiColors.secondary;
+                    return Theme.of(context).colorScheme.secondary;
                   },
                 ),
               ),
@@ -427,7 +426,7 @@ class _AssetsPageState extends State<AssetsPage> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             S.current.warning,
-                            style: SilentiStyles.titleTextStyleDark,
+                            style: SilentiStyles.titleTextStyleDark(context),
                           ),
                         ),
                         SizedBox(
@@ -482,7 +481,7 @@ class _AssetsPageState extends State<AssetsPage> {
               child: Text(
                 S.current.delete,
                 style: TextStyle(
-                  color: SilentiColors.dark,
+                  color: Theme.of(context).colorScheme.onSecondary,
                 ),
               ),
             ),

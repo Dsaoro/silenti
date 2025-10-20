@@ -93,19 +93,20 @@ class _SilentiDatatableState extends State<SilentiDatatable> {
             child: DataTable(
               sortColumnIndex: 0,
               columnSpacing: 5,
-              border: TableBorder.all(color: SilentiColors.gray),
+              border:
+                  TableBorder.all(color: Theme.of(context).colorScheme.outline),
               headingRowColor: WidgetStateColor.resolveWith(
-                (states) => SilentiColors.secondary,
+                (states) => Theme.of(context).colorScheme.secondary,
               ),
               headingTextStyle: TextStyle(
-                color: SilentiColors.dark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 16,
               ),
               headingRowHeight: 28,
               dataRowMaxHeight: 26,
               dataRowMinHeight: 26,
               dataTextStyle: TextStyle(
-                color: SilentiColors.dark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 14,
               ),
               columns: widget.columns,

@@ -266,8 +266,10 @@ class _AssetFormState extends State<AssetForm> {
           alignment: Alignment.centerRight,
           child: TextButton(
             style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(SilentiColors.secondary),
-              foregroundColor: WidgetStateProperty.all(Colors.white),
+              backgroundColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.secondary),
+              foregroundColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.onSurface),
             ),
             onPressed: () {
               if (editingAsset.name != "") {
@@ -276,7 +278,8 @@ class _AssetFormState extends State<AssetForm> {
             },
             child: Text(
               widget.buttonText,
-              style: TextStyle(fontSize: 16, color: SilentiColors.dark),
+              style: TextStyle(
+                  fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ),

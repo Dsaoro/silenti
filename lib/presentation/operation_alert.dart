@@ -28,7 +28,7 @@ class _OperationAlertState extends State<OperationAlert> {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          foregroundColor: SilentiColors.primary,
+          foregroundColor: Theme.of(context).colorScheme.primary,
           bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.payments_rounded), text: tabs.keys.first),

@@ -23,7 +23,7 @@ class _OutcomePageState extends State<OutcomePage> {
             child: Text(S.current.spent),
           ),
           Card(
-            color: SilentiColors.gray,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.52),

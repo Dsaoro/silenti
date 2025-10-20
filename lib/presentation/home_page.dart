@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/application/storage/open_secure_database_use_case.dart';
 import 'package:silenti/application/storage/migrate_database_use_case.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/budget_page.dart';
 import 'package:silenti/presentation/assets_page.dart';
@@ -96,14 +95,14 @@ class _HomePageState extends State<HomePage> {
     // Widget home =
 
     return Scaffold(
-      backgroundColor: SilentiColors.dark,
+      backgroundColor: Theme.of(context).colorScheme.background,
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
           });
         },
-        indicatorColor: SilentiColors.primary,
+        indicatorColor: Theme.of(context).colorScheme.primary,
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
@@ -111,14 +110,14 @@ class _HomePageState extends State<HomePage> {
                 const Badge(child: Icon(Icons.account_balance_wallet_outlined)),
             selectedIcon: Icon(
               Icons.account_balance_wallet_outlined,
-              color: SilentiColors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             label: "${S.current.asset}s",
           ),
           NavigationDestination(
             selectedIcon: Icon(
               Icons.home,
-              color: SilentiColors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             icon: Icon(Icons.home_outlined),
             label: S.current.home,
@@ -130,7 +129,7 @@ class _HomePageState extends State<HomePage> {
             ),
             selectedIcon: Icon(
               Icons.paste_outlined,
-              color: SilentiColors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             label: S.current.budget,
           ),
@@ -150,7 +149,7 @@ class _HomePageState extends State<HomePage> {
         tooltip: S.current.income,
         child: Icon(
           Icons.add,
-          color: SilentiColors.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );

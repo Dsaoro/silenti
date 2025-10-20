@@ -330,7 +330,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     height: 50,
                     child: Text(
                       budget.name,
-                      style: SilentiStyles.titleTextStyleDark,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                 SizedBox(
@@ -401,7 +401,7 @@ class _BudgetPageState extends State<BudgetPage> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             S.current.warning,
-                            style: SilentiStyles.titleTextStyleDark,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ),
                         SizedBox(

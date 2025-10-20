@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/enums/silenti_colors.dart';
-
 // ignore: must_be_immutable
 class WrapGradientBackground extends StatelessWidget {
   WrapGradientBackground({super.key, required this.child, this.gradient});
@@ -17,8 +15,8 @@ class WrapGradientBackground extends StatelessWidget {
         0.7,
       ],
       colors: [
-        SilentiColors.dark,
-        SilentiColors.dark,
+        Theme.of(context).colorScheme.surface,
+        Theme.of(context).colorScheme.surface,
       ],
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,

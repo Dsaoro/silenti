@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
-import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/utils/currency_formater.dart';
 
@@ -24,7 +23,7 @@ class OperationCardListItem extends StatelessWidget {
     return result;
   }
 
-  Text _getAmount() {
+  Text _getAmount(BuildContext context) {
     String result = "";
     result = operation.amount.toString();
     if (operation.type == Operation.expense) {
@@ -50,44 +49,45 @@ class OperationCardListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(40, 242, 242, 242),
-          borderRadius: BorderRadius.circular(
-            4,
-          ),
-        ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      child: Card(
+        elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
             children: [
-              Container(
-                  alignment: Alignment.centerLeft,
-                  height: 28,
-                  child: Text(
-                    _getShowableDate(operation.date),
-                    style: SilentiStyles.subtitleTextStyle,
-                  )),
-              const SizedBox(height: 2),
-              Container(
-                alignment: Alignment.centerLeft,
-                height: 16,
-                child: Text(
-                  _getDescription(),
-                  style: TextStyle(
-                    color: SilentiColors.gray,
-                  ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getShowableDate(operation.date),
+                      style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      _getDescription(),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 4),
-              Container(
-                alignment: Alignment.centerRight,
-                height: 16,
-                child: _getAmount(),
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: _getAmount(context),
+                ),
               ),
             ],
           ),

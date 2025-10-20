@@ -14,6 +14,8 @@ import 'package:silenti/presentation/components/resume_card.dart';
 import 'package:silenti/presentation/components/shimmer.dart';
 import 'package:silenti/presentation/components/shimmer_loading.dart';
 import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
+import 'package:silenti/presentation/theme/silenti_themes.dart';
+import 'package:silenti/presentation/theme/theme_extensions.dart';
 import 'package:silenti/utils/currency_formater.dart';
 
 class HomePageContent extends StatefulWidget {
@@ -108,7 +110,7 @@ class _HomePageContentState extends State<HomePageContent> {
         children: [
           Text(
             S.current.income,
-            style: SilentiStyles.subtitleTextStyle,
+            style: SilentiStyles.subtitleTextStyle(context),
           ),
           Text(
             "\$${CurrencyFormater.convert(accountBalance)}",
@@ -131,7 +133,7 @@ class _HomePageContentState extends State<HomePageContent> {
         children: [
           Text(
             S.current.spent,
-            style: SilentiStyles.subtitleTextStyle,
+            style: SilentiStyles.subtitleTextStyle(context),
           ),
           Text(
             "\$${CurrencyFormater.convert(spendBalance)}",
@@ -151,12 +153,12 @@ class _HomePageContentState extends State<HomePageContent> {
       children: [
         Text(
           S.current.balance,
-          style: SilentiStyles.titleTextStyle,
+          style: SilentiStyles.titleTextStyle(context),
         ),
         Text(
           "\$${CurrencyFormater.convert(totalBalance)}",
           style: TextStyle(
-            color: SilentiColors.gray,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),

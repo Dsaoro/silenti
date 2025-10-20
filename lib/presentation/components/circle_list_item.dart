@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 
 // ignore: must_be_immutable
 class CircleListItem extends StatefulWidget {
@@ -36,37 +35,34 @@ class _CircleListItemState extends State<CircleListItem> {
         child: Column(
           children: [
             Container(
-              width: 54,
-              height: 54,
-              decoration: const BoxDecoration(
-                color: Colors.black,
-                shape: BoxShape.circle,
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: widget.isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(24),
               ),
-              child: ClipOval(
-                child: Icon(
-                  widget.icon ?? Icons.attach_money_outlined,
-                  color: widget.isSelected
-                      ? SilentiColors.primary
-                      : SilentiColors.gray,
-                ),
+              child: Icon(
+                widget.icon,
+                size: 28,
+                color: widget.isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
+            const SizedBox(height: 8),
             SizedBox(
-              height: 4,
-            ),
-            Container(
-              width: 54,
-              alignment: Alignment.center,
+              width: 64,
               child: Text(
                 widget.title,
-                overflow: TextOverflow.fade,
-                maxLines: 1,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: widget.isSelected
-                      ? SilentiColors.secondary
-                      : SilentiColors.gray,
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
