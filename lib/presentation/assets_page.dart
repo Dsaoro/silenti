@@ -232,13 +232,19 @@ class _AssetsPageState extends State<AssetsPage> {
               width: MediaQuery.of(context).size.width,
               child: AssetForm(
                 onSave: (value) {
-                  if (value.runtimeType == FinancialAsset) {
+                  if (value is FinancialAsset) {
                     _createNewAsset(value);
                   }
                   Navigator.pop(context);
                 },
-                asset: FinancialAsset(
-                    0, "", 0.0, 1, 0.0, FinancialAssetFrequency.once),
+                asset: BankAccount(
+                  id: 0,
+                  name: "",
+                  includedOnBalance: 1,
+                  frequency: Frequency.once,
+                  balance: 0.0,
+                  interestRate: 0.0,
+                ),
                 buttonText: S.current.register,
               ),
             ),
@@ -390,7 +396,7 @@ class _AssetsPageState extends State<AssetsPage> {
             height: MediaQuery.of(context).size.height * 0.3,
             child: AssetForm(
               onSave: (value) {
-                if (value.runtimeType == FinancialAsset) {
+                if (value is FinancialAsset) {
                   if (kDebugMode) {
                     print("asset in edting mode:\n${value.toMap()}");
                   }

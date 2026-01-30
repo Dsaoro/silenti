@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
 import 'package:silenti/application/financial_assets/deposit_in_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_date_picker.dart';

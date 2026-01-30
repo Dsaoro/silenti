@@ -6,9 +6,8 @@ import 'package:silenti/application/budgets/delete_budget_category_use_case.dart
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
-import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/core/models/budget_category.dart';
-import 'package:silenti/core/models/financial_asset.dart';
+
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/notification_popper.dart';
@@ -209,7 +208,7 @@ class _BudgetPageState extends State<BudgetPage> {
               width: MediaQuery.of(context).size.width,
               child: BudgetForm(
                 onSave: (value) {
-                  if (value.runtimeType == BudgetCategory) {
+                  if (value is BudgetCategory) {
                     _createNewBudget(value);
                   }
                 },
@@ -219,7 +218,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     name: "",
                     type: CategoryType.spent,
                     firstTime: DateTime.now(),
-                    frequency: FinancialAssetFrequency.monthly),
+                    frequency: "monthly"),
                 buttonText: S.current.register,
               ),
             ),
@@ -365,7 +364,7 @@ class _BudgetPageState extends State<BudgetPage> {
             height: MediaQuery.of(context).size.height * 0.3,
             child: BudgetForm(
               onSave: (value) {
-                if (value.runtimeType == BudgetCategory) {
+                if (value is BudgetCategory) {
                   if (kDebugMode) {
                     print("budget in edting mode:\n${value.toMap()}");
                   }

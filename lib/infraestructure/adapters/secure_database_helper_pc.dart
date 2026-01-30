@@ -73,16 +73,20 @@ class SecureDatabaseHelperPC {
   static const String _createFinancialAssetsTable = '''
   CREATE TABLE financial_assets(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT DEFAULT 'BANK',
     name TEXT NOT NULL,
     balance REAL NOT NULL,
     included INTEGER NOT NULL,
     interestRate REAL,
-    frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL
+    frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL,
+    quantity REAL,
+    currentPrice REAL,
+    tickerSymbol TEXT
   )
   ''';
   static const String _initFinancialAssets = '''
-  INSERT INTO financial_assets (name, balance, included, interestRate, frequency)
-    VALUES ('Efectivo', 5000, 1, 0, 'once')
+  INSERT INTO financial_assets (type, name, balance, included, interestRate, frequency)
+    VALUES ('BANK', 'Efectivo', 5000, 1, 0, 'once')
   ''';
 
   static const String _createProfitsTable = '''
@@ -102,11 +106,13 @@ class SecureDatabaseHelperPC {
   static const String _createBudgetCategoriesTable = '''
   CREATE TABLE budget_categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    parentId INTEGER,
     type TEXT CHECK(type IN ('income', 'spent') NOT NULL),
     name TEXT NOT NULL,
     amount REAL NOT NULL,
     frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL,
-    firstTime TEXT NOT NULL
+    firstTime TEXT NOT NULL,
+    FOREIGN KEY (parentId) REFERENCES budget_categories(id) ON DELETE CASCADE
   )
   ''';
   static const String _initBudgetCategories = '''
@@ -132,9 +138,11 @@ class SecureDatabaseHelperPC {
     date TEXT NOT NULL,
     description TEXT,
     category INTEGER NOT NULL,
-    type TEXT CHECK(type IN ('income', 'spent')) NOT NULL,
-    FOREIGN KEY (financialAsset) REFERENCES financial_assets(id)
-    FOREIGN KEY (category) REFERENCES budget_categories(id)
+    destination_asset_id INTEGER,
+    type TEXT CHECK(type IN ('income', 'spent', 'transfer')) NOT NULL,
+    FOREIGN KEY (financialAsset) REFERENCES financial_assets(id),
+    FOREIGN KEY (category) REFERENCES budget_categories(id),
+    FOREIGN KEY (destination_asset_id) REFERENCES financial_assets(id)
   )
   ''';
 
