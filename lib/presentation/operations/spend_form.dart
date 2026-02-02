@@ -4,7 +4,6 @@ import 'package:silenti/application/budgets/get_expenses_categories_use_case.dar
 import 'package:silenti/application/budgets/get_expenses_sub_categories_use_Case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/financial_assets/withdraw_from_financial_asset_use_case.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_date_picker.dart';
@@ -174,6 +173,7 @@ class _SpendFormState extends State<SpendForm> {
           SizedBox(
             height: 8,
           ),
+          //Account
           Container(
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
@@ -221,7 +221,7 @@ class _SpendFormState extends State<SpendForm> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-                width: MediaQuery.of(context).size.width * 0.38,
+                width: MediaQuery.of(context).size.width * 0.35,
                 alignment: Alignment.topLeft,
                 child: Column(children: [
                   Container(
@@ -248,7 +248,7 @@ class _SpendFormState extends State<SpendForm> {
                       borderRadius: BorderRadius.circular(4),
                       elevation: 2,
                       alignment: Alignment.centerLeft,
-                      value: 0,
+                      value: category,
                       items: _categories.entries
                           .map(
                             (entry) => DropdownMenuItem(
@@ -257,14 +257,18 @@ class _SpendFormState extends State<SpendForm> {
                             ),
                           )
                           .toList(),
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          category = value ?? 0;
+                        });
+                      },
                     ),
                   ),
                 ]),
               ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-                width: MediaQuery.of(context).size.width * 0.38,
+                width: MediaQuery.of(context).size.width * 0.35,
                 alignment: Alignment.topLeft,
                 child: Column(
                   children: [
@@ -295,7 +299,7 @@ class _SpendFormState extends State<SpendForm> {
                             borderRadius: BorderRadius.circular(4),
                             elevation: 2,
                             alignment: Alignment.centerLeft,
-                            value: 0,
+                            value: subCategory,
                             items: _categories.entries
                                 .map(
                                   (entry) => DropdownMenuItem(
@@ -304,7 +308,11 @@ class _SpendFormState extends State<SpendForm> {
                                   ),
                                 )
                                 .toList(),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              setState(() {
+                                subCategory = value ?? 0;
+                              });
+                            },
                           ),
                         );
                       },
@@ -331,18 +339,7 @@ class _SpendFormState extends State<SpendForm> {
           SizedBox(
             height: 8,
           ),
-          // Container(
-          //   padding: EdgeInsets.all(8),
-          //   child: TextField(
-          //     controller: TextEditingController(),
-          //     readOnly: true,
-          //     onTap: _selectDate,
-          //     decoration: InputDecoration(
-          //       prefixIcon: Icon(Icons.calendar_today),
-          //       hintText: _getShowableDate(date),
-          //     ),
-          //   ),
-          // ),
+
           SilentiDatePicker(
             inputDate: DateTime.now(),
             onChange: (value) {

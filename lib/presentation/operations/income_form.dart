@@ -64,9 +64,15 @@ class _IncomeFormState extends State<IncomeForm> {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
       _categories.clear();
-      _categories.addEntries([MapEntry(0, "Select category")]);
+      _categories.addEntries([MapEntry(0, "Select cat...")]);
       for (var category in response.model) {
-        _categories.addEntries([MapEntry(category.id, category.name)]);
+        _categories.addEntries([
+          MapEntry(
+              category.id,
+              category.name.length > 10
+                  ? "${category.name.substring(0, 10)}..."
+                  : category.name)
+        ]);
       }
     }
   }
@@ -165,7 +171,7 @@ class _IncomeFormState extends State<IncomeForm> {
           Row(children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-              width: MediaQuery.of(context).size.width * 0.38,
+              width: MediaQuery.of(context).size.width * 0.33,
               alignment: Alignment.topLeft,
               child: Column(children: [
                 Container(
@@ -184,7 +190,7 @@ class _IncomeFormState extends State<IncomeForm> {
                 ),
                 Container(
                   padding: EdgeInsets.all(8),
-                  width: MediaQuery.of(context).size.width * 0.37,
+                  width: MediaQuery.of(context).size.width * 0.33,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -212,7 +218,7 @@ class _IncomeFormState extends State<IncomeForm> {
             ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-              width: MediaQuery.of(context).size.width * 0.38,
+              width: MediaQuery.of(context).size.width * 0.33,
               alignment: Alignment.topLeft,
               child: Column(
                 children: [
@@ -232,7 +238,7 @@ class _IncomeFormState extends State<IncomeForm> {
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
-                    width: MediaQuery.of(context).size.width * 0.37,
+                    width: MediaQuery.of(context).size.width * 0.33,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -240,7 +246,7 @@ class _IncomeFormState extends State<IncomeForm> {
                       borderRadius: BorderRadius.circular(4),
                       elevation: 2,
                       alignment: Alignment.centerLeft,
-                      value: 0,
+                      value: subCategory,
                       items: _categories.entries.isNotEmpty
                           ? _categories.entries
                               .map(
@@ -256,7 +262,9 @@ class _IncomeFormState extends State<IncomeForm> {
                                 child: Text("None"),
                               ),
                             ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        subCategory = value ?? 0;
+                      },
                     ),
                   ),
                 ],

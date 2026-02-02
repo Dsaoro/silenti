@@ -51,11 +51,40 @@ class OperationDAO {
         orderBy: 'date DESC');
   }
 
+  Future<double> getSpentAmountByCategoryAndMonth(
+      int categoryId, int month, int year) async {
+    final db = await SecureDatabaseHelperPC().database;
+    final monthStr = month.toString().padLeft(2, '0');
+    final result = await db.rawQuery(
+      '''
+      SELECT SUM(amount) as total 
+      FROM operations 
+      WHERE category = ? 
+      AND type = 'spent'
+      AND strftime('%m', date) = ? 
+      AND strftime('%Y', date) = ?
+      ''',
+      [categoryId, monthStr, year.toString()],
+    );
+
+    if (result.isNotEmpty && result.first['total'] != null) {
+      return (result.first['total'] as num).toDouble();
+    }
+    return 0.0;
+  }
+
   Future<List<Map<String, Object?>>> getSpendByMonth(
       {required int month, required int year}) async {
     final db = await SecureDatabaseHelperPC().database;
+    final monthStr = month.toString().padLeft(2, '0');
     List<Map<String, Object?>> result = await db.rawQuery(
-      '''SELECT SUM(amount) as amount FROM Operations GROUP BY STRFTIME('%m-%Y', date)''',
+      '''
+      SELECT SUM(amount) as amount 
+      FROM Operations 
+      WHERE strftime('%m', date) = ? AND strftime('%Y', date) = ?
+      GROUP BY strftime('%m-%Y', date)
+      ''',
+      [monthStr, year.toString()],
     );
     return result;
   }

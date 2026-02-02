@@ -348,8 +348,8 @@ class _AssetsPageState extends State<AssetsPage> {
               children: [
                 if (_isEditing)
                   SizedBox(
-                    width: 100,
-                    height: 60,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: 50,
                     child: SilentiTextField(
                       input: asset.name,
                       onChange: () {},
@@ -359,16 +359,13 @@ class _AssetsPageState extends State<AssetsPage> {
                   ),
                 if (!_isEditing)
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
+                    width: MediaQuery.of(context).size.width * 0.6,
                     height: 50,
                     child: Text(
                       asset.name,
                       style: SilentiStyles.titleTextStyleDark(context),
                     ),
                   ),
-                SizedBox(
-                  width: 32,
-                ),
                 SizedBox(
                   child: IconButton(
                     onPressed: () {
@@ -385,8 +382,85 @@ class _AssetsPageState extends State<AssetsPage> {
                         : Icon(
                             Icons.edit,
                             size: 28,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
+                  ),
+                ),
+                // SizedBox(
+                //   width: 2,
+                // ),
+                SizedBox(
+                  child: IconButton(
+                    onPressed: () {
+                      AlertDialog confirmation = AlertDialog(
+                        content: Container(
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          alignment: Alignment.centerLeft,
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  S.current.warning,
+                                  style:
+                                      SilentiStyles.titleTextStyleDark(context),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                S.current.deleteWarning(
+                                  S.current.asset,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              S.current.cancel,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              if (currentSelectedIndex == 0 &&
+                                  assets.length == 1) {
+                                NotificationPopper(
+                                  contentType: ContentType.warning,
+                                  title: "Error",
+                                  message:
+                                      "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
+                                  // ignore: use_build_context_synchronously
+                                ).pop(context);
+                                return;
+                              }
+                              await _deleteAsset(asset);
+                              // ignore: use_build_context_synchronously
+                              setState(() {});
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              S.current.delete,
+                            ),
+                          ),
+                        ],
+                      );
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return confirmation;
+                          });
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      size: 28,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
                   ),
                 )
               ],
@@ -412,88 +486,88 @@ class _AssetsPageState extends State<AssetsPage> {
               buttonText: S.current.update,
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith(
-                  (states) {
-                    return Theme.of(context).colorScheme.secondary;
-                  },
-                ),
-              ),
-              onPressed: () {
-                AlertDialog confirmation = AlertDialog(
-                  content: Container(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            S.current.warning,
-                            style: SilentiStyles.titleTextStyleDark(context),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 12,
-                        ),
-                        Text(
-                          S.current.deleteWarning(
-                            S.current.asset,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        S.current.cancel,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        if (currentSelectedIndex == 0 && assets.length == 1) {
-                          NotificationPopper(
-                            contentType: ContentType.warning,
-                            title: "Error",
-                            message:
-                                "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
-                            // ignore: use_build_context_synchronously
-                          ).pop(context);
-                          return;
-                        }
-                        await _deleteAsset(asset);
-                        // ignore: use_build_context_synchronously
-                        setState(() {});
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        S.current.delete,
-                      ),
-                    ),
-                  ],
-                );
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return confirmation;
-                    });
-              },
-              child: Text(
-                S.current.delete,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                ),
-              ),
-            ),
-          )
+          // Container(
+          //   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+          //   alignment: Alignment.centerLeft,
+          //   child: TextButton(
+          //     style: ButtonStyle(
+          //       backgroundColor: WidgetStateProperty.resolveWith(
+          //         (states) {
+          //           return Theme.of(context).colorScheme.secondary;
+          //         },
+          //       ),
+          //     ),
+          //     onPressed: () {
+          //       AlertDialog confirmation = AlertDialog(
+          //         content: Container(
+          //           height: MediaQuery.of(context).size.height * 0.15,
+          //           alignment: Alignment.centerLeft,
+          //           child: Column(
+          //             children: [
+          //               Container(
+          //                 alignment: Alignment.centerLeft,
+          //                 child: Text(
+          //                   S.current.warning,
+          //                   style: SilentiStyles.titleTextStyleDark(context),
+          //                 ),
+          //               ),
+          //               SizedBox(
+          //                 height: 12,
+          //               ),
+          //               Text(
+          //                 S.current.deleteWarning(
+          //                   S.current.asset,
+          //                 ),
+          //               )
+          //             ],
+          //           ),
+          //         ),
+          //         actions: [
+          //           TextButton(
+          //             onPressed: () {
+          //               Navigator.pop(context);
+          //             },
+          //             child: Text(
+          //               S.current.cancel,
+          //             ),
+          //           ),
+          //           TextButton(
+          //             onPressed: () async {
+          //               if (currentSelectedIndex == 0 && assets.length == 1) {
+          //                 NotificationPopper(
+          //                   contentType: ContentType.warning,
+          //                   title: "Error",
+          //                   message:
+          //                       "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
+          //                   // ignore: use_build_context_synchronously
+          //                 ).pop(context);
+          //                 return;
+          //               }
+          //               await _deleteAsset(asset);
+          //               // ignore: use_build_context_synchronously
+          //               setState(() {});
+          //               Navigator.pop(context);
+          //             },
+          //             child: Text(
+          //               S.current.delete,
+          //             ),
+          //           ),
+          //         ],
+          //       );
+          //       showDialog(
+          //           context: context,
+          //           builder: (context) {
+          //             return confirmation;
+          //           });
+          //     },
+          //     child: Text(
+          //       S.current.delete,
+          //       style: TextStyle(
+          //         color: Theme.of(context).colorScheme.onSecondary,
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );

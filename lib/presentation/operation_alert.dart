@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/operations/income_form.dart';
 import 'package:silenti/presentation/operations/spend_form.dart';
@@ -27,8 +26,9 @@ class _OperationAlertState extends State<OperationAlert> {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface.withAlpha(50),
         appBar: AppBar(
-          foregroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.secondary,
           bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.payments_rounded), text: tabs.keys.first),

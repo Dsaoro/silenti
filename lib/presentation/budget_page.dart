@@ -41,16 +41,12 @@ class _BudgetPageState extends State<BudgetPage> {
   List<BudgetCategory> categories = [];
   List<Operation> operations = [];
   int currentSelectedIndex = 0;
+  double spentThisMonth = 0;
 
   void _toggleLoading() {
     setState(() {
-      // _isLoading = !_isLoading;
       _isLoading = false;
     });
-  }
-
-  Widget _budgetStatus() {
-    return Container();
   }
 
   Widget _budgetsOperationTable() {
@@ -81,10 +77,84 @@ class _BudgetPageState extends State<BudgetPage> {
     );
   }
 
+  Widget _budgetStatus() {
+    if (categories.isEmpty) return Container();
+    final budget = categories[currentSelectedIndex];
+    final percent = budget.amount > 0 ? (spentThisMonth / budget.amount) : 0.0;
+    final remaining = budget.amount - spentThisMonth;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Consumo mensual",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                "${(percent * 100).toStringAsFixed(1)}%",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: percent > 1.0 ? Colors.red : SilentiColors.primary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: percent.clamp(0.0, 1.0),
+              minHeight: 12,
+              backgroundColor: Colors.grey[300],
+              color: percent > 0.9
+                  ? Colors.orange
+                  : (percent > 1.0 ? Colors.red : SilentiColors.primary),
+            ),
+          ),
+          SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Gastado",
+                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text("\$${spentThisMonth.toStringAsFixed(2)}",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text("Restante",
+                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text("\$${remaining.toStringAsFixed(2)}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: remaining < 0 ? Colors.red : Colors.green,
+                      )),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   _getDataFromDB() async {
     await _requestBudgetCategories();
     if (categories.isNotEmpty) {
-      await _requestBudgetOperations(currentSelectedIndex);
+      if (currentSelectedIndex >= categories.length) {
+        currentSelectedIndex = 0;
+      }
+      await _requestBudgetOperations(categories[currentSelectedIndex].id);
     }
     setState(() {
       _toggleLoading();
@@ -93,22 +163,37 @@ class _BudgetPageState extends State<BudgetPage> {
 
   _requestBudgetCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
-    if (!response.status) {
-    } else {
+    if (response.status) {
       categories = response.model;
     }
   }
 
   _requestBudgetOperations(int budgetId) async {
-    var response =
+    final now = DateTime.now();
+
+    // Get last operations
+    var opResponse =
         await GetOperations().byBudgetCategoryLimited(budgetId, limit: 6);
-    if (!response.status) {
-    } else {
-      setState(() {
-        _toggleLoading();
-        operations = response.model;
-      });
-    }
+
+    // Get monthly spent
+    var spentResponse = await GetOperations()
+        .getSpentAmountByCategoryAndMonth(budgetId, now.month, now.year);
+
+    setState(() {
+      if (opResponse.status) {
+        operations = opResponse.model;
+      } else {
+        operations = [];
+      }
+
+      if (spentResponse.status) {
+        spentThisMonth = spentResponse.model;
+      } else {
+        spentThisMonth = 0;
+      }
+
+      _toggleLoading();
+    });
   }
 
   @override

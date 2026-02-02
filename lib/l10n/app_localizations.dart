@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
 
 // ignore_for_file: type=lint
 
@@ -61,7 +62,8 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -69,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -81,7 +84,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -90,14 +94,15 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('en')
+    Locale('en'),
+    Locale('es')
   ];
 
   /// add a new transaction
   ///
   /// In en, this message translates to:
-  /// **'register transaction'**
-  String get trnasactionRegistration;
+  /// **'Register transaction'**
+  String get transactionRegistration;
 
   /// home
   ///
@@ -114,7 +119,7 @@ abstract class AppLocalizations {
   /// outcome
   ///
   /// In en, this message translates to:
-  /// **'Spent'**
+  /// **'Expense'**
   String get spent;
 
   /// register operation
@@ -198,7 +203,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Update'**
+  /// **'Type'**
   String get type;
 
   ///
@@ -222,7 +227,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'SubCategory'**
+  /// **'Subcategory'**
   String get subCategory;
 
   /// label
@@ -234,8 +239,8 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Sumary'**
-  String get sumary;
+  /// **'Summary'**
+  String get summary;
 
   /// label
   ///
@@ -264,7 +269,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Frecuency'**
+  /// **'Frequency'**
   String get frequency;
 
   /// label
@@ -282,7 +287,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'SemiMonthly'**
+  /// **'Semi-monthly'**
   String get frecSemiMonthly;
 
   /// label
@@ -294,8 +299,8 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Anual'**
-  String get frecAnual;
+  /// **'Annual'**
+  String get frecAnnual;
 
   /// label
   ///
@@ -318,7 +323,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Interest rate(E.A.)'**
+  /// **'Interest rate (E.A.)'**
   String get interestRate;
 
   /// label
@@ -342,13 +347,13 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'New budget '**
+  /// **'New budget'**
   String get newBudget;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Status '**
+  /// **'Status'**
   String get status;
 
   /// message
@@ -366,7 +371,7 @@ abstract class AppLocalizations {
   /// message
   ///
   /// In en, this message translates to:
-  /// **'By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?'**
+  /// **'By deleting this {item} all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?'**
   String deleteWarning(Object item);
 
   /// message
@@ -376,7 +381,8 @@ abstract class AppLocalizations {
   String get newAccount;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -385,24 +391,25 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

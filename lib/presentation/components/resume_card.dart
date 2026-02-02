@@ -84,7 +84,7 @@ class _ResumeCardState extends State<ResumeCard> {
             ),
           ),
           Card(
-            color: Theme.of(context).colorScheme.surface.withAlpha(150),
+            color: Theme.of(context).colorScheme.surface.withAlpha(200),
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: widget.height,

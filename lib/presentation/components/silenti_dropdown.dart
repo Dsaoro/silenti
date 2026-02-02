@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/generated/l10n.dart';
 
 // ignore: must_be_immutable
