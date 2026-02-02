@@ -32,11 +32,13 @@ class BudgetForm extends StatefulWidget {
 class _BudgetFormState extends State<BudgetForm> {
   late String _name;
   late double _amount;
+  late String _amountInput;
 
   @override
   void initState() {
     _name = widget.budget.name;
     _amount = widget.budget.amount;
+    _amountInput = CurrencyFormater.convert(_amount);
     super.initState();
   }
 
@@ -124,10 +126,11 @@ class _BudgetFormState extends State<BudgetForm> {
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             child: SilentiTextField(
-              input: CurrencyFormater.convert(_amount),
+              input: _amountInput,
               readOnly: widget.readOnly,
               onChange: (value) {
                 setState(() {
+                  _amountInput = value;
                   // Handle potential parse errors if needed, though convert handles basics
                   try {
                     String sanitized = value.replaceAll(',', '.');

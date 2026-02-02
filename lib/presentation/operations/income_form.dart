@@ -63,6 +63,8 @@ class _IncomeFormState extends State<IncomeForm> {
   _getCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
+      _categories.clear();
+      _categories.addEntries([MapEntry(0, "Select category")]);
       for (var category in response.model) {
         _categories.addEntries([MapEntry(category.id, category.name)]);
       }
@@ -239,14 +241,21 @@ class _IncomeFormState extends State<IncomeForm> {
                       elevation: 2,
                       alignment: Alignment.centerLeft,
                       value: 0,
-                      items: _categories.entries
-                          .map(
-                            (entry) => DropdownMenuItem(
-                              value: entry.key,
-                              child: Text(entry.value),
-                            ),
-                          )
-                          .toList(),
+                      items: _categories.entries.isNotEmpty
+                          ? _categories.entries
+                              .map(
+                                (entry) => DropdownMenuItem(
+                                  value: entry.key,
+                                  child: Text(entry.value),
+                                ),
+                              )
+                              .toList()
+                          : [
+                              DropdownMenuItem(
+                                value: 0,
+                                child: Text("None"),
+                              ),
+                            ],
                       onChanged: (value) {},
                     ),
                   ),

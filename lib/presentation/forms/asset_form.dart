@@ -33,8 +33,10 @@ class AssetForm extends StatefulWidget {
 class _AssetFormState extends State<AssetForm> {
   late String _name;
   late double _balance;
+  late String _balanceInput;
   late int _includedOnBalance;
   late double _interestRate;
+  late String _interestRateInput;
   late Frequency _frequency;
 
   @override
@@ -57,6 +59,9 @@ class _AssetFormState extends State<AssetForm> {
       _balance = widget.asset.currentBalance;
       _interestRate = 0.0;
     }
+
+    _balanceInput = CurrencyFormater.convert(_balance);
+    _interestRateInput = _interestRate.toString();
   }
 
   @override
@@ -134,10 +139,11 @@ class _AssetFormState extends State<AssetForm> {
               alignment: Alignment.centerLeft,
               // height: 50,
               child: SilentiTextField(
-                input: CurrencyFormater.convert(_balance),
+                input: _balanceInput,
                 readOnly: widget.readOnly,
                 onChange: (value) {
                   setState(() {
+                    _balanceInput = value;
                     try {
                       String sanitized = value.replaceAll(',', '.');
                       _balance = double.parse(sanitized);
@@ -257,10 +263,11 @@ class _AssetFormState extends State<AssetForm> {
                   height: 60,
                   // height: 50,
                   child: SilentiTextField(
-                    input: _interestRate.toStringAsPrecision(3),
+                    input: _interestRateInput,
                     readOnly: widget.readOnly,
                     onChange: (value) {
                       setState(() {
+                        _interestRateInput = value;
                         if (value == "") value = "0";
                         if (value == ".") value = "0.";
                         try {

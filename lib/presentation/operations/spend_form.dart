@@ -22,6 +22,7 @@ class _SpendFormState extends State<SpendForm> {
   int category = 0;
   int subCategory = 0;
   double amount = 0;
+  String _amountInput = "";
   int financialAssetId = 1;
   String description = "";
 
@@ -111,6 +112,7 @@ class _SpendFormState extends State<SpendForm> {
   @override
   void initState() {
     _getDataFromDB();
+    _amountInput = CurrencyFormater.convert(amount);
     super.initState();
   }
 
@@ -156,9 +158,15 @@ class _SpendFormState extends State<SpendForm> {
             // height: 50,
             child: SilentiTextField(
               isMoney: true,
-              input: CurrencyFormater.convert(amount),
+              input: _amountInput,
               onChange: (value) {
-                amount = double.parse(value);
+                setState(() {
+                  _amountInput = value;
+                  try {
+                    String sanitized = value.replaceAll(',', '.');
+                    amount = double.parse(sanitized);
+                  } catch (_) {}
+                });
               },
               keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),

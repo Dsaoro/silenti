@@ -275,6 +275,8 @@ class _AssetsPageState extends State<AssetsPage> {
   Widget _buildTopRowItem(
       IconData icon, String title, Function onTap, bool isSelected) {
     return ShimmerLoading(
+      // TODO check for intermitent exception flashing at building PAge
+
       isLoading: _isLoading,
       child: CircleListItem(
         // onTap: () {
@@ -357,7 +359,7 @@ class _AssetsPageState extends State<AssetsPage> {
                   ),
                 if (!_isEditing)
                   SizedBox(
-                    width: 100,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     height: 50,
                     child: Text(
                       asset.name,
