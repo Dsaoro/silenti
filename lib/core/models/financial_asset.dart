@@ -20,7 +20,7 @@ enum Frequency {
       case Frequency.monthly:
         return S.current.frecMonthly;
       case Frequency.anual:
-        return S.current.frecAnual;
+        return S.current.frecAnnual;
       case Frequency.once:
         return S.current.frecOnce;
     }

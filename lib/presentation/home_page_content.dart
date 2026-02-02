@@ -1,21 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+
 import 'package:silenti/application/financial_assets/get_financial_assets_balance_use_case.dart';
 import 'package:silenti/application/financial_assets/get_total_balance_chart_data_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/enums/silenti_styles.dart';
 import 'package:silenti/generated/l10n.dart';
-import 'package:silenti/presentation/components/card_graph_item.dart';
 import 'package:silenti/presentation/components/category_button.dart';
 import 'package:silenti/presentation/components/operation_card_list_item.dart';
 import 'package:silenti/presentation/components/resume_card.dart';
 import 'package:silenti/presentation/components/shimmer.dart';
 import 'package:silenti/presentation/components/shimmer_loading.dart';
 import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
-import 'package:silenti/presentation/theme/silenti_themes.dart';
-import 'package:silenti/presentation/theme/theme_extensions.dart';
 import 'package:silenti/utils/currency_formater.dart';
 
 class HomePageContent extends StatefulWidget {
@@ -125,7 +123,6 @@ class _HomePageContentState extends State<HomePageContent> {
     );
 
 //expenses
-
     Widget expenses = SizedBox(
       width: MediaQuery.of(context).size.width * 0.44,
       child: Column(
@@ -168,26 +165,27 @@ class _HomePageContentState extends State<HomePageContent> {
 
     Widget sumary = Container(
       alignment: Alignment.center,
-      height: 174,
+      height: MediaQuery.of(context).size.height * 0.2,
       child: Column(
         children: [
           Container(
             alignment: Alignment.topCenter,
-            height: 100,
+            height: MediaQuery.of(context).size.height * 0.1,
             child: balance,
           ),
           SizedBox(
-            height: 70,
+            height: MediaQuery.of(context).size.height * 0.1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ShimmerLoading(
-                    //TODO check issue with Null invalid renderbox
-                    isLoading: isLoading,
-                    child: CategoryButton(
-                      onPressed: (() {}),
-                      child: incomes,
-                    )),
+                  //TODO check issue with Null invalid renderbox
+                  isLoading: isLoading,
+                  child: CategoryButton(
+                    onPressed: (() {}),
+                    child: incomes,
+                  ),
+                ),
                 SizedBox(
                   width: 16,
                 ),
@@ -217,15 +215,19 @@ class _HomePageContentState extends State<HomePageContent> {
             child: ListView(
               children: [
                 sumary,
-                CardGraphItem(
-                  isLoading: isLoading,
-                  title: "${S.current.sumary} - Balance Evolution",
-                  chartData: summaryChartData,
-                  showGrid: true,
-                  showTitles: false,
-                ),
+                // Container(
+                //   height: MediaQuery.of(context).size.height * 0.2,
+                //   child: CardGraphItem(
+                //     isLoading: isLoading,
+                //     title: "${S.current.summary} - Balance Evolution",
+                //     chartData: summaryChartData,
+                //     showGrid: true,
+                //     showTitles: false,
+                //   ),
+                // ),
                 ResumeCard(
                   isLoading: isLoading,
+                  height: MediaQuery.of(context).size.height * 0.5,
                   children: lastOperations,
                 ),
               ],

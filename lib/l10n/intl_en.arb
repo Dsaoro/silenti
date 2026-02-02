@@ -1,8 +1,8 @@
 {
     "@@locale": "en",
     "@@author": "dsaoro",
-    "trnasactionRegistration": "register transaction",
-    "@trnasactionRegistration": {
+    "transactionRegistration": "Register transaction",
+    "@transactionRegistration": {
         "description": "add a new transaction"
     },
     "home": "Home",
@@ -13,7 +13,7 @@
     "@income": {
         "description": "income"
     },
-    "spent": "Spent",
+    "spent": "Expense",
     "@spent": {
         "description": "outcome"
     },
@@ -69,7 +69,7 @@
     "@update": {
         "description": "label"
     },
-    "type": "Update",
+    "type": "Type",
     "@type": {
         "description": "label"
     },
@@ -85,7 +85,7 @@
     "@description": {
         "description": "label"
     },
-    "subCategory": "SubCategory",
+    "subCategory": "Subcategory",
     "@subCategory": {
         "description": "label"
     },
@@ -93,8 +93,8 @@
     "@balance": {
         "description": "label"
     },
-    "sumary": "Sumary",
-    "@sumary": {
+    "summary": "Summary",
+    "@summary": {
         "description": "label"
     },
     "add": "Add",
@@ -113,7 +113,7 @@
     "@operations": {
         "description": "label"
     },
-    "frequency": "Frecuency",
+    "frequency": "Frequency",
     "@frequency": {
         "description": "label"
     },
@@ -125,7 +125,7 @@
     "@frecWeekly": {
         "description": "label"
     },
-    "frecSemiMonthly": "SemiMonthly",
+    "frecSemiMonthly": "Semi-monthly",
     "@frecSemiMonthly": {
         "description": "label"
     },
@@ -133,8 +133,8 @@
     "@frecMonthly": {
         "description": "label"
     },
-    "frecAnual": "Anual",
-    "@frecAnual": {
+    "frecAnnual": "Annual",
+    "@frecAnnual": {
         "description": "label"
     },
     "frecOnce": "Once",
@@ -149,7 +149,7 @@
     "@details": {
         "description": "label"
     },
-    "interestRate": "Interest rate(E.A.)",
+    "interestRate": "Interest rate (E.A.)",
     "@interestRate": {
         "description": "label"
     },
@@ -165,11 +165,11 @@
     "@budgetName": {
         "description": "label"
     },
-    "newBudget": "New budget ",
+    "newBudget": "New budget",
     "@newBudget": {
         "description": "label"
     },
-    "status": "Status ",
+    "status": "Status",
     "@status": {
         "description": "label"
     },
@@ -181,7 +181,7 @@
     "@balanceIncluded": {
         "description": "message"
     },
-    "deleteWarning": "By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?",
+    "deleteWarning": "By deleting this {item} all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?",
     "@deleteWarning": {
         "description": "message",
         "placeholders": {

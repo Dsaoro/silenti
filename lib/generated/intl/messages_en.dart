@@ -21,7 +21,7 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
   static String m0(item) =>
-      "By deleting this ${item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?";
+      "By deleting this ${item} all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -44,21 +44,23 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "details": MessageLookupByLibrary.simpleMessage("Details"),
-    "frecAnual": MessageLookupByLibrary.simpleMessage("Anual"),
+    "frecAnnual": MessageLookupByLibrary.simpleMessage("Annual"),
     "frecDaily": MessageLookupByLibrary.simpleMessage("Daily"),
     "frecMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "frecOnce": MessageLookupByLibrary.simpleMessage("Once"),
-    "frecSemiMonthly": MessageLookupByLibrary.simpleMessage("SemiMonthly"),
+    "frecSemiMonthly": MessageLookupByLibrary.simpleMessage("Semi-monthly"),
     "frecWeekly": MessageLookupByLibrary.simpleMessage("Weekly"),
-    "frequency": MessageLookupByLibrary.simpleMessage("Frecuency"),
+    "frequency": MessageLookupByLibrary.simpleMessage("Frequency"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "income": MessageLookupByLibrary.simpleMessage("Income"),
     "initialAmount": MessageLookupByLibrary.simpleMessage("Initial amount"),
-    "interestRate": MessageLookupByLibrary.simpleMessage("Interest rate(E.A.)"),
+    "interestRate": MessageLookupByLibrary.simpleMessage(
+      "Interest rate (E.A.)",
+    ),
     "itemsPerPage": MessageLookupByLibrary.simpleMessage("Items per page"),
     "monthlyBudget": MessageLookupByLibrary.simpleMessage("Monthly budget"),
     "newAccount": MessageLookupByLibrary.simpleMessage("New Account"),
-    "newBudget": MessageLookupByLibrary.simpleMessage("New budget "),
+    "newBudget": MessageLookupByLibrary.simpleMessage("New budget"),
     "operationRegistration": MessageLookupByLibrary.simpleMessage(
       "Register operation",
     ),
@@ -68,14 +70,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "spendRegistration": MessageLookupByLibrary.simpleMessage(
       "Spend registration",
     ),
-    "spent": MessageLookupByLibrary.simpleMessage("Spent"),
-    "status": MessageLookupByLibrary.simpleMessage("Status "),
-    "subCategory": MessageLookupByLibrary.simpleMessage("SubCategory"),
-    "sumary": MessageLookupByLibrary.simpleMessage("Sumary"),
-    "trnasactionRegistration": MessageLookupByLibrary.simpleMessage(
-      "register transaction",
+    "spent": MessageLookupByLibrary.simpleMessage("Expense"),
+    "status": MessageLookupByLibrary.simpleMessage("Status"),
+    "subCategory": MessageLookupByLibrary.simpleMessage("Subcategory"),
+    "summary": MessageLookupByLibrary.simpleMessage("Summary"),
+    "transactionRegistration": MessageLookupByLibrary.simpleMessage(
+      "Register transaction",
     ),
-    "type": MessageLookupByLibrary.simpleMessage("Update"),
+    "type": MessageLookupByLibrary.simpleMessage("Type"),
     "unavailableData": MessageLookupByLibrary.simpleMessage("Unavailable data"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
     "warning": MessageLookupByLibrary.simpleMessage("Warning"),

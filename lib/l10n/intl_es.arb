@@ -1,0 +1,197 @@
+{
+    "@@locale": "es",
+    "@@author": "dsaoro",
+    "transactionRegistration": "Registrar transacción",
+    "@transactionRegistration": {
+        "description": "registrar una nueva transacción"
+    },
+    "home": "Inicio",
+    "@home": {
+        "description": "inicio"
+    },
+    "income": "Ingresos",
+    "@income": {
+        "description": "ingresos"
+    },
+    "spent": "Gastos",
+    "@spent": {
+        "description": "egresos"
+    },
+    "operationRegistration": "Registrar operación",
+    "@operationRegistration": {
+        "description": "registrar operación"
+    },
+    "depositRegistration": "Registro de depósito",
+    "@depositRegistration": {
+        "description": "registro de depósito"
+    },
+    "spendRegistration": "Registro de gasto",
+    "@spendRegistration": {
+        "description": "registro de gasto"
+    },
+    "withdrawalRegistration": "Registro de retiro",
+    "@withdrawalRegistration": {
+        "description": "registro de retiro"
+    },
+    "amount": "Monto",
+    "@amount": {
+        "description": ""
+    },
+    "initialAmount": "Monto inicial",
+    "@initialAmount": {
+        "description": ""
+    },
+    "accountBalance": "Saldo de la cuenta",
+    "@accountBalance": {
+        "description": ""
+    },
+    "asset": "Cuenta",
+    "@asset": {
+        "description": ""
+    },
+    "budget": "Presupuesto",
+    "@budget": {
+        "description": ""
+    },
+    "accountName": "Nombre de la cuenta",
+    "@accountName": {
+        "description": ""
+    },
+    "category": "Categoría",
+    "@category": {
+        "description": ""
+    },
+    "register": "Registrar",
+    "@register": {
+        "description": "etiqueta"
+    },
+    "update": "Actualizar",
+    "@update": {
+        "description": "etiqueta"
+    },
+    "type": "Tipo",
+    "@type": {
+        "description": "etiqueta"
+    },
+    "date": "Fecha",
+    "@date": {
+        "description": ""
+    },
+    "select": "Seleccionar",
+    "@select": {
+        "description": "etiqueta"
+    },
+    "description": "Descripción",
+    "@description": {
+        "description": "etiqueta"
+    },
+    "subCategory": "Subcategoría",
+    "@subCategory": {
+        "description": "etiqueta"
+    },
+    "balance": "Saldo",
+    "@balance": {
+        "description": "etiqueta"
+    },
+    "summary": "Resumen",
+    "@summary": {
+        "description": "etiqueta"
+    },
+    "add": "Agregar",
+    "@add": {
+        "description": "etiqueta"
+    },
+    "delete": "Eliminar",
+    "@delete": {
+        "description": "etiqueta"
+    },
+    "cancel": "Cancelar",
+    "@cancel": {
+        "description": "etiqueta"
+    },
+    "operations": "Operaciones",
+    "@operations": {
+        "description": "etiqueta"
+    },
+    "frequency": "Frecuencia",
+    "@frequency": {
+        "description": "etiqueta"
+    },
+    "frecDaily": "Diario",
+    "@frecDaily": {
+        "description": "etiqueta"
+    },
+    "frecWeekly": "Semanal",
+    "@frecWeekly": {
+        "description": "etiqueta"
+    },
+    "frecSemiMonthly": "Quincenal",
+    "@frecSemiMonthly": {
+        "description": "etiqueta"
+    },
+    "frecMonthly": "Mensual",
+    "@frecMonthly": {
+        "description": "etiqueta"
+    },
+    "frecAnnual": "Anual",
+    "@frecAnnual": {
+        "description": "etiqueta"
+    },
+    "frecOnce": "Una vez",
+    "@frecOnce": {
+        "description": "etiqueta"
+    },
+    "itemsPerPage": "Elementos por página",
+    "@itemsPerPage": {
+        "description": "etiqueta"
+    },
+    "details": "Detalles",
+    "@details": {
+        "description": "etiqueta"
+    },
+    "interestRate": "Tasa de interés (E.A.)",
+    "@interestRate": {
+        "description": "etiqueta"
+    },
+    "warning": "Advertencia",
+    "@warning": {
+        "description": "etiqueta"
+    },
+    "monthlyBudget": "Presupuesto mensual",
+    "@monthlyBudget": {
+        "description": "etiqueta"
+    },
+    "budgetName": "Nombre del presupuesto",
+    "@budgetName": {
+        "description": "etiqueta"
+    },
+    "newBudget": "Nuevo presupuesto",
+    "@newBudget": {
+        "description": "etiqueta"
+    },
+    "status": "Estado",
+    "@status": {
+        "description": "etiqueta"
+    },
+    "unavailableData": "Datos no disponibles",
+    "@unavailableData": {
+        "description": "mensaje"
+    },
+    "balanceIncluded": "Mostrar en el saldo",
+    "@balanceIncluded": {
+        "description": "mensaje"
+    },
+    "deleteWarning": "Al eliminar {item} se perderá toda la información almacenada. Esta acción es irreversible.\n¿Desea continuar?",
+    "@deleteWarning": {
+        "description": "mensaje",
+        "placeholders": {
+            "item": {
+                "example": "cuenta"
+            }
+        }
+    },
+    "newAccount": "Nueva cuenta",
+    "@newAccount": {
+        "description": "mensaje"
+    }
+}
