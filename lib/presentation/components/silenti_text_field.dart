@@ -62,8 +62,8 @@ class _SilentiTextFieldState extends State<SilentiTextField> {
         isCollapsed: true,
         enabled: !widget.readOnly,
         hintText: widget.hintText,
+        counterText: "",
         prefixIcon: widget.prefixIcon);
-
     return decoration;
   }
 

@@ -58,7 +58,7 @@ class OperationCardListItem extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -355,7 +355,8 @@ class _BudgetPageState extends State<BudgetPage> {
         isLoading: _isLoading,
         child: CardGraphItem(
           isLoading: _isLoading,
-          title: categories[currentSelectedIndex].name,
+          title:
+              "${categories[currentSelectedIndex].name}    (\$${categories[currentSelectedIndex].amount})",
         ),
       );
     }
