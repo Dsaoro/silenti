@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/security/auth_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
@@ -86,6 +87,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _login() {
+    if (kDebugMode) {
+      print("Return login");
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -110,6 +114,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _register() {
+    if (kDebugMode) {
+      print("Return register");
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -168,8 +175,8 @@ class _LoginPageState extends State<LoginPage> {
       body: WrapGradientBackground(
         gradient: gradient,
         child: Container(
-          width: double.infinity,
-          height: double.infinity,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: isRegister ? _register() : _login(),
         ),
