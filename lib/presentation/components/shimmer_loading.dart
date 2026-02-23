@@ -59,10 +59,18 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
     }
     final shimmerSize = shimmer.size;
     final gradient = shimmer.gradient;
-    final offsetWithinShimmer = shimmer.getDescendantOffset(
-      //TODO check bug here
 
-      descendant: context.findRenderObject() as RenderBox,
+    final renderObject = context.findRenderObject();
+    if (renderObject == null ||
+        renderObject is! RenderBox ||
+        !renderObject.hasSize) {
+      // Return the child without the shader mask so it can be laid out
+      // natively and get its RenderObject for the next frame.
+      return widget.child;
+    }
+
+    final offsetWithinShimmer = shimmer.getDescendantOffset(
+      descendant: renderObject,
     );
 
     return ShaderMask(

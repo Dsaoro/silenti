@@ -209,7 +209,15 @@ class _AssetsPageState extends State<AssetsPage> {
       print("build top row list  ${assets.isNotEmpty}");
     }
     if (assets.isNotEmpty) {
+      if (kDebugMode) {
+        print("***-* assets is not empty");
+      }
       for (var asset in assets) {
+        if (kDebugMode) {
+          print("***-* building top row item for asset: ${asset.name}");
+          print(
+              "asset index: ${assets.indexOf(asset)}\ncurrentBalance:${asset.currentBalance}\nincludedOnBalance:${asset.includedOnBalance}\nfrequency:${asset.frequency}\nname:${asset.name}\n");
+        }
         children.add(
           _buildTopRowItem(Icons.attach_money, asset.name, () async {
             await _selectAsset(assets.indexOf(asset));
@@ -279,11 +287,6 @@ class _AssetsPageState extends State<AssetsPage> {
 
       isLoading: _isLoading,
       child: CircleListItem(
-        // onTap: () {
-        //   if (kDebugMode) {
-        //     print("click on item");
-        //   }
-        // },
         onTap: onTap,
         icon: icon,
         title: title,
