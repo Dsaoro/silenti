@@ -31,7 +31,7 @@ class CardGraphItem extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -76,7 +76,7 @@ class CardGraphItem extends StatelessWidget {
         child: Text(
           'No hay datos disponibles',
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(160),
             fontSize: 14,
           ),
         ),
@@ -97,7 +97,7 @@ class CardGraphItem extends StatelessWidget {
             dotData: FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withAlpha(25),
             ),
           ),
         ],

@@ -6,6 +6,8 @@ import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
 import 'package:silenti/presentation/home_page.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -14,6 +16,8 @@ class _LoginPageState extends State<LoginPage> {
   double columnWidth = 300;
   bool isRegister = false;
   bool hasPassword = true;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
 
@@ -60,9 +64,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleRegister() async {
+    if (_nameController.text.isEmpty || _emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("El nombre y correo no pueden estar vacíos"),
+            backgroundColor: Colors.red),
+      );
+      return;
+    }
     if (_passController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("La contraseña no puede estar vacía")),
+        SnackBar(
+            content: Text("La contraseña no puede estar vacía"),
+            backgroundColor: Colors.red),
       );
       return;
     }
@@ -73,7 +87,11 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final result = await AuthUseCase().setPassword(_passController.text);
+    final result = await AuthUseCase().registerUser(
+      _nameController.text,
+      _emailController.text,
+      _passController.text,
+    );
     if (result.status) {
       _checkUser();
       setState(() {
@@ -102,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(height: 16),
         _buildTextField(_passController, "Contraseña", isPassword: true),
         SizedBox(height: 24),
-        Container(
+        SizedBox(
           width: columnWidth,
           child: ElevatedButton(
             onPressed: _handleLogin,
@@ -133,12 +151,16 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.white70, fontSize: 12),
         ),
         SizedBox(height: 24),
+        _buildTextField(_nameController, "Nombre"),
+        SizedBox(height: 16),
+        _buildTextField(_emailController, "Correo Electrónico"),
+        SizedBox(height: 16),
         _buildTextField(_passController, "Contraseña", isPassword: true),
         SizedBox(height: 16),
         _buildTextField(_confirmPassController, "Repetir Contraseña",
             isPassword: true),
         SizedBox(height: 24),
-        Container(
+        SizedBox(
           width: columnWidth,
           child: ElevatedButton(
             onPressed: _handleRegister,
@@ -151,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildTextField(TextEditingController controller, String label,
       {bool isPassword = false}) {
-    return Container(
+    return SizedBox(
       width: columnWidth,
       child: TextField(
         controller: controller,

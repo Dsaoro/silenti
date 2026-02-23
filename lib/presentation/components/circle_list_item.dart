@@ -59,7 +59,7 @@ class _CircleListItemState extends State<CircleListItem> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

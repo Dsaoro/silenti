@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
-import 'package:silenti/application/budgets/get_expenses_sub_categories_use_Case.dart';
+import 'package:silenti/application/budgets/get_expenses_sub_categories_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/financial_assets/withdraw_from_financial_asset_use_case.dart';
 import 'package:silenti/core/models/operation.dart';

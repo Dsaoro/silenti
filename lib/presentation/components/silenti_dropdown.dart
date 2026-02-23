@@ -39,7 +39,7 @@ class _SilentiDropdownState extends State<SilentiDropdown> {
       borderRadius: BorderRadius.circular(4),
       elevation: 2,
       alignment: Alignment.centerLeft,
-      value: widget.input,
+      initialValue: widget.input,
       validator: (value) {
         if (value == null) {
           return widget.items.first;
@@ -55,7 +55,7 @@ class _SilentiDropdownState extends State<SilentiDropdown> {
             style: TextStyle(
               fontSize: 14,
               color: widget.readOnly
-                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.6)
+                  ? Theme.of(context).colorScheme.onSurface.withAlpha(160)
                   : Theme.of(context).colorScheme.onSurface,
             ),
           ),

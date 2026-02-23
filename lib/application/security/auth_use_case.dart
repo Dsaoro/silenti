@@ -22,12 +22,13 @@ class AuthUseCase extends BaseUseCase {
     return result;
   }
 
-  Future<HandleResult<bool>> setPassword(String password) async {
+  Future<HandleResult<bool>> registerUser(
+      String name, String email, String password) async {
     HandleResult<bool> result = HandleResult<bool>();
     UserDAO dao = UserDAO();
     try {
       // In a real app we would hash the password here
-      await dao.updateUserPassword(password);
+      await dao.registerUser(name, email, password);
       result.setData(true);
     } catch (e) {
       result.setError(e.toString());

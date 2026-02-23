@@ -593,7 +593,7 @@ class _AssetsPageState extends State<AssetsPage> {
               ],
             ),
           ),
-          body: Container(
+          body: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.7,
             child: TabBarView(

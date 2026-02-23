@@ -13,6 +13,8 @@ import 'package:silenti/presentation/components/summary_card.dart';
 import 'package:silenti/presentation/components/wrap_gradient_backgroud.dart';
 
 class HomePageContent extends StatefulWidget {
+  const HomePageContent({super.key});
+
   @override
   State<HomePageContent> createState() => _HomePageContentState();
 }

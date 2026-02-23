@@ -68,18 +68,13 @@ class BankAccount extends FinancialAsset {
   final double interestRate;
 
   BankAccount({
-    required int id,
-    required String name,
-    required int includedOnBalance,
-    required Frequency frequency,
+    required super.id,
+    required super.name,
+    required super.includedOnBalance,
+    required super.frequency,
     required this.balance,
     required this.interestRate,
-  }) : super(
-          id: id,
-          name: name,
-          includedOnBalance: includedOnBalance,
-          frequency: frequency,
-        );
+  });
 
   @override
   double get currentBalance => balance;
@@ -115,19 +110,14 @@ class InvestmentAsset extends FinancialAsset {
   final String tickerSymbol;
 
   InvestmentAsset({
-    required int id,
-    required String name,
-    required int includedOnBalance,
-    required Frequency frequency,
+    required super.id,
+    required super.name,
+    required super.includedOnBalance,
+    required super.frequency,
     required this.quantity,
     required this.currentPrice,
     required this.tickerSymbol,
-  }) : super(
-          id: id,
-          name: name,
-          includedOnBalance: includedOnBalance,
-          frequency: frequency,
-        );
+  });
 
   @override
   double get currentBalance => quantity * currentPrice;

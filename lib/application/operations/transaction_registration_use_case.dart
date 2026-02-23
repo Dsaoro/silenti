@@ -5,15 +5,15 @@ import 'package:silenti/infraestructure/storage/operation_dao.dart';
 
 class OperationRegistrationUseCase extends BaseUseCase {
   OperationRegistrationUseCase() : super('OperationRegistration');
-  Future<HandleResult<bool>> execute({required Operation Operation}) async {
+  Future<HandleResult<bool>> execute({required Operation operation}) async {
     HandleResult<bool> result = HandleResult<bool>();
     final dao = OperationDAO();
     var operationStatus = await dao.insertOperation({
-      'monto': 50000,
-      'fecha': '2025-02-10',
-      'descripcion': 'Pago de factura',
-      'categoria': 'Servicios',
-      'tipo': 'gasto'
+      'monto': operation.amount,
+      'fecha': operation.date,
+      'descripcion': operation.description,
+      'categoria': operation.category,
+      'tipo': operation.type
     });
     if (operationStatus != 0) {
       result.setData(true);

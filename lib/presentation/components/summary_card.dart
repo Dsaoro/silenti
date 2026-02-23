@@ -56,7 +56,7 @@ class _SummaryCardState extends State<SummaryCard> {
     //     Text(
     //       "\$${CurrencyFormater.convert(accountBalance)}",
     //       style: TextStyle(
-    //         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+    //         color: Theme.of(context).colorScheme.onSurface.withAlpha(200),
     //         fontSize: 22,
     //         fontWeight: FontWeight.bold,
     //       ),

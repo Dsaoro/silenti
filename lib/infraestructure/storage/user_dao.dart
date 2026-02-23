@@ -10,11 +10,15 @@ class UserDAO {
     return null;
   }
 
-  Future<int> updateUserPassword(String password) async {
+  Future<int> registerUser(String name, String email, String password) async {
     final db = await SecureDatabaseHelperPC().database;
     return await db.update(
       'users',
-      {'password': password},
+      {
+        'name': name,
+        'email': email,
+        'password': password,
+      },
       where: 'id = ?',
       whereArgs: [1], // Default user has ID 1
     );
