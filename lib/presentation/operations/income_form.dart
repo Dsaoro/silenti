@@ -65,7 +65,7 @@ class _IncomeFormState extends State<IncomeForm> {
     if (response.status) {
       _categories.clear();
       _categories.addEntries([MapEntry(0, "Select cat...")]);
-      for (var category in response.model) {
+      for (var category in response.model!) {
         _categories.addEntries([
           MapEntry(
               category.id,
@@ -80,7 +80,7 @@ class _IncomeFormState extends State<IncomeForm> {
   _requestAssets() async {
     var response = await GetFinancialAssets().execute();
     if (response.status) {
-      for (var asset in response.model) {
+      for (var asset in response.model!) {
         _assets.addEntries([MapEntry(asset.id, asset.name)]);
       }
     } else {

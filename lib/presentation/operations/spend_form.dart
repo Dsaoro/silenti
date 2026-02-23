@@ -42,7 +42,7 @@ class _SpendFormState extends State<SpendForm> {
   _requestAssets() async {
     var response = await GetFinancialAssets().execute();
     if (response.status) {
-      for (var asset in response.model) {
+      for (var asset in response.model!) {
         _assets.addEntries([MapEntry(asset.id, asset.name)]);
       }
     } else {
@@ -55,7 +55,7 @@ class _SpendFormState extends State<SpendForm> {
   _getCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
-      for (var category in response.model) {
+      for (var category in response.model!) {
         _categories.addEntries([MapEntry(category.id, category.name)]);
       }
     }
@@ -64,7 +64,7 @@ class _SpendFormState extends State<SpendForm> {
   _getSubCategories() async {
     var response = await GetExpensesSubCategoriesUseCase().byId(id: category);
     if (response.status) {
-      for (var category in response.model) {
+      for (var category in response.model!) {
         _subCategories.addEntries([MapEntry(category.id, category.name)]);
       }
     }

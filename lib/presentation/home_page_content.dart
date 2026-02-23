@@ -37,12 +37,12 @@ class _HomePageContentState extends State<HomePageContent> {
 
   _getLastOperations() async {
     var result = await GetOperations().getLastOperations(limit: 10);
-    if (result.status && result.model.isNotEmpty) {
+    if (result.status && result.model!.isNotEmpty) {
       if (kDebugMode) {
-        print("read last ${result.model.length} operations");
+        print("read last ${result.model!.length} operations");
       }
       List<Widget> operations = [];
-      for (var e in result.model) {
+      for (var e in result.model!) {
         operations.add(OperationCardListItem(
           operation: e,
           isLoading: false,
@@ -64,7 +64,7 @@ class _HomePageContentState extends State<HomePageContent> {
 
     if (chartResponse.status) {
       setState(() {
-        summaryChartData = chartResponse.model;
+        summaryChartData = chartResponse.model!;
       });
     } else {
       if (kDebugMode) {

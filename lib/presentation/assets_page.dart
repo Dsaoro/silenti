@@ -77,7 +77,7 @@ class _AssetsPageState extends State<AssetsPage> {
     var response = await GetFinancialAssets().execute();
     if (response.status) {
       setState(() {
-        assets = response.model;
+        assets = response.model!;
         if (assets.isNotEmpty) {
           _loadChartData(assets[currentSelectedIndex].id);
         }
@@ -97,7 +97,7 @@ class _AssetsPageState extends State<AssetsPage> {
 
     if (chartResponse.status) {
       setState(() {
-        chartData = chartResponse.model;
+        chartData = chartResponse.model!;
       });
     } else {
       if (kDebugMode) {
@@ -132,7 +132,7 @@ class _AssetsPageState extends State<AssetsPage> {
     } else {
       setState(() {
         _toggleLoading();
-        operations = response.model;
+        operations = response.model!;
       });
     }
   }
@@ -145,7 +145,7 @@ class _AssetsPageState extends State<AssetsPage> {
 
   _deleteAsset(FinancialAsset asset) async {
     var response = await DeleteFinancialAssetUseCase().execute(asset.id);
-    if (response.status && response.model > 0) {
+    if (response.status && response.model! > 0) {
       await _getDataFromDB();
       if (currentSelectedIndex >= assets.length) {
         if (kDebugMode) {
@@ -181,7 +181,7 @@ class _AssetsPageState extends State<AssetsPage> {
 
   _createNewAsset(FinancialAsset asset) async {
     var response = await CreateFinancialAssetUseCase().execute(asset);
-    if (response.status && response.model > 0) {
+    if (response.status && response.model! > 0) {
       setState(() {
         _getDataFromDB();
         NotificationPopper(

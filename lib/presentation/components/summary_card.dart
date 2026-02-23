@@ -27,10 +27,10 @@ class _SummaryCardState extends State<SummaryCard> {
     var spentBalance = await GetSpendsThisMonthUseCase().execute();
     setState(() {
       if (kDebugMode) {
-        print("assetBalance.model ${assetsBalance.model}");
+        print("assetBalance.model ${assetsBalance.model ?? 0}");
       }
-      accountBalance = assetsBalance.model;
-      monthExpenses = spentBalance.model;
+      accountBalance = assetsBalance.model ?? 0;
+      monthExpenses = spentBalance.model ?? 0;
       accountBalance = accountBalance;
       isLoading = !isLoading;
     });

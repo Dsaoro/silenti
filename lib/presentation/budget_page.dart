@@ -164,7 +164,7 @@ class _BudgetPageState extends State<BudgetPage> {
   _requestBudgetCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
-      categories = response.model;
+      categories = response.model!;
     }
   }
 
@@ -181,13 +181,13 @@ class _BudgetPageState extends State<BudgetPage> {
 
     setState(() {
       if (opResponse.status) {
-        operations = opResponse.model;
+        operations = opResponse.model!;
       } else {
         operations = [];
       }
 
       if (spentResponse.status) {
-        spentThisMonth = spentResponse.model;
+        spentThisMonth = spentResponse.model!;
       } else {
         spentThisMonth = 0;
       }
@@ -204,7 +204,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
   _deleteBudget(BudgetCategory budget) async {
     var response = await DeleteBudgetCategoryUseCase().execute(budget);
-    if (response.status && response.model > 0) {
+    if (response.status && response.model! > 0) {
       await _getDataFromDB();
       if (currentSelectedIndex >= categories.length) {
         if (kDebugMode) {
@@ -242,7 +242,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
   _createNewBudget(BudgetCategory budget) async {
     var response = await AddBudgetCategoryUseCase().execute(category: budget);
-    if (response.status && response.model > 0) {
+    if (response.status && response.model! > 0) {
       setState(() {
         _getDataFromDB();
         NotificationPopper(

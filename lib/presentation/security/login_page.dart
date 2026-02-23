@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/security/auth_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
@@ -105,9 +104,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _login() {
-    if (kDebugMode) {
-      print("Return login");
-    }
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
       width: MediaQuery.of(context).size.width * 0.8,
@@ -149,9 +145,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _register() {
-    if (kDebugMode) {
-      print("Return register");
-    }
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -223,7 +216,8 @@ class _LoginPageState extends State<LoginPage> {
           enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white38)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: SilentiColors.secondary)),
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.secondary)),
         ),
       ),
     );

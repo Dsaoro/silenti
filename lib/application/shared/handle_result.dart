@@ -1,7 +1,7 @@
 class HandleResult<T> {
-  late bool status;
-  late String message;
-  late T model;
+  bool status = false;
+  String message = "";
+  T? model;
 
   void setError(String userMessage) {
     status = false;
