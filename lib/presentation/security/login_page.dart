@@ -108,26 +108,43 @@ class _LoginPageState extends State<LoginPage> {
     if (kDebugMode) {
       print("Return login");
     }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.monetization_on, size: 100, color: SilentiColors.secondary),
-        SizedBox(height: 32),
-        Text(
-          "Ingresa tu contraseña",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
+      width: MediaQuery.of(context).size.width * 0.8,
+      alignment: Alignment.center,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        SizedBox(height: 16),
-        _buildTextField(_passController, "Contraseña", isPassword: true),
-        SizedBox(height: 24),
-        SizedBox(
-          width: columnWidth,
-          child: ElevatedButton(
-            onPressed: _handleLogin,
-            child: Text('Ingresar'),
+        color: Theme.of(context).colorScheme.surface.withAlpha(160),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          width: MediaQuery.of(context).size.width * 0.8,
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.monetization_on,
+                  size: 100, color: Theme.of(context).colorScheme.onSurface),
+              SizedBox(height: 32),
+              Text(
+                "Ingresa tu contraseña",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              SizedBox(height: 16),
+              _buildTextField(_passController, "Contraseña", isPassword: true),
+              SizedBox(height: 24),
+              SizedBox(
+                width: columnWidth,
+                child: ElevatedButton(
+                  onPressed: _handleLogin,
+                  child: Text('Ingresar'),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -135,39 +152,60 @@ class _LoginPageState extends State<LoginPage> {
     if (kDebugMode) {
       print("Return register");
     }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.security, size: 100, color: SilentiColors.secondary),
-        SizedBox(height: 32),
-        Text(
-          "Crea una contraseña local",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      width: MediaQuery.of(context).size.width * 0.9,
+      alignment: Alignment.center,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        SizedBox(height: 8),
-        Text(
-          "Tus datos se guardarán de forma privada solo en este dispositivo.",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white70, fontSize: 12),
-        ),
-        SizedBox(height: 24),
-        _buildTextField(_nameController, "Nombre"),
-        SizedBox(height: 16),
-        _buildTextField(_emailController, "Correo Electrónico"),
-        SizedBox(height: 16),
-        _buildTextField(_passController, "Contraseña", isPassword: true),
-        SizedBox(height: 16),
-        _buildTextField(_confirmPassController, "Repetir Contraseña",
-            isPassword: true),
-        SizedBox(height: 24),
-        SizedBox(
-          width: columnWidth,
-          child: ElevatedButton(
-            onPressed: _handleRegister,
-            child: Text('Registrar Contraseña'),
+        color: Theme.of(context).colorScheme.surface.withAlpha(160),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width * 0.9,
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.security,
+                  size: 100, color: Theme.of(context).colorScheme.onSurface),
+              SizedBox(height: 28),
+              Text(
+                "Crea una contraseña local",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "Tus datos se guardarán de forma privada solo en este dispositivo.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white70, fontSize: 12),
+              ),
+              SizedBox(height: 40),
+              _buildTextField(_nameController, "Nombre"),
+              SizedBox(height: 16),
+              _buildTextField(_emailController, "Correo Electrónico"),
+              SizedBox(height: 16),
+              _buildTextField(_passController, "Contraseña", isPassword: true),
+              SizedBox(height: 16),
+              _buildTextField(_confirmPassController, "Repetir Contraseña",
+                  isPassword: true),
+              SizedBox(height: 24),
+              SizedBox(
+                width: columnWidth,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
+                    foregroundColor: Theme.of(context).colorScheme.surface,
+                  ),
+                  onPressed: _handleRegister,
+                  child: Text('Registrar Contraseña'),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -196,11 +234,17 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: WrapGradientBackground(
         gradient: gradient,
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: isRegister ? _register() : _login(),
+          child: Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              // height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: isRegister ? _register() : _login(),
+            ),
+          ),
         ),
       ),
     );
