@@ -115,18 +115,18 @@
 //   ''';
 //   static const String _initBudgetCategories = '''
 //     INSERT INTO budgetcategories (source, amount, frequency, firstTime)
-//     VALUES ('Salary', 0, 'monthly', '2021-01-01')
+//     VALUES ('Salary', 0, 'monthly', CURRENT_TIMESTAMP)
 //   ''';
 //   static const String _initOperations = '''
 //     INSERT INTO Operations (amount, date, description, category, type)
-//     VALUES (0, '2021-01-01', 'Initial balance', 'Salary', 'income')
+//     VALUES (0, CURRENT_TIMESTAMP, 'Initial balance', 'Salary', 'income')
 //   ''';
 //   static const String _initProfits = '''
 //     INSERT INTO profits (financialAsset, date, amount)
-//     VALUES (1, '2021-01-01', 0)
+//     VALUES (1, CURRENT_TIMESTAMP, 0)
 //   ''';
 //   static const String _initNotifications = '''
 //     INSERT INTO notifications (message, date, status, Operation_id)
-//     VALUES ('Initial balance', '2021-01-01', 'send', 1)
+//     VALUES ('Initial balance', CURRENT_TIMESTAMP, 'send', 1)
 //   ''';
 // }

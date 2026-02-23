@@ -28,14 +28,6 @@ class AssetsPage extends StatefulWidget {
   State<AssetsPage> createState() => _AssetsPageState();
 }
 
-const _shimmerGradient = LinearGradient(
-  colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
-  stops: [0.1, 0.3, 0.4],
-  begin: Alignment(-1.0, -0.3),
-  end: Alignment(1.0, 0.3),
-  tileMode: TileMode.clamp,
-);
-
 class _AssetsPageState extends State<AssetsPage> {
   bool _isLoading = true;
   bool _isEditing = false;
@@ -44,7 +36,8 @@ class _AssetsPageState extends State<AssetsPage> {
   List<FlSpot> chartData = [];
   int currentSelectedIndex = 0;
 
-  void _toggleLoading() {
+  void _toggleLoading() async {
+    // await Future.delayed(const Duration(milliseconds: 200));
     setState(() {
       // _isLoading = !_isLoading;
       _isLoading = false;
@@ -68,9 +61,9 @@ class _AssetsPageState extends State<AssetsPage> {
     if (assets.isNotEmpty) {
       await _requestAssetOperations(currentSelectedIndex);
     }
-    setState(() {
-      _toggleLoading();
-    });
+    // setState(() {
+    _toggleLoading();
+    // });
   }
 
   _getAssets() async {
@@ -283,8 +276,6 @@ class _AssetsPageState extends State<AssetsPage> {
   Widget _buildTopRowItem(
       IconData icon, String title, Function onTap, bool isSelected) {
     return ShimmerLoading(
-      // TODO check for intermitent exception flashing at building PAge
-
       isLoading: _isLoading,
       child: CircleListItem(
         onTap: onTap,
@@ -629,7 +620,7 @@ class _AssetsPageState extends State<AssetsPage> {
     ];
 
     return Shimmer(
-      linearGradient: _shimmerGradient,
+      linearGradient: shimmerGradientDefault,
       child: ListView(
         physics: _isLoading ? const NeverScrollableScrollPhysics() : null,
         children: children,

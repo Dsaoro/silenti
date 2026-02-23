@@ -19,14 +19,6 @@ class HomePageContent extends StatefulWidget {
   State<HomePageContent> createState() => _HomePageContentState();
 }
 
-const _shimmerGradient = LinearGradient(
-  colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
-  stops: [0.1, 0.3, 0.4],
-  begin: Alignment(-1.0, -0.3),
-  end: Alignment(1.0, 0.3),
-  tileMode: TileMode.clamp,
-);
-
 class _HomePageContentState extends State<HomePageContent> {
   bool isLoading = false;
   double accountBalance = 0;
@@ -86,7 +78,7 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   Widget build(BuildContext context) {
     return Shimmer(
-      linearGradient: _shimmerGradient,
+      linearGradient: shimmerGradientDefault,
       child: WrapGradientBackground(
         child: ShimmerLoading(
           isLoading: isLoading,
