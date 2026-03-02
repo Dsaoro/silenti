@@ -14,6 +14,8 @@ import 'package:silenti/presentation/components/notification_popper.dart';
 import 'package:silenti/presentation/components/silenti_datatable.dart';
 import 'package:silenti/presentation/components/silenti_text_field.dart';
 import 'package:silenti/presentation/forms/budget_form.dart';
+import 'package:silenti/presentation/components/category_status_widget.dart';
+import 'package:silenti/application/budgets/update_budget_category_use_case.dart';
 import 'components/card_graph_item.dart';
 import 'components/operation_card_list_item.dart';
 import 'components/circle_list_item.dart';
@@ -34,6 +36,7 @@ class _BudgetPageState extends State<BudgetPage> {
   List<Operation> operations = [];
   int currentSelectedIndex = 0;
   double spentThisMonth = 0;
+  Map<int, double> _spentBySubcategory = {};
 
   void _toggleLoading() {
     setState(() {
@@ -72,71 +75,154 @@ class _BudgetPageState extends State<BudgetPage> {
   Widget _budgetStatus() {
     if (categories.isEmpty) return Container();
     final budget = categories[currentSelectedIndex];
-    final percent = budget.amount > 0 ? (spentThisMonth / budget.amount) : 0.0;
-    final remaining = budget.amount - spentThisMonth;
+
+    // The main category amount is the sum of its subcategories if it has any, otherwise its own amount.
+    // However, the rules specify that if we modify subcategories, it updates the main.
+    // The totalAmount getter does exactly what we want (sum of itself + subcategories).
+    // Let's use it for the display of total budgeted amount for the parent.
+    final totalBudgeted = budget.subcategories.isNotEmpty
+        ? budget.subcategories.fold(0.0, (sum, item) => sum + item.amount)
+        : budget.amount;
+
+    // total spent includes the main category spent + all subcategories spent
+    double totalSpent = spentThisMonth;
+    for (var sub in budget.subcategories) {
+      totalSpent += _spentBySubcategory[sub.id] ?? 0.0;
+    }
+
+    final percent = totalBudgeted > 0 ? (totalSpent / totalBudgeted) : 0.0;
+    final remaining = totalBudgeted - totalSpent;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Consumo mensual",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Text(
-                "${(percent * 100).toStringAsFixed(1)}%",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: percent > 1.0 ? Colors.red : SilentiColors.primary,
-                ),
-              ),
-            ],
+          CategoryStatusWidget(
+            percent: percent,
+            remaining: remaining,
+            spentThisMonth: totalSpent,
+            title: "Consumo mensual (Total)",
           ),
-          SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: percent.clamp(0.0, 1.0),
-              minHeight: 12,
-              backgroundColor: Colors.grey[300],
-              color: percent > 0.9
-                  ? Colors.orange
-                  : (percent > 1.0 ? Colors.red : SilentiColors.primary),
+          const SizedBox(height: 16),
+          if (budget.subcategories.isNotEmpty) ...[
+            const Divider(),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text("Subcategorías",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
-          ),
-          SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Gastado",
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  Text("\$${spentThisMonth.toStringAsFixed(2)}",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text("Restante",
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  Text("\$${remaining.toStringAsFixed(2)}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: remaining < 0 ? Colors.red : Colors.green,
-                      )),
-                ],
-              ),
-            ],
-          ),
+            ...budget.subcategories.map((sub) {
+              final subSpent = _spentBySubcategory[sub.id] ?? 0.0;
+              final subPercent = sub.amount > 0 ? (subSpent / sub.amount) : 0.0;
+              final subRemaining = sub.amount - subSpent;
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: CategoryStatusWidget(
+                  percent: subPercent,
+                  remaining: subRemaining,
+                  spentThisMonth: subSpent,
+                  title: sub.name,
+                  onLongPress: () {
+                    _showEditSubcategoryDialog(sub);
+                  },
+                ),
+              );
+            }),
+          ],
+          const SizedBox(height: 16),
+          ListTile(
+            leading: const Icon(Icons.add_circle_outline),
+            title: const Text("Agregar subcategoría"),
+            onTap: () {
+              _showAddSubcategoryDialog(budget);
+            },
+          )
         ],
       ),
+    );
+  }
+
+  void _showAddSubcategoryDialog(BudgetCategory parent) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Scaffold(
+            appBar: AppBar(
+              foregroundColor: SilentiColors.primary,
+              title: const Text("Nueva Subcategoría"),
+            ),
+            body: Container(
+              padding: const EdgeInsets.all(16),
+              width: MediaQuery.of(context).size.width,
+              child: BudgetForm(
+                onSave: (value) async {
+                  if (value is BudgetCategory) {
+                    await _createNewBudget(value);
+                  }
+                },
+                budget: BudgetCategory(
+                    amount: 0,
+                    id: 0,
+                    parentId: parent.id,
+                    name: "",
+                    type: CategoryType.spent,
+                    firstTime: DateTime.now(),
+                    frequency: parent.frequency),
+                buttonText: S.current.register,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showEditSubcategoryDialog(BudgetCategory subcategory) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Scaffold(
+            appBar: AppBar(
+              foregroundColor: SilentiColors.primary,
+              title: const Text("Editar Subcategoría"),
+            ),
+            body: Container(
+              padding: const EdgeInsets.all(16),
+              width: MediaQuery.of(context).size.width,
+              child: BudgetForm(
+                onSave: (value) async {
+                  if (value is BudgetCategory) {
+                    var response = await UpdateBudgetCategoryUseCase()
+                        .execute(category: value);
+                    if (response.status && response.model! > 0) {
+                      setState(() {
+                        _getDataFromDB();
+                        NotificationPopper(
+                          contentType: ContentType.success,
+                          title: "Sucess",
+                          message: "Account ${value.name} updated.",
+                        ).pop(context);
+                      });
+                    } else {
+                      NotificationPopper(
+                        contentType: ContentType.failure,
+                        title: "Error",
+                        message:
+                            "Account ${value.name} couldn´t be updated, please try again.",
+                      ).pop(context);
+                    }
+                  }
+                },
+                budget: subcategory,
+                buttonText: S.current.update,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -163,13 +249,26 @@ class _BudgetPageState extends State<BudgetPage> {
   _requestBudgetOperations(int budgetId) async {
     final now = DateTime.now();
 
-    // Get last operations
+    // Get last operations for the main category
     var opResponse =
         await GetOperations().byBudgetCategoryLimited(budgetId, limit: 6);
 
-    // Get monthly spent
+    // Get monthly spent for the main category
     var spentResponse = await GetOperations()
         .getSpentAmountByCategoryAndMonth(budgetId, now.month, now.year);
+
+    // Get spent for each subcategory
+    Map<int, double> subcategorySpent = {};
+    if (categories.isNotEmpty && currentSelectedIndex < categories.length) {
+      final currentBudget = categories[currentSelectedIndex];
+      for (var sub in currentBudget.subcategories) {
+        var subSpentRes = await GetOperations()
+            .getSpentAmountByCategoryAndMonth(sub.id, now.month, now.year);
+        if (subSpentRes.status) {
+          subcategorySpent[sub.id] = subSpentRes.model!;
+        }
+      }
+    }
 
     setState(() {
       if (opResponse.status) {
@@ -183,6 +282,8 @@ class _BudgetPageState extends State<BudgetPage> {
       } else {
         spentThisMonth = 0;
       }
+
+      _spentBySubcategory = subcategorySpent;
 
       _toggleLoading();
     });

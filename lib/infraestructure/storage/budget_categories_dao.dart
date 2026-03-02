@@ -9,6 +9,16 @@ class BudgetCategoriesDAO {
     );
   }
 
+  Future<int> updateBudgetCategory(Map<String, dynamic> category) async {
+    final db = await SecureDatabaseHelperPC().database;
+    return await db.update(
+      'budget_categories',
+      category,
+      where: 'id = ?',
+      whereArgs: [category['id']],
+    );
+  }
+
   Future<List<Map<String, dynamic>>> getBudgetCategories() async {
     final db = await SecureDatabaseHelperPC().database;
     // Using CTE to get hierarchy if needed, or just plain select if we handle tree building in Dart

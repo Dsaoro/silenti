@@ -8,14 +8,35 @@ class GetExpensesCategoriesUseCase extends BaseUseCase {
   Future<HandleResult<List<BudgetCategory>>> execute() async {
     HandleResult<List<BudgetCategory>> result =
         HandleResult<List<BudgetCategory>>();
-    List<BudgetCategory> categories = [];
+    List<BudgetCategory> allCategories = [];
     var dao = BudgetCategoriesDAO();
     try {
       await dao.getBudgetExpenses().then((value) {
         for (var element in value) {
-          categories.add(BudgetCategory.fromMap(element));
+          allCategories.add(BudgetCategory.fromMap(element));
         }
-        result.setData(categories);
+
+        // Build hierarchy
+        List<BudgetCategory> parents = [];
+        Map<int, List<BudgetCategory>> childrenMap = {};
+
+        // Group by parentId
+        for (var category in allCategories) {
+          if (category.parentId == null) {
+            parents.add(category);
+          } else {
+            childrenMap.putIfAbsent(category.parentId!, () => []).add(category);
+          }
+        }
+
+        // Assign children to parents
+        List<BudgetCategory> resultCategories = [];
+        for (var parent in parents) {
+          var children = childrenMap[parent.id] ?? [];
+          resultCategories.add(parent.copyWith(subcategories: children));
+        }
+
+        result.setData(resultCategories);
       });
     } catch (e) {
       result.setError(e.toString());
