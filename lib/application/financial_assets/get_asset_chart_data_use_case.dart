@@ -32,22 +32,12 @@ class GetAssetChartDataUseCase extends BaseUseCase {
 
       // Convertir a FlSpot para fl_chart
       List<FlSpot> spots = [];
-      DateTime? firstDate;
 
       for (int i = 0; i < chartData.length; i++) {
         DateTime currentDate = DateTime.parse(chartData[i]['date']);
         double balance = chartData[i]['balance']?.toDouble() ?? 0.0;
 
-        // Usar el primer punto como referencia temporal
-        if (firstDate == null) {
-          firstDate = currentDate;
-          spots.add(FlSpot(0, balance));
-        } else {
-          // Calcular días desde el primer punto
-          double daysDifference =
-              currentDate.difference(firstDate).inDays.toDouble();
-          spots.add(FlSpot(daysDifference, balance));
-        }
+        spots.add(FlSpot(currentDate.millisecondsSinceEpoch.toDouble(), balance));
       }
 
       result.setData(spots);
