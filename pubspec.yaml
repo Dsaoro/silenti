@@ -1,0 +1,44 @@
+name: silenti
+description: "A private and simple budget tracking app."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 0.0.1+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  intl: any
+  intl_utils: ^2.8.10
+  sqlite3: ^2.7.4
+  sqflite_common_ffi: ^2.3.5
+  #sqflite_sqlcipher: ^3.1.0+1
+  encrypt: ^5.0.3
+  path_provider: ^2.1.5
+  fl_chart: ^0.70.2
+  awesome_snackbar_content: ^0.1.5
+  flutter_riverpod: ^2.5.1
+  get_it: ^7.7.0
+  injectable: ^2.4.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.9
+  injectable_generator: ^2.4.1
+
+
+flutter:
+  generate: true
+  uses-material-design: true
+flutter_intl:
+  enabled: true

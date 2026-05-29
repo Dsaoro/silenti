@@ -1,0 +1,197 @@
+{
+    "@@locale": "en",
+    "@@author": "dsaoro",
+    "trnasactionRegistration": "register transaction",
+    "@trnasactionRegistration": {
+        "description": "add a new transaction"
+    },
+    "home": "Home",
+    "@home": {
+        "description": "home"
+    },
+    "income": "Income",
+    "@income": {
+        "description": "income"
+    },
+    "spent": "Spent",
+    "@spent": {
+        "description": "outcome"
+    },
+    "operationRegistration": "Register operation",
+    "@operationRegistration": {
+        "description": "register operation"
+    },
+    "depositRegistration": "Deposit registration",
+    "@depositRegistration": {
+        "description": "deposit registration"
+    },
+    "spendRegistration": "Spend registration",
+    "@spendRegistration": {
+        "description": "spend registration"
+    },
+    "withdrawalRegistration": "Withdrawal registration",
+    "@withdrawalRegistration": {
+        "description": "withdrawal registration"
+    },
+    "amount": "Amount",
+    "@amount": {
+        "description": ""
+    },
+    "initialAmount": "Initial amount",
+    "@initialAmount": {
+        "description": ""
+    },
+    "accountBalance": "Account balance",
+    "@accountBalance": {
+        "description": ""
+    },
+    "asset": "Account",
+    "@asset": {
+        "description": ""
+    },
+    "budget": "Budget",
+    "@budget": {
+        "description": ""
+    },
+    "accountName": "Account name",
+    "@accountName": {
+        "description": ""
+    },
+    "category": "Category",
+    "@category": {
+        "description": ""
+    },
+    "register": "Register",
+    "@register": {
+        "description": "label"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "label"
+    },
+    "type": "Update",
+    "@type": {
+        "description": "label"
+    },
+    "date": "Date",
+    "@date": {
+        "description": ""
+    },
+    "select": "Select",
+    "@select": {
+        "description": "label"
+    },
+    "description": "Description",
+    "@description": {
+        "description": "label"
+    },
+    "subCategory": "SubCategory",
+    "@subCategory": {
+        "description": "label"
+    },
+    "balance": "Balance",
+    "@balance": {
+        "description": "label"
+    },
+    "sumary": "Sumary",
+    "@sumary": {
+        "description": "label"
+    },
+    "add": "Add",
+    "@add": {
+        "description": "label"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "label"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "label"
+    },
+    "operations": "Operations",
+    "@operations": {
+        "description": "label"
+    },
+    "frequency": "Frecuency",
+    "@frequency": {
+        "description": "label"
+    },
+    "frecDaily": "Daily",
+    "@frecDaily": {
+        "description": "label"
+    },
+    "frecWeekly": "Weekly",
+    "@frecWeekly": {
+        "description": "label"
+    },
+    "frecSemiMonthly": "SemiMonthly",
+    "@frecSemiMonthly": {
+        "description": "label"
+    },
+    "frecMonthly": "Monthly",
+    "@frecMonthly": {
+        "description": "label"
+    },
+    "frecAnual": "Anual",
+    "@frecAnual": {
+        "description": "label"
+    },
+    "frecOnce": "Once",
+    "@frecOnce": {
+        "description": "label"
+    },
+    "itemsPerPage": "Items per page",
+    "@itemsPerPage": {
+        "description": "label"
+    },
+    "details": "Details",
+    "@details": {
+        "description": "label"
+    },
+    "interestRate": "Interest rate(E.A.)",
+    "@interestRate": {
+        "description": "label"
+    },
+    "warning": "Warning",
+    "@warning": {
+        "description": "label"
+    },
+    "monthlyBudget": "Monthly budget",
+    "@monthlyBudget": {
+        "description": "label"
+    },
+    "budgetName": "Budget name",
+    "@budgetName": {
+        "description": "label"
+    },
+    "newBudget": "New budget ",
+    "@newBudget": {
+        "description": "label"
+    },
+    "status": "Status ",
+    "@status": {
+        "description": "label"
+    },
+    "unavailableData": "Unavailable data",
+    "@unavailableData": {
+        "description": "message"
+    },
+    "balanceIncluded": "Show on balance",
+    "@balanceIncluded": {
+        "description": "message"
+    },
+    "deleteWarning": "By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?",
+    "@deleteWarning": {
+        "description": "message",
+        "placeholders": {
+            "item": {
+                "example": "asset"
+            }
+        }
+    },
+    "newAccount": "New Account",
+    "@newAccount": {
+        "description": "message"
+    }
+}
