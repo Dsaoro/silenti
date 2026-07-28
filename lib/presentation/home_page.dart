@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
     // Widget home =
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
@@ -142,6 +142,7 @@ class _HomePageState extends State<HomePage> {
         BudgetPage(),
       ][currentPageIndex],
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.onSurface.withAlpha(200),
         onPressed: () async {
           await registerOperation();
           operationsUpdated = false;

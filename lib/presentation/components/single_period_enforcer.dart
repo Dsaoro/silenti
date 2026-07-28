@@ -8,7 +8,8 @@ class SinglePeriodEnforcer extends TextInputFormatter {
   ) {
     final newText = newValue.text;
     // Allow only one period
-    if ('.'.allMatches(newText).length <= 1) {
+    final separatorsCount = RegExp(r'[\.\,]').allMatches(newText).length;
+    if (separatorsCount <= 1) {
       return newValue;
     }
     return oldValue;

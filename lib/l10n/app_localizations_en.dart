@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get trnasactionRegistration => 'register transaction';
+  String get transactionRegistration => 'Register transaction';
 
   @override
   String get home => 'Home';
@@ -18,7 +18,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get income => 'Income';
 
   @override
-  String get spent => 'Spent';
+  String get spent => 'Expense';
 
   @override
   String get operationRegistration => 'Register operation';
@@ -60,7 +60,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update => 'Update';
 
   @override
-  String get type => 'Update';
+  String get type => 'Type';
 
   @override
   String get date => 'Date';
@@ -72,13 +72,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get description => 'Description';
 
   @override
-  String get subCategory => 'SubCategory';
+  String get subCategory => 'Subcategory';
 
   @override
   String get balance => 'Balance';
 
   @override
-  String get sumary => 'Sumary';
+  String get summary => 'Summary';
 
   @override
   String get add => 'Add';
@@ -93,7 +93,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get operations => 'Operations';
 
   @override
-  String get frequency => 'Frecuency';
+  String get frequency => 'Frequency';
 
   @override
   String get frecDaily => 'Daily';
@@ -102,13 +102,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get frecWeekly => 'Weekly';
 
   @override
-  String get frecSemiMonthly => 'SemiMonthly';
+  String get frecSemiMonthly => 'Semi-monthly';
 
   @override
   String get frecMonthly => 'Monthly';
 
   @override
-  String get frecAnual => 'Anual';
+  String get frecAnnual => 'Annual';
 
   @override
   String get frecOnce => 'Once';
@@ -120,7 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get details => 'Details';
 
   @override
-  String get interestRate => 'Interest rate(E.A.)';
+  String get interestRate => 'Interest rate (E.A.)';
 
   @override
   String get warning => 'Warning';
@@ -132,10 +132,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetName => 'Budget name';
 
   @override
-  String get newBudget => 'New budget ';
+  String get newBudget => 'New budget';
 
   @override
-  String get status => 'Status ';
+  String get status => 'Status';
 
   @override
   String get unavailableData => 'Unavailable data';
@@ -145,7 +145,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String deleteWarning(Object item) {
-    return 'By deleting this $item all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?';
+    return 'By deleting this $item all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?';
   }
 
   @override

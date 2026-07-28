@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-// import 'package:silenti/core/enums/silenti_styles.dart';
+import 'package:intl/intl.dart';
 
 class CardGraphItem extends StatelessWidget {
   const CardGraphItem({
@@ -31,7 +31,7 @@ class CardGraphItem extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -76,16 +76,78 @@ class CardGraphItem extends StatelessWidget {
         child: Text(
           'No hay datos disponibles',
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(160),
             fontSize: 14,
           ),
         ),
       );
     }
 
+    double minX = chartData.isNotEmpty ? chartData.first.x : 0;
+    double maxX = chartData.isNotEmpty ? chartData.last.x : 1;
+
+    // Handle edge case where there is only one point
+    if (minX == maxX && chartData.isNotEmpty) {
+      minX -= const Duration(days: 1).inMilliseconds.toDouble();
+      maxX += const Duration(days: 1).inMilliseconds.toDouble();
+    }
+
+    double range = maxX - minX;
+
+    double interval;
+    if (range <= const Duration(days: 2).inMilliseconds) {
+      interval = const Duration(hours: 4).inMilliseconds.toDouble();
+    } else if (range <= const Duration(days: 7).inMilliseconds) {
+      interval = const Duration(days: 1).inMilliseconds.toDouble();
+    } else if (range <= const Duration(days: 31).inMilliseconds) {
+      interval = const Duration(days: 5).inMilliseconds.toDouble();
+    } else {
+      interval = const Duration(days: 30).inMilliseconds.toDouble();
+    }
+
+    // Ensure interval is not zero
+    if (interval == 0) interval = 1;
+
     return LineChart(
       LineChartData(
-        titlesData: FlTitlesData(show: showTitles),
+        titlesData: FlTitlesData(
+          show: showTitles,
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              interval: interval,
+              getTitlesWidget: (value, meta) {
+                DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                String formattedDate;
+
+                if (range <= const Duration(days: 2).inMilliseconds) {
+                  // If range is within 2 days, show only time
+                  formattedDate = DateFormat('HH:mm').format(date);
+                } else if (range <= const Duration(days: 7).inMilliseconds) {
+                  // If range is within 7 days, show abbreviated day and time
+                  formattedDate = DateFormat('E HH:mm').format(date);
+                } else {
+                  // If scale is monthly (or larger), only consider the day
+                  formattedDate = DateFormat('dd/MM').format(date);
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    formattedDate,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface.withAlpha(160),
+                      fontSize: 10,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
         borderData: FlBorderData(show: false),
         gridData: FlGridData(show: showGrid),
         lineBarsData: [
@@ -97,12 +159,12 @@ class CardGraphItem extends StatelessWidget {
             dotData: FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withAlpha(25),
             ),
           ),
         ],
-        minX: chartData.isNotEmpty ? chartData.first.x : 0,
-        maxX: chartData.isNotEmpty ? chartData.last.x : 1,
+        minX: minX,
+        maxX: maxX,
         minY: _getMinY(),
         maxY: _getMaxY(),
       ),

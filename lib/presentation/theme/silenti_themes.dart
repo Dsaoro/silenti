@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
-import 'package:silenti/presentation/theme/theme_extensions.dart';
 
 ThemeData silentiTheme() {
   return ThemeData(

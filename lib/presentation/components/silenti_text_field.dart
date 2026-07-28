@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:silenti/presentation/components/single_period_enforcer.dart';
-import 'package:silenti/utils/currency_formater.dart';
 
 // ignore: must_be_immutable
 class SilentiTextField extends StatefulWidget {
@@ -43,19 +42,16 @@ class _SilentiTextFieldState extends State<SilentiTextField> {
 
   void _setFormaters() {
     List<TextInputFormatter> rules = [];
-    switch (widget.keyboardType) {
-      case TextInputType.number:
-        isNumeric = true;
-        if (widget.isDouble) {
-          break;
-        }
+    final isNumericType = widget.keyboardType.toString().contains('number');
+
+    if (isNumericType) {
+      isNumeric = true;
+      if (!widget.isDouble) {
         rules = [
-          FilteringTextInputFormatter.allow(RegExp(r'[\d\.]')),
+          FilteringTextInputFormatter.allow(RegExp(r'[\d\.\,]')),
           SinglePeriodEnforcer()
         ];
-        break;
-      default:
-        break;
+      }
     }
     inputFormaters = rules;
   }
@@ -66,8 +62,8 @@ class _SilentiTextFieldState extends State<SilentiTextField> {
         isCollapsed: true,
         enabled: !widget.readOnly,
         hintText: widget.hintText,
+        counterText: "",
         prefixIcon: widget.prefixIcon);
-
     return decoration;
   }
 
@@ -80,31 +76,37 @@ class _SilentiTextFieldState extends State<SilentiTextField> {
     } else {
       keyboardType = widget.keyboardType;
     }
+    controller.text = widget.input;
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    controller.text = widget.input;
+  void didUpdateWidget(covariant SilentiTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.input != oldWidget.input && widget.input != controller.text) {
+      controller.text = widget.input;
+      // Note: This might still jump cursors if an external sync happens,
+      // but it prevents jumps from typing.
+    }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return TextField(
       inputFormatters: inputFormaters,
       maxLength: widget.maxLength,
       controller: controller,
       onChanged: (value) {
-        if (isNumeric && value == "") {
-          value = "0";
-        }
-        if (isNumeric && value == ".") {
-          value = "0.";
-        }
         if (isNumeric) {
-          widget.input = widget.isDouble
-              ? CurrencyFormater.convert(double.parse(value))
-              : CurrencyFormater.convert(int.parse(value));
-        } else {
-          widget.input = value;
+          // Normalize commas to dots for calculations
+          value = value.replaceAll(',', '.');
+
+          if (value == ".") {
+            value = "0.";
+          }
+          // Allow empty string while typing so user can clear and start fresh
         }
+        widget.input = value;
         widget.onChange(value);
       },
       textAlign: TextAlign.left,

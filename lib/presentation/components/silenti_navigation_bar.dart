@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/enums/silenti_colors.dart';
-
 class SilentiNavigationBar extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _SilentiNavigationBarState();

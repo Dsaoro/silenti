@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/budget_category.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_text_field.dart';
@@ -30,11 +29,15 @@ class BudgetForm extends StatefulWidget {
 }
 
 class _BudgetFormState extends State<BudgetForm> {
-  late BudgetCategory editingBudget;
+  late String _name;
+  late double _amount;
+  late String _amountInput;
 
   @override
   void initState() {
-    editingBudget = widget.budget;
+    _name = widget.budget.name;
+    _amount = widget.budget.amount;
+    _amountInput = CurrencyFormater.convert(_amount);
     super.initState();
   }
 
@@ -85,11 +88,13 @@ class _BudgetFormState extends State<BudgetForm> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: SilentiTextField(
-                  input: editingBudget.name,
+                  input: _name,
                   maxLength: 15,
                   keyboardType: TextInputType.text,
                   onChange: (value) {
-                    editingBudget.name = value;
+                    setState(() {
+                      _name = value;
+                    });
                   },
                 ),
               ),
@@ -120,12 +125,20 @@ class _BudgetFormState extends State<BudgetForm> {
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             child: SilentiTextField(
-              input: CurrencyFormater.convert(editingBudget.amount),
+              input: _amountInput,
               readOnly: widget.readOnly,
               onChange: (value) {
-                // setState(() {
-                editingBudget.amount = double.parse(value);
-                // });
+                setState(() {
+                  _amountInput = value;
+                  // Handle potential parse errors if needed, though convert handles basics
+                  try {
+                    String sanitized = value.replaceAll(',', '.');
+                    // Simple sanitization for example, careful with localization
+                    _amount = double.parse(sanitized);
+                  } catch (e) {
+                    // ignore
+                  }
+                });
               },
               keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
@@ -149,8 +162,12 @@ class _BudgetFormState extends State<BudgetForm> {
                   Theme.of(context).colorScheme.onSurface),
             ),
             onPressed: () {
-              if (editingBudget.name != "") {
-                widget.onSave(editingBudget);
+              if (_name.isNotEmpty) {
+                final updatedBudget = widget.budget.copyWith(
+                  name: _name,
+                  amount: _amount,
+                );
+                widget.onSave(updatedBudget);
                 Navigator.pop(context);
               }
             },

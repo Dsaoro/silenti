@@ -1,77 +1,151 @@
+import 'package:silenti/core/models/base_model.dart';
 import 'package:silenti/generated/l10n.dart';
 
-class FinancialAssetFrequency {
-  // 'daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once'
-  static const String daily = "daily";
-  static const String weekly = "weekly";
-  static const String monthly = "monthly";
-  static const String semiMonthly = "semi-monthly";
-  static const String anual = "anual";
-  static const String once = "once";
+enum Frequency {
+  daily,
+  weekly,
+  semiMonthly,
+  monthly,
+  anual,
+  once;
 
-  static const List<String> list = [
-    once,
-    daily,
-    weekly,
-    semiMonthly,
-    monthly,
-    anual,
-  ];
+  String get label {
+    switch (this) {
+      case Frequency.daily:
+        return S.current.frecDaily;
+      case Frequency.weekly:
+        return S.current.frecWeekly;
+      case Frequency.semiMonthly:
+        return S.current.frecSemiMonthly;
+      case Frequency.monthly:
+        return S.current.frecMonthly;
+      case Frequency.anual:
+        return S.current.frecAnnual;
+      case Frequency.once:
+        return S.current.frecOnce;
+    }
+  }
 
-  static final List<String> listNames = [
-    S.current.frecOnce,
-    S.current.frecDaily,
-    S.current.frecWeekly,
-    S.current.frecSemiMonthly,
-    S.current.frecMonthly,
-    S.current.frecAnual,
-  ];
-
-  static Map<String, String> getMap = {
-    S.current.frecOnce: once,
-    S.current.frecDaily: daily,
-    S.current.frecWeekly: weekly,
-    S.current.frecMonthly: monthly,
-    S.current.frecSemiMonthly: semiMonthly,
-    S.current.frecAnual: anual,
-  };
-}
-
-class FinancialAsset {
-  final int id;
-  String name;
-  double accountBalance;
-  int includedOnBalance;
-  double interest;
-  String frequency;
-
-  FinancialAsset(
-    this.id,
-    this.name,
-    this.accountBalance,
-    this.includedOnBalance,
-    this.interest,
-    this.frequency,
-  );
-
-  factory FinancialAsset.fromMap(Map<String, dynamic> map) {
-    return FinancialAsset(
-      map['id'],
-      map['name'],
-      map['balance'] ?? 0.0,
-      map['included'] ?? 0,
-      map['interestRate'] ?? 0,
-      map['frequency'] ?? "",
+  static Frequency fromString(String value) {
+    return Frequency.values.firstWhere(
+      (e) => e.toString().split('.').last == value,
+      orElse: () => Frequency.once,
     );
   }
-  toMap() {
+}
+
+abstract class FinancialAsset implements BaseModel {
+  @override
+  final int id;
+  final String name;
+  final int includedOnBalance; // 1 or 0
+  final Frequency frequency;
+
+  FinancialAsset({
+    required this.id,
+    required this.name,
+    required this.includedOnBalance,
+    required this.frequency,
+  });
+
+  double get currentBalance;
+
+  @override
+  Map<String, dynamic> toMap();
+
+  static FinancialAsset fromMap(Map<String, dynamic> map) {
+    final type = map['type'] as String? ?? 'BANK';
+    if (type == 'INVESTMENT') {
+      return InvestmentAsset.fromMap(map);
+    } else {
+      return BankAccount.fromMap(map);
+    }
+  }
+}
+
+class BankAccount extends FinancialAsset {
+  final double balance;
+  final double interestRate;
+
+  BankAccount({
+    required super.id,
+    required super.name,
+    required super.includedOnBalance,
+    required super.frequency,
+    required this.balance,
+    required this.interestRate,
+  });
+
+  @override
+  double get currentBalance => balance;
+
+  @override
+  Map<String, dynamic> toMap() {
     return {
-      // 'id': id,
+      'id': id == 0 ? null : id, // Auto-increment
+      'type': 'BANK',
       'name': name,
-      'balance': accountBalance,
+      'balance': balance,
       'included': includedOnBalance,
-      'interestRate': interest,
-      'frequency': frequency,
+      'frequency': frequency.toString().split('.').last,
+      'interestRate': interestRate,
     };
+  }
+
+  factory BankAccount.fromMap(Map<String, dynamic> map) {
+    return BankAccount(
+      id: map['id'],
+      name: map['name'],
+      includedOnBalance: map['included'] ?? 0,
+      frequency: Frequency.fromString(map['frequency'] ?? 'once'),
+      balance: (map['balance'] ?? 0.0).toDouble(),
+      interestRate: (map['interestRate'] ?? 0.0).toDouble(),
+    );
+  }
+}
+
+class InvestmentAsset extends FinancialAsset {
+  final double quantity;
+  final double currentPrice;
+  final String tickerSymbol;
+
+  InvestmentAsset({
+    required super.id,
+    required super.name,
+    required super.includedOnBalance,
+    required super.frequency,
+    required this.quantity,
+    required this.currentPrice,
+    required this.tickerSymbol,
+  });
+
+  @override
+  double get currentBalance => quantity * currentPrice;
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id == 0 ? null : id,
+      'type': 'INVESTMENT',
+      'name': name,
+      'included': includedOnBalance,
+      'frequency': frequency.toString().split('.').last,
+      'quantity': quantity, // Stored in specific column or JSON
+      'currentPrice': currentPrice, // Stored in balance or separate
+      'balance': currentBalance, // Store calculated for easy query
+      'tickerSymbol': tickerSymbol,
+    };
+  }
+
+  factory InvestmentAsset.fromMap(Map<String, dynamic> map) {
+    return InvestmentAsset(
+      id: map['id'],
+      name: map['name'],
+      includedOnBalance: map['included'] ?? 0,
+      frequency: Frequency.fromString(map['frequency'] ?? 'once'),
+      quantity: (map['quantity'] ?? 0.0).toDouble(),
+      currentPrice: (map['currentPrice'] ?? 0.0).toDouble(),
+      tickerSymbol: map['tickerSymbol'] ?? '',
+    );
   }
 }

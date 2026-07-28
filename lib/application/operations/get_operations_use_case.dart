@@ -109,4 +109,18 @@ class GetOperations extends BaseUseCase {
     }
     return result;
   }
+
+  Future<HandleResult<double>> getSpentAmountByCategoryAndMonth(
+      int categoryId, int month, int year) async {
+    HandleResult<double> result = HandleResult<double>();
+    OperationDAO dao = OperationDAO();
+    try {
+      double spent =
+          await dao.getSpentAmountByCategoryAndMonth(categoryId, month, year);
+      result.setData(spent);
+    } catch (e) {
+      result.setError(e.toString());
+    }
+    return result;
+  }
 }

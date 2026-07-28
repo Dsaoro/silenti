@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
+
 import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_dropdown.dart';
@@ -31,12 +31,37 @@ class AssetForm extends StatefulWidget {
 }
 
 class _AssetFormState extends State<AssetForm> {
-  late FinancialAsset editingAsset;
+  late String _name;
+  late double _balance;
+  late String _balanceInput;
+  late int _includedOnBalance;
+  late double _interestRate;
+  late String _interestRateInput;
+  late Frequency _frequency;
 
   @override
   void initState() {
-    editingAsset = widget.asset;
     super.initState();
+    _name = widget.asset.name;
+    _includedOnBalance = widget.asset.includedOnBalance;
+    _frequency = widget.asset.frequency;
+
+    // Handle subclasses
+    if (widget.asset is BankAccount) {
+      _balance = (widget.asset as BankAccount).balance;
+      _interestRate = (widget.asset as BankAccount).interestRate;
+    } else if (widget.asset is InvestmentAsset) {
+      // Mapping for investment if editing in this form (though arguably needs separate form)
+      _balance = (widget.asset as InvestmentAsset).currentBalance;
+      _interestRate = 0.0;
+    } else {
+      // Default or base
+      _balance = widget.asset.currentBalance;
+      _interestRate = 0.0;
+    }
+
+    _balanceInput = CurrencyFormater.convert(_balance);
+    _interestRateInput = _interestRate.toString();
   }
 
   @override
@@ -78,11 +103,13 @@ class _AssetFormState extends State<AssetForm> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: SilentiTextField(
-                  input: editingAsset.name,
+                  input: _name,
                   maxLength: 15,
                   keyboardType: TextInputType.text,
                   onChange: (value) {
-                    editingAsset.name = value;
+                    setState(() {
+                      _name = value;
+                    });
                   },
                 ),
               ),
@@ -112,12 +139,18 @@ class _AssetFormState extends State<AssetForm> {
               alignment: Alignment.centerLeft,
               // height: 50,
               child: SilentiTextField(
-                input: CurrencyFormater.convert(editingAsset.accountBalance),
+                input: _balanceInput,
                 readOnly: widget.readOnly,
                 onChange: (value) {
-                  // setState(() {
-                  editingAsset.accountBalance = double.parse(value);
-                  // });
+                  setState(() {
+                    _balanceInput = value;
+                    try {
+                      String sanitized = value.replaceAll(',', '.');
+                      _balance = double.parse(sanitized);
+                    } catch (e) {
+                      // ignore
+                    }
+                  });
                 },
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
@@ -138,15 +171,12 @@ class _AssetFormState extends State<AssetForm> {
             alignment: Alignment.center,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: Checkbox(
-              value: editingAsset.includedOnBalance == 1,
+              value: _includedOnBalance == 1,
               onChanged: (value) {
                 if (widget.readOnly) return;
-                if (value != null && value) {
-                  editingAsset.includedOnBalance = 1;
-                } else {
-                  editingAsset.includedOnBalance = 0;
-                }
-                setState(() {});
+                setState(() {
+                  _includedOnBalance = (value != null && value) ? 1 : 0;
+                });
               },
             ),
           ),
@@ -198,14 +228,12 @@ class _AssetFormState extends State<AssetForm> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: SilentiDropdown(
-                    items: FinancialAssetFrequency.listNames,
-                    input: FinancialAssetFrequency.list.indexOf(
-                      editingAsset.frequency,
-                    ),
+                    items: Frequency.values.map((e) => e.label).toList(),
+                    input: Frequency.values.indexOf(_frequency),
                     onChanged: (value) {
-                      editingAsset.frequency =
-                          FinancialAssetFrequency.list[value];
-                      setState(() {});
+                      setState(() {
+                        _frequency = Frequency.values[value];
+                      });
                     },
                     readOnly: widget.readOnly,
                   ),
@@ -235,16 +263,17 @@ class _AssetFormState extends State<AssetForm> {
                   height: 60,
                   // height: 50,
                   child: SilentiTextField(
-                    input: editingAsset.interest.toStringAsPrecision(3),
+                    input: _interestRateInput,
                     readOnly: widget.readOnly,
                     onChange: (value) {
-                      if (value == "") {
-                        value = "0";
-                      }
-                      if (value == ".") {
-                        value = "0.";
-                      }
-                      editingAsset.interest = double.parse(value);
+                      setState(() {
+                        _interestRateInput = value;
+                        if (value == "") value = "0";
+                        if (value == ".") value = "0.";
+                        try {
+                          _interestRate = double.parse(value);
+                        } catch (_) {}
+                      });
                     },
                     isDouble: true,
                     keyboardType: TextInputType.numberWithOptions(
@@ -272,8 +301,17 @@ class _AssetFormState extends State<AssetForm> {
                   Theme.of(context).colorScheme.onSurface),
             ),
             onPressed: () {
-              if (editingAsset.name != "") {
-                widget.onSave(editingAsset);
+              if (_name.isNotEmpty) {
+                // Construct new BankAccount (default for this form)
+                final newAsset = BankAccount(
+                  id: widget.asset.id,
+                  name: _name,
+                  includedOnBalance: _includedOnBalance,
+                  frequency: _frequency,
+                  balance: _balance,
+                  interestRate: _interestRate,
+                );
+                widget.onSave(newAsset);
               }
             },
             child: Text(
@@ -290,7 +328,5 @@ class _AssetFormState extends State<AssetForm> {
       alignment: Alignment.center,
       child: ListView(children: children),
     );
-
-    ///Listview End
   }
 }

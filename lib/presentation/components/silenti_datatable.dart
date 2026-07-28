@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_text_field.dart';
 
@@ -56,6 +55,7 @@ class _SilentiDatatableState extends State<SilentiDatatable> {
     return Container(
       decoration: BoxDecoration(),
       width: MediaQuery.of(context).size.width,
+      // height: MediaQuery.of(context).size.height * 0.6,
       alignment: Alignment.center,
       padding: EdgeInsets.all(4),
       child: Column(

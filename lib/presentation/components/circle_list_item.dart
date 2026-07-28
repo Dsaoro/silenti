@@ -26,9 +26,6 @@ class _CircleListItemState extends State<CircleListItem> {
         if (widget.onTap != null) {
           widget.onTap!();
         }
-        // setState(() {
-        //   widget.isSelected = true;
-        // });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -40,7 +37,7 @@ class _CircleListItemState extends State<CircleListItem> {
               decoration: BoxDecoration(
                 color: widget.isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.surface,
+                    : Theme.of(context).colorScheme.onSurface,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(
@@ -48,7 +45,7 @@ class _CircleListItemState extends State<CircleListItem> {
                 size: 28,
                 color: widget.isSelected
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSurface,
+                    : Theme.of(context).colorScheme.surface,
               ),
             ),
             const SizedBox(height: 8),
@@ -59,7 +56,7 @@ class _CircleListItemState extends State<CircleListItem> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/generated/l10n.dart';
 
 class OutcomePage extends StatefulWidget {
@@ -23,7 +22,7 @@ class _OutcomePageState extends State<OutcomePage> {
             child: Text(S.current.spent),
           ),
           Card(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(160),
             child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.52),

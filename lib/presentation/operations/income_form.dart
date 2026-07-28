@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
 import 'package:silenti/application/financial_assets/deposit_in_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_date_picker.dart';
@@ -64,8 +63,16 @@ class _IncomeFormState extends State<IncomeForm> {
   _getCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
-      for (var category in response.model) {
-        _categories.addEntries([MapEntry(category.id, category.name)]);
+      _categories.clear();
+      _categories.addEntries([MapEntry(0, "Select cat...")]);
+      for (var category in response.model!) {
+        _categories.addEntries([
+          MapEntry(
+              category.id,
+              category.name.length > 10
+                  ? "${category.name.substring(0, 10)}..."
+                  : category.name)
+        ]);
       }
     }
   }
@@ -73,7 +80,7 @@ class _IncomeFormState extends State<IncomeForm> {
   _requestAssets() async {
     var response = await GetFinancialAssets().execute();
     if (response.status) {
-      for (var asset in response.model) {
+      for (var asset in response.model!) {
         _assets.addEntries([MapEntry(asset.id, asset.name)]);
       }
     } else {
@@ -164,7 +171,7 @@ class _IncomeFormState extends State<IncomeForm> {
           Row(children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-              width: MediaQuery.of(context).size.width * 0.38,
+              width: MediaQuery.of(context).size.width * 0.33,
               alignment: Alignment.topLeft,
               child: Column(children: [
                 Container(
@@ -183,7 +190,7 @@ class _IncomeFormState extends State<IncomeForm> {
                 ),
                 Container(
                   padding: EdgeInsets.all(8),
-                  width: MediaQuery.of(context).size.width * 0.37,
+                  width: MediaQuery.of(context).size.width * 0.33,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -211,7 +218,7 @@ class _IncomeFormState extends State<IncomeForm> {
             ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-              width: MediaQuery.of(context).size.width * 0.38,
+              width: MediaQuery.of(context).size.width * 0.33,
               alignment: Alignment.topLeft,
               child: Column(
                 children: [
@@ -231,7 +238,7 @@ class _IncomeFormState extends State<IncomeForm> {
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
-                    width: MediaQuery.of(context).size.width * 0.37,
+                    width: MediaQuery.of(context).size.width * 0.33,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -239,16 +246,25 @@ class _IncomeFormState extends State<IncomeForm> {
                       borderRadius: BorderRadius.circular(4),
                       elevation: 2,
                       alignment: Alignment.centerLeft,
-                      value: 0,
-                      items: _categories.entries
-                          .map(
-                            (entry) => DropdownMenuItem(
-                              value: entry.key,
-                              child: Text(entry.value),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {},
+                      value: subCategory,
+                      items: _categories.entries.isNotEmpty
+                          ? _categories.entries
+                              .map(
+                                (entry) => DropdownMenuItem(
+                                  value: entry.key,
+                                  child: Text(entry.value),
+                                ),
+                              )
+                              .toList()
+                          : [
+                              DropdownMenuItem(
+                                value: 0,
+                                child: Text("None"),
+                              ),
+                            ],
+                      onChanged: (value) {
+                        subCategory = value ?? 0;
+                      },
                     ),
                   ),
                 ],

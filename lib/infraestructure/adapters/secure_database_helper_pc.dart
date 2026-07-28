@@ -1,6 +1,7 @@
 //import 'package:sqflite_sqlcipher/sqflite.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter/foundation.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -73,16 +74,20 @@ class SecureDatabaseHelperPC {
   static const String _createFinancialAssetsTable = '''
   CREATE TABLE financial_assets(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT DEFAULT 'BANK',
     name TEXT NOT NULL,
     balance REAL NOT NULL,
     included INTEGER NOT NULL,
     interestRate REAL,
-    frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL
+    frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL,
+    quantity REAL,
+    currentPrice REAL,
+    tickerSymbol TEXT
   )
   ''';
   static const String _initFinancialAssets = '''
-  INSERT INTO financial_assets (name, balance, included, interestRate, frequency)
-    VALUES ('Efectivo', 5000, 1, 0, 'once')
+  INSERT INTO financial_assets (type, name, balance, included, interestRate, frequency)
+    VALUES ('BANK', 'Efectivo', 5000, 1, 0, 'once')
   ''';
 
   static const String _createProfitsTable = '''
@@ -96,22 +101,24 @@ class SecureDatabaseHelperPC {
   ''';
   static const String _initProfits = '''
   INSERT INTO profits (financialAsset, date, amount)  
-    VALUES (0, '2021-01-01', 0)
+    VALUES (0, CURRENT_TIMESTAMP, 0)
   ''';
 
   static const String _createBudgetCategoriesTable = '''
   CREATE TABLE budget_categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    parentId INTEGER,
     type TEXT CHECK(type IN ('income', 'spent') NOT NULL),
     name TEXT NOT NULL,
     amount REAL NOT NULL,
     frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL,
-    firstTime TEXT NOT NULL
+    firstTime TEXT NOT NULL,
+    FOREIGN KEY (parentId) REFERENCES budget_categories(id) ON DELETE CASCADE
   )
   ''';
   static const String _initBudgetCategories = '''
   INSERT INTO budget_categories (type, name, amount, frequency, firstTime)
-    VALUES ('spent','various', 0, 'monthly', '2025-03-01')
+    VALUES ('spent','various', 0, 'monthly', CURRENT_TIMESTAMP)
   ''';
 
   static const String _createSubCategories = '''
@@ -132,15 +139,17 @@ class SecureDatabaseHelperPC {
     date TEXT NOT NULL,
     description TEXT,
     category INTEGER NOT NULL,
-    type TEXT CHECK(type IN ('income', 'spent')) NOT NULL,
-    FOREIGN KEY (financialAsset) REFERENCES financial_assets(id)
-    FOREIGN KEY (category) REFERENCES budget_categories(id)
+    destination_asset_id INTEGER,
+    type TEXT CHECK(type IN ('income', 'spent', 'transfer')) NOT NULL,
+    FOREIGN KEY (financialAsset) REFERENCES financial_assets(id),
+    FOREIGN KEY (category) REFERENCES budget_categories(id),
+    FOREIGN KEY (destination_asset_id) REFERENCES financial_assets(id)
   )
   ''';
 
   static const String _initOperations = '''
   INSERT INTO Operations (financialAsset, amount, date, description, category, type)
-    VALUES (0, 0, '2021-01-01', 'Initial balance', 1, 'income')
+    VALUES (0, 0, CURRENT_TIMESTAMP, 'Initial balance', 1, 'income')
   ''';
   static const String _createNotificationsTable = '''
   CREATE TABLE notifications (
@@ -155,7 +164,7 @@ class SecureDatabaseHelperPC {
 
   static const String _initNotifications = '''
   INSERT INTO notifications (message, date, status, Operation_id)
-    VALUES ('Initial balance', '2021-01-01', 'send', 1)
+    VALUES ('Initial balance', CURRENT_TIMESTAMP, 'send', 1)
   ''';
 
   static const String _createBalanceHistoryTable = '''
@@ -172,6 +181,6 @@ class SecureDatabaseHelperPC {
 
   static const String _initBalanceHistory = '''
   INSERT INTO balance_history (financialAssetId, balance, date, operationId)
-    VALUES (1, 5000, '2021-01-01', 1)
+    VALUES (1, 0, CURRENT_TIMESTAMP, 1)
   ''';
 }

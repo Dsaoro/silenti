@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
-import 'package:silenti/application/budgets/get_expenses_sub_categories_use_Case.dart';
+import 'package:silenti/application/budgets/get_expenses_sub_categories_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/financial_assets/withdraw_from_financial_asset_use_case.dart';
-import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_date_picker.dart';
@@ -22,6 +21,7 @@ class _SpendFormState extends State<SpendForm> {
   int category = 0;
   int subCategory = 0;
   double amount = 0;
+  String _amountInput = "";
   int financialAssetId = 1;
   String description = "";
 
@@ -42,7 +42,7 @@ class _SpendFormState extends State<SpendForm> {
   _requestAssets() async {
     var response = await GetFinancialAssets().execute();
     if (response.status) {
-      for (var asset in response.model) {
+      for (var asset in response.model!) {
         _assets.addEntries([MapEntry(asset.id, asset.name)]);
       }
     } else {
@@ -55,7 +55,7 @@ class _SpendFormState extends State<SpendForm> {
   _getCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
-      for (var category in response.model) {
+      for (var category in response.model!) {
         _categories.addEntries([MapEntry(category.id, category.name)]);
       }
     }
@@ -64,7 +64,7 @@ class _SpendFormState extends State<SpendForm> {
   _getSubCategories() async {
     var response = await GetExpensesSubCategoriesUseCase().byId(id: category);
     if (response.status) {
-      for (var category in response.model) {
+      for (var category in response.model!) {
         _subCategories.addEntries([MapEntry(category.id, category.name)]);
       }
     }
@@ -111,6 +111,7 @@ class _SpendFormState extends State<SpendForm> {
   @override
   void initState() {
     _getDataFromDB();
+    _amountInput = CurrencyFormater.convert(amount);
     super.initState();
   }
 
@@ -156,9 +157,15 @@ class _SpendFormState extends State<SpendForm> {
             // height: 50,
             child: SilentiTextField(
               isMoney: true,
-              input: CurrencyFormater.convert(amount),
+              input: _amountInput,
               onChange: (value) {
-                amount = double.parse(value);
+                setState(() {
+                  _amountInput = value;
+                  try {
+                    String sanitized = value.replaceAll(',', '.');
+                    amount = double.parse(sanitized);
+                  } catch (_) {}
+                });
               },
               keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
@@ -166,6 +173,7 @@ class _SpendFormState extends State<SpendForm> {
           SizedBox(
             height: 8,
           ),
+          //Account
           Container(
             padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
@@ -213,7 +221,7 @@ class _SpendFormState extends State<SpendForm> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-                width: MediaQuery.of(context).size.width * 0.38,
+                width: MediaQuery.of(context).size.width * 0.35,
                 alignment: Alignment.topLeft,
                 child: Column(children: [
                   Container(
@@ -240,7 +248,7 @@ class _SpendFormState extends State<SpendForm> {
                       borderRadius: BorderRadius.circular(4),
                       elevation: 2,
                       alignment: Alignment.centerLeft,
-                      value: 0,
+                      value: category,
                       items: _categories.entries
                           .map(
                             (entry) => DropdownMenuItem(
@@ -249,14 +257,18 @@ class _SpendFormState extends State<SpendForm> {
                             ),
                           )
                           .toList(),
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          category = value ?? 0;
+                        });
+                      },
                     ),
                   ),
                 ]),
               ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-                width: MediaQuery.of(context).size.width * 0.38,
+                width: MediaQuery.of(context).size.width * 0.35,
                 alignment: Alignment.topLeft,
                 child: Column(
                   children: [
@@ -287,7 +299,7 @@ class _SpendFormState extends State<SpendForm> {
                             borderRadius: BorderRadius.circular(4),
                             elevation: 2,
                             alignment: Alignment.centerLeft,
-                            value: 0,
+                            value: subCategory,
                             items: _categories.entries
                                 .map(
                                   (entry) => DropdownMenuItem(
@@ -296,7 +308,11 @@ class _SpendFormState extends State<SpendForm> {
                                   ),
                                 )
                                 .toList(),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              setState(() {
+                                subCategory = value ?? 0;
+                              });
+                            },
                           ),
                         );
                       },
@@ -323,18 +339,7 @@ class _SpendFormState extends State<SpendForm> {
           SizedBox(
             height: 8,
           ),
-          // Container(
-          //   padding: EdgeInsets.all(8),
-          //   child: TextField(
-          //     controller: TextEditingController(),
-          //     readOnly: true,
-          //     onTap: _selectDate,
-          //     decoration: InputDecoration(
-          //       prefixIcon: Icon(Icons.calendar_today),
-          //       hintText: _getShowableDate(date),
-          //     ),
-          //   ),
-          // ),
+
           SilentiDatePicker(
             inputDate: DateTime.now(),
             onChange: (value) {

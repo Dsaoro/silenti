@@ -50,7 +50,7 @@ class OperationCardListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      margin: EdgeInsets.symmetric(vertical: 1, horizontal: 2),
       child: Card(
         elevation: 2,
         child: Padding(
@@ -58,7 +58,7 @@ class OperationCardListItem extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,7 +68,7 @@ class OperationCardListItem extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                         fontSize: 12,
                       ),
                     ),
@@ -95,62 +95,4 @@ class OperationCardListItem extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildImage() {
-  //   return AspectRatio(
-  //     aspectRatio: 1,
-  //     child: Container(
-  //       width: 64,
-  //       decoration: BoxDecoration(
-  //         color: Colors.black,
-  //         borderRadius: BorderRadius.circular(8),
-  //       ),
-  //       child: Icon(Icons.attach_money_rounded),
-  //       // child: ClipRRect(
-  //       //   borderRadius: BorderRadius.circular(8),
-  //       //   child: _buildText(),
-  //       // ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildText(context) {
-  //   if (!isLoading) {
-  //     return Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Container(
-  //           width: MediaQuery.of(context).size.width * 0.5,
-  //           height: 24,
-  //           decoration: BoxDecoration(
-  //             color: Colors.black,
-  //             borderRadius: BorderRadius.circular(8),
-  //           ),
-  //           child: Text(
-  //             title,
-  //             style: SilentiStyles.titleTextStyle,
-  //           ),
-  //         ),
-  //         const SizedBox(height: 6),
-  //         Container(
-  //           width: MediaQuery.of(context).size.width * 0.5,
-  //           height: 34,
-  //           decoration: BoxDecoration(
-  //             color: Colors.black,
-  //             borderRadius: BorderRadius.circular(8),
-  //           ),
-  //           child: Text(
-  //             content,
-  //             style: SilentiStyles.titleTextStyle,
-  //           ),
-  //         ),
-  //       ],
-  //     );
-  //   } else {
-  //     return Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: 8),
-  //       child: Text(content, style: TextStyle(color: Colors.white)),
-  //     );
-  //   }
-  // }
 }

@@ -28,10 +28,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -55,11 +54,11 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `register transaction`
-  String get trnasactionRegistration {
+  /// `Register transaction`
+  String get transactionRegistration {
     return Intl.message(
-      'register transaction',
-      name: 'trnasactionRegistration',
+      'Register transaction',
+      name: 'transactionRegistration',
       desc: 'add a new transaction',
       args: [],
     );
@@ -75,9 +74,9 @@ class S {
     return Intl.message('Income', name: 'income', desc: 'income', args: []);
   }
 
-  /// `Spent`
+  /// `Expense`
   String get spent {
-    return Intl.message('Spent', name: 'spent', desc: 'outcome', args: []);
+    return Intl.message('Expense', name: 'spent', desc: 'outcome', args: []);
   }
 
   /// `Register operation`
@@ -180,9 +179,9 @@ class S {
     return Intl.message('Update', name: 'update', desc: 'label', args: []);
   }
 
-  /// `Update`
+  /// `Type`
   String get type {
-    return Intl.message('Update', name: 'type', desc: 'label', args: []);
+    return Intl.message('Type', name: 'type', desc: 'label', args: []);
   }
 
   /// `Date`
@@ -205,10 +204,10 @@ class S {
     );
   }
 
-  /// `SubCategory`
+  /// `Subcategory`
   String get subCategory {
     return Intl.message(
-      'SubCategory',
+      'Subcategory',
       name: 'subCategory',
       desc: 'label',
       args: [],
@@ -220,9 +219,9 @@ class S {
     return Intl.message('Balance', name: 'balance', desc: 'label', args: []);
   }
 
-  /// `Sumary`
-  String get sumary {
-    return Intl.message('Sumary', name: 'sumary', desc: 'label', args: []);
+  /// `Summary`
+  String get summary {
+    return Intl.message('Summary', name: 'summary', desc: 'label', args: []);
   }
 
   /// `Add`
@@ -250,10 +249,10 @@ class S {
     );
   }
 
-  /// `Frecuency`
+  /// `Frequency`
   String get frequency {
     return Intl.message(
-      'Frecuency',
+      'Frequency',
       name: 'frequency',
       desc: 'label',
       args: [],
@@ -270,10 +269,10 @@ class S {
     return Intl.message('Weekly', name: 'frecWeekly', desc: 'label', args: []);
   }
 
-  /// `SemiMonthly`
+  /// `Semi-monthly`
   String get frecSemiMonthly {
     return Intl.message(
-      'SemiMonthly',
+      'Semi-monthly',
       name: 'frecSemiMonthly',
       desc: 'label',
       args: [],
@@ -290,9 +289,9 @@ class S {
     );
   }
 
-  /// `Anual`
-  String get frecAnual {
-    return Intl.message('Anual', name: 'frecAnual', desc: 'label', args: []);
+  /// `Annual`
+  String get frecAnnual {
+    return Intl.message('Annual', name: 'frecAnnual', desc: 'label', args: []);
   }
 
   /// `Once`
@@ -315,10 +314,10 @@ class S {
     return Intl.message('Details', name: 'details', desc: 'label', args: []);
   }
 
-  /// `Interest rate(E.A.)`
+  /// `Interest rate (E.A.)`
   String get interestRate {
     return Intl.message(
-      'Interest rate(E.A.)',
+      'Interest rate (E.A.)',
       name: 'interestRate',
       desc: 'label',
       args: [],
@@ -350,19 +349,19 @@ class S {
     );
   }
 
-  /// `New budget `
+  /// `New budget`
   String get newBudget {
     return Intl.message(
-      'New budget ',
+      'New budget',
       name: 'newBudget',
       desc: 'label',
       args: [],
     );
   }
 
-  /// `Status `
+  /// `Status`
   String get status {
-    return Intl.message('Status ', name: 'status', desc: 'label', args: []);
+    return Intl.message('Status', name: 'status', desc: 'label', args: []);
   }
 
   /// `Unavailable data`
@@ -385,10 +384,10 @@ class S {
     );
   }
 
-  /// `By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?`
+  /// `By deleting this {item} all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?`
   String deleteWarning(Object item) {
     return Intl.message(
-      'By deleting this $item all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?',
+      'By deleting this $item all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?',
       name: 'deleteWarning',
       desc: 'message',
       args: [item],
@@ -410,7 +409,10 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
-    return const <Locale>[Locale.fromSubtags(languageCode: 'en')];
+    return const <Locale>[
+      Locale.fromSubtags(languageCode: 'es'),
+      Locale.fromSubtags(languageCode: 'en'),
+    ];
   }
 
   @override

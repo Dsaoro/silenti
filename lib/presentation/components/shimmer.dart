@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:silenti/core/enums/silenti_colors.dart';
 
 class Shimmer extends StatefulWidget {
   static ShimmerState? of(BuildContext context) {
@@ -13,6 +14,18 @@ class Shimmer extends StatefulWidget {
   @override
   ShimmerState createState() => ShimmerState();
 }
+
+final shimmerGradientDefault = LinearGradient(
+  colors: [
+    SilentiColors.gray.withAlpha(80),
+    SilentiColors.gray.withAlpha(42),
+    SilentiColors.gray.withAlpha(5),
+  ],
+  stops: [0.1, 0.3, 0.4],
+  begin: Alignment(-1.0, -0.3),
+  end: Alignment(1.0, 0.3),
+  tileMode: TileMode.clamp,
+);
 
 class ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   late AnimationController _shimmerController;

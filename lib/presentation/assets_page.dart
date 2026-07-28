@@ -28,14 +28,6 @@ class AssetsPage extends StatefulWidget {
   State<AssetsPage> createState() => _AssetsPageState();
 }
 
-const _shimmerGradient = LinearGradient(
-  colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
-  stops: [0.1, 0.3, 0.4],
-  begin: Alignment(-1.0, -0.3),
-  end: Alignment(1.0, 0.3),
-  tileMode: TileMode.clamp,
-);
-
 class _AssetsPageState extends State<AssetsPage> {
   bool _isLoading = true;
   bool _isEditing = false;
@@ -44,7 +36,8 @@ class _AssetsPageState extends State<AssetsPage> {
   List<FlSpot> chartData = [];
   int currentSelectedIndex = 0;
 
-  void _toggleLoading() {
+  void _toggleLoading() async {
+    // await Future.delayed(const Duration(milliseconds: 200));
     setState(() {
       // _isLoading = !_isLoading;
       _isLoading = false;
@@ -68,16 +61,16 @@ class _AssetsPageState extends State<AssetsPage> {
     if (assets.isNotEmpty) {
       await _requestAssetOperations(currentSelectedIndex);
     }
-    setState(() {
-      _toggleLoading();
-    });
+    // setState(() {
+    _toggleLoading();
+    // });
   }
 
   _getAssets() async {
     var response = await GetFinancialAssets().execute();
     if (response.status) {
       setState(() {
-        assets = response.model;
+        assets = response.model!;
         if (assets.isNotEmpty) {
           _loadChartData(assets[currentSelectedIndex].id);
         }
@@ -97,7 +90,7 @@ class _AssetsPageState extends State<AssetsPage> {
 
     if (chartResponse.status) {
       setState(() {
-        chartData = chartResponse.model;
+        chartData = chartResponse.model!;
       });
     } else {
       if (kDebugMode) {
@@ -132,7 +125,7 @@ class _AssetsPageState extends State<AssetsPage> {
     } else {
       setState(() {
         _toggleLoading();
-        operations = response.model;
+        operations = response.model!;
       });
     }
   }
@@ -145,7 +138,7 @@ class _AssetsPageState extends State<AssetsPage> {
 
   _deleteAsset(FinancialAsset asset) async {
     var response = await DeleteFinancialAssetUseCase().execute(asset.id);
-    if (response.status && response.model > 0) {
+    if (response.status && response.model! > 0) {
       await _getDataFromDB();
       if (currentSelectedIndex >= assets.length) {
         if (kDebugMode) {
@@ -181,7 +174,7 @@ class _AssetsPageState extends State<AssetsPage> {
 
   _createNewAsset(FinancialAsset asset) async {
     var response = await CreateFinancialAssetUseCase().execute(asset);
-    if (response.status && response.model > 0) {
+    if (response.status && response.model! > 0) {
       setState(() {
         _getDataFromDB();
         NotificationPopper(
@@ -209,7 +202,15 @@ class _AssetsPageState extends State<AssetsPage> {
       print("build top row list  ${assets.isNotEmpty}");
     }
     if (assets.isNotEmpty) {
+      if (kDebugMode) {
+        print("***-* assets is not empty");
+      }
       for (var asset in assets) {
+        if (kDebugMode) {
+          print("***-* building top row item for asset: ${asset.name}");
+          print(
+              "asset index: ${assets.indexOf(asset)}\ncurrentBalance:${asset.currentBalance}\nincludedOnBalance:${asset.includedOnBalance}\nfrequency:${asset.frequency}\nname:${asset.name}\n");
+        }
         children.add(
           _buildTopRowItem(Icons.attach_money, asset.name, () async {
             await _selectAsset(assets.indexOf(asset));
@@ -232,13 +233,19 @@ class _AssetsPageState extends State<AssetsPage> {
               width: MediaQuery.of(context).size.width,
               child: AssetForm(
                 onSave: (value) {
-                  if (value.runtimeType == FinancialAsset) {
+                  if (value is FinancialAsset) {
                     _createNewAsset(value);
                   }
                   Navigator.pop(context);
                 },
-                asset: FinancialAsset(
-                    0, "", 0.0, 1, 0.0, FinancialAssetFrequency.once),
+                asset: BankAccount(
+                  id: 0,
+                  name: "",
+                  includedOnBalance: 1,
+                  frequency: Frequency.once,
+                  balance: 0.0,
+                  interestRate: 0.0,
+                ),
                 buttonText: S.current.register,
               ),
             ),
@@ -271,11 +278,6 @@ class _AssetsPageState extends State<AssetsPage> {
     return ShimmerLoading(
       isLoading: _isLoading,
       child: CircleListItem(
-        // onTap: () {
-        //   if (kDebugMode) {
-        //     print("click on item");
-        //   }
-        // },
         onTap: onTap,
         icon: icon,
         title: title,
@@ -340,8 +342,8 @@ class _AssetsPageState extends State<AssetsPage> {
               children: [
                 if (_isEditing)
                   SizedBox(
-                    width: 100,
-                    height: 60,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: 50,
                     child: SilentiTextField(
                       input: asset.name,
                       onChange: () {},
@@ -351,16 +353,13 @@ class _AssetsPageState extends State<AssetsPage> {
                   ),
                 if (!_isEditing)
                   SizedBox(
-                    width: 100,
+                    width: MediaQuery.of(context).size.width * 0.6,
                     height: 50,
                     child: Text(
                       asset.name,
                       style: SilentiStyles.titleTextStyleDark(context),
                     ),
                   ),
-                SizedBox(
-                  width: 32,
-                ),
                 SizedBox(
                   child: IconButton(
                     onPressed: () {
@@ -377,8 +376,85 @@ class _AssetsPageState extends State<AssetsPage> {
                         : Icon(
                             Icons.edit,
                             size: 28,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
+                  ),
+                ),
+                // SizedBox(
+                //   width: 2,
+                // ),
+                SizedBox(
+                  child: IconButton(
+                    onPressed: () {
+                      AlertDialog confirmation = AlertDialog(
+                        content: Container(
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          alignment: Alignment.centerLeft,
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  S.current.warning,
+                                  style:
+                                      SilentiStyles.titleTextStyleDark(context),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                S.current.deleteWarning(
+                                  S.current.asset,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              S.current.cancel,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              if (currentSelectedIndex == 0 &&
+                                  assets.length == 1) {
+                                NotificationPopper(
+                                  contentType: ContentType.warning,
+                                  title: "Error",
+                                  message:
+                                      "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
+                                  // ignore: use_build_context_synchronously
+                                ).pop(context);
+                                return;
+                              }
+                              await _deleteAsset(asset);
+                              // ignore: use_build_context_synchronously
+                              setState(() {});
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              S.current.delete,
+                            ),
+                          ),
+                        ],
+                      );
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return confirmation;
+                          });
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      size: 28,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
                   ),
                 )
               ],
@@ -390,7 +466,7 @@ class _AssetsPageState extends State<AssetsPage> {
             height: MediaQuery.of(context).size.height * 0.3,
             child: AssetForm(
               onSave: (value) {
-                if (value.runtimeType == FinancialAsset) {
+                if (value is FinancialAsset) {
                   if (kDebugMode) {
                     print("asset in edting mode:\n${value.toMap()}");
                   }
@@ -404,88 +480,88 @@ class _AssetsPageState extends State<AssetsPage> {
               buttonText: S.current.update,
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith(
-                  (states) {
-                    return Theme.of(context).colorScheme.secondary;
-                  },
-                ),
-              ),
-              onPressed: () {
-                AlertDialog confirmation = AlertDialog(
-                  content: Container(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            S.current.warning,
-                            style: SilentiStyles.titleTextStyleDark(context),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 12,
-                        ),
-                        Text(
-                          S.current.deleteWarning(
-                            S.current.asset,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        S.current.cancel,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        if (currentSelectedIndex == 0 && assets.length == 1) {
-                          NotificationPopper(
-                            contentType: ContentType.warning,
-                            title: "Error",
-                            message:
-                                "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
-                            // ignore: use_build_context_synchronously
-                          ).pop(context);
-                          return;
-                        }
-                        await _deleteAsset(asset);
-                        // ignore: use_build_context_synchronously
-                        setState(() {});
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        S.current.delete,
-                      ),
-                    ),
-                  ],
-                );
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return confirmation;
-                    });
-              },
-              child: Text(
-                S.current.delete,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                ),
-              ),
-            ),
-          )
+          // Container(
+          //   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+          //   alignment: Alignment.centerLeft,
+          //   child: TextButton(
+          //     style: ButtonStyle(
+          //       backgroundColor: WidgetStateProperty.resolveWith(
+          //         (states) {
+          //           return Theme.of(context).colorScheme.secondary;
+          //         },
+          //       ),
+          //     ),
+          //     onPressed: () {
+          //       AlertDialog confirmation = AlertDialog(
+          //         content: Container(
+          //           height: MediaQuery.of(context).size.height * 0.15,
+          //           alignment: Alignment.centerLeft,
+          //           child: Column(
+          //             children: [
+          //               Container(
+          //                 alignment: Alignment.centerLeft,
+          //                 child: Text(
+          //                   S.current.warning,
+          //                   style: SilentiStyles.titleTextStyleDark(context),
+          //                 ),
+          //               ),
+          //               SizedBox(
+          //                 height: 12,
+          //               ),
+          //               Text(
+          //                 S.current.deleteWarning(
+          //                   S.current.asset,
+          //                 ),
+          //               )
+          //             ],
+          //           ),
+          //         ),
+          //         actions: [
+          //           TextButton(
+          //             onPressed: () {
+          //               Navigator.pop(context);
+          //             },
+          //             child: Text(
+          //               S.current.cancel,
+          //             ),
+          //           ),
+          //           TextButton(
+          //             onPressed: () async {
+          //               if (currentSelectedIndex == 0 && assets.length == 1) {
+          //                 NotificationPopper(
+          //                   contentType: ContentType.warning,
+          //                   title: "Error",
+          //                   message:
+          //                       "Account ${asset.name} couldn´t be deleted, you must have at least one account.",
+          //                   // ignore: use_build_context_synchronously
+          //                 ).pop(context);
+          //                 return;
+          //               }
+          //               await _deleteAsset(asset);
+          //               // ignore: use_build_context_synchronously
+          //               setState(() {});
+          //               Navigator.pop(context);
+          //             },
+          //             child: Text(
+          //               S.current.delete,
+          //             ),
+          //           ),
+          //         ],
+          //       );
+          //       showDialog(
+          //           context: context,
+          //           builder: (context) {
+          //             return confirmation;
+          //           });
+          //     },
+          //     child: Text(
+          //       S.current.delete,
+          //       style: TextStyle(
+          //         color: Theme.of(context).colorScheme.onSecondary,
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
@@ -511,7 +587,7 @@ class _AssetsPageState extends State<AssetsPage> {
               ],
             ),
           ),
-          body: Container(
+          body: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.7,
             child: TabBarView(
@@ -544,7 +620,7 @@ class _AssetsPageState extends State<AssetsPage> {
     ];
 
     return Shimmer(
-      linearGradient: _shimmerGradient,
+      linearGradient: shimmerGradientDefault,
       child: ListView(
         physics: _isLoading ? const NeverScrollableScrollPhysics() : null,
         children: children,

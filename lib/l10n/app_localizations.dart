@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,13 +93,16 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('es')
+  ];
 
   /// add a new transaction
   ///
   /// In en, this message translates to:
-  /// **'register transaction'**
-  String get trnasactionRegistration;
+  /// **'Register transaction'**
+  String get transactionRegistration;
 
   /// home
   ///
@@ -115,7 +119,7 @@ abstract class AppLocalizations {
   /// outcome
   ///
   /// In en, this message translates to:
-  /// **'Spent'**
+  /// **'Expense'**
   String get spent;
 
   /// register operation
@@ -199,7 +203,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Update'**
+  /// **'Type'**
   String get type;
 
   ///
@@ -223,7 +227,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'SubCategory'**
+  /// **'Subcategory'**
   String get subCategory;
 
   /// label
@@ -235,8 +239,8 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Sumary'**
-  String get sumary;
+  /// **'Summary'**
+  String get summary;
 
   /// label
   ///
@@ -265,7 +269,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Frecuency'**
+  /// **'Frequency'**
   String get frequency;
 
   /// label
@@ -283,7 +287,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'SemiMonthly'**
+  /// **'Semi-monthly'**
   String get frecSemiMonthly;
 
   /// label
@@ -295,8 +299,8 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Anual'**
-  String get frecAnual;
+  /// **'Annual'**
+  String get frecAnnual;
 
   /// label
   ///
@@ -319,7 +323,7 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Interest rate(E.A.)'**
+  /// **'Interest rate (E.A.)'**
   String get interestRate;
 
   /// label
@@ -343,13 +347,13 @@ abstract class AppLocalizations {
   /// label
   ///
   /// In en, this message translates to:
-  /// **'New budget '**
+  /// **'New budget'**
   String get newBudget;
 
   /// label
   ///
   /// In en, this message translates to:
-  /// **'Status '**
+  /// **'Status'**
   String get status;
 
   /// message
@@ -367,7 +371,7 @@ abstract class AppLocalizations {
   /// message
   ///
   /// In en, this message translates to:
-  /// **'By deleting this {item} all information stored in it will be lost, this is an unreversible action.\nDo you want to continue?'**
+  /// **'By deleting this {item} all information stored in it will be lost, this is an irreversible action.\nDo you want to continue?'**
   String deleteWarning(Object item);
 
   /// message
@@ -388,7 +392,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -399,6 +403,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
   }
 
   throw FlutterError(

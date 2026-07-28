@@ -1,43 +1,41 @@
+import 'package:silenti/core/models/base_model.dart';
+
 class CategoryType {
   // static String all = 0;
-  static String income = "income";
-  static String spent = "spent";
+  static const String income = "income";
+  static const String spent = "spent";
 }
 
-class BudgetCategory {
-//  id INTEGER PRIMARY KEY AUTOINCREMENT,
-//  type TEXT CHECK(type IN ('income', 'spent') NOT NULL),
-//  name TEXT NOT NULL,
-//  amount REAL NOT NULL,
-//  frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'semi-monthly', 'monthly', 'anual', 'once')) NOT NULL,
-//  firstTime
+class BudgetCategory implements BaseModel {
+  @override
+  final int id;
+  final int? parentId;
+  final String type;
+  final String name;
+  final double amount;
+  final String frequency;
+  final DateTime firstTime;
+  final List<BudgetCategory> subcategories;
 
-  int id;
-  String type;
-  String name;
-  double amount;
-  String frequency;
-  DateTime firstTime = DateTime.now();
-
-  final String now = DateTime.now().toString();
   BudgetCategory({
     required this.id,
+    this.parentId,
     required this.type,
-    required this.amount,
     required this.name,
+    required this.amount,
     required this.frequency,
     required this.firstTime,
+    this.subcategories = const [],
   });
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'name': name,
-        'amount': amount,
-      };
+  // Derived property for recursive total
+  double get totalAmount =>
+      amount + subcategories.fold(0.0, (sum, item) => sum + item.totalAmount);
 
+  @override
   Map<String, dynamic> toMap() => {
-        //The 'id': id, field is set for autoincrement and shouldn't be sent to DB
+        'id': id == 0 ? null : id,
+        'parentId': parentId,
         'type': type,
         'name': name,
         'amount': amount,
@@ -45,20 +43,39 @@ class BudgetCategory {
         'firstTime': firstTime.toIso8601String(),
       };
 
-  factory BudgetCategory.fromJson(Map<String, dynamic> json) => BudgetCategory(
-        id: json['id'],
-        type: json['type'],
-        name: json['name'],
-        amount: json['amount'],
-        frequency: json['frequency'],
-        firstTime: json['firstTime'],
-      );
   factory BudgetCategory.fromMap(Map<String, dynamic> map) => BudgetCategory(
         id: map['id'],
+        parentId: map['parentId'],
         type: map['type'],
         name: map['name'],
-        amount: map['amount'],
+        amount: (map['amount'] ?? 0.0).toDouble(),
         frequency: map['frequency'],
-        firstTime: map['firstTime'],
+        firstTime: DateTime.parse(map['firstTime']),
+        // Subcategories are usually loaded separately or via join,
+        // for fromMap basic usage we initialize empty.
+        subcategories: [],
       );
+
+  // Helper to reconstruct tree if we have the list
+  BudgetCategory copyWith({
+    int? id,
+    int? parentId,
+    String? type,
+    String? name,
+    double? amount,
+    String? frequency,
+    DateTime? firstTime,
+    List<BudgetCategory>? subcategories,
+  }) {
+    return BudgetCategory(
+      id: id ?? this.id,
+      parentId: parentId ?? this.parentId,
+      type: type ?? this.type,
+      name: name ?? this.name,
+      amount: amount ?? this.amount,
+      frequency: frequency ?? this.frequency,
+      firstTime: firstTime ?? this.firstTime,
+      subcategories: subcategories ?? this.subcategories,
+    );
+  }
 }
