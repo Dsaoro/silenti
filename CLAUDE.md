@@ -164,6 +164,15 @@ generate — don't assume running `build_runner` produces DI wiring today.
 
 ## Related Docs
 
+- `PRD.md` — the product requirements doc, elicited directly with the client
+  (see its §9 for the Q&A trail). Defines the MVP scope (monthly budget +
+  transaction log + periodic-expense planner/calendar with OS push
+  reminders), the business rules decided for it, and a Phase 2 vision
+  (Cash Flow Forecasting / SafeToSpend engine, credit cards with
+  installments) that is explicitly **not** part of the MVP. Cross-references
+  which `BUSINESS_LOGIC_AUDIT.md` findings are MVP-blocking. Read this before
+  agents.md's roadmap checklist — this is the current source of truth for
+  what to build next.
 - `agents.md` — the project's target/aspirational architecture and roadmap
   (Clean Architecture layer rules, planned DI/state-management/encryption
   choices, MVP checklist). Useful for direction; verify against actual code
