@@ -170,5 +170,12 @@ generate — don't assume running `build_runner` produces DI wiring today.
   (as this file does) before relying on a specific claim.
 - `BALANCE_HISTORY_IMPLEMENTATION.md` — detailed design notes for the balance
   history/chart feature described above.
+- `BUSINESS_LOGIC_AUDIT.md` — entity-relationship map, use-case-by-use-case
+  data flow, and a verified audit of business-logic bugs and layering/coupling
+  issues (e.g. delete-category is a no-op, deposit/withdraw can report false
+  success, income operations are categorized against expense categories).
+  Read this before touching `application/financial_assets`,
+  `application/budgets`, or `application/operations` — it documents real,
+  confirmed defects, not hypothetical ones.
 - `README.md` — user-facing feature pitch (mentions Sembast as storage, which
   is stale; the app actually uses `sqflite_common_ffi`/SQLite).
