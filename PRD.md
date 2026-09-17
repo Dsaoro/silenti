@@ -122,8 +122,7 @@ lugar y sin exponerlo a terceros:
 - **H3.1** Como usuario, puedo programar un gasto fijo periódico (ej.
   "Arriendo, día 5 de cada mes", ligado a una categoría/subcategoría) con un
   día de vencimiento dentro del mes.
-- **H3.2** Como usuario, veo estos vencimientos en una vista de calendario
-  del mes en curso.
+- **H3.2** Como usuario, veo estos vencimientos en una vista de timeline.
 - **H3.3** Como usuario, recibo una **notificación push del sistema
   operativo** (no solo un aviso dentro de la app) antes de la fecha límite
   de cada gasto programado (decisión §9) — plazo de aviso configurable por
