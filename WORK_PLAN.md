@@ -29,7 +29,49 @@ demuestra.
 
 ---
 
-## Fase 0 — Fundaciones de testing
+## Fase 0 — Fundaciones de testing ✅ Ejecutada
+
+**Estado:** implementada en el código (ver commit de esta fase). **Nota
+importante:** este entorno no tiene el SDK de Flutter/Dart instalado, así que
+`flutter test`/`flutter analyze` no se pudieron ejecutar aquí — el código se
+revisó manualmente (releído cada archivo tras editarlo, más una verificación
+de balance de `{}`/`()` en todos los archivos tocados) pero **falta correr la
+suite real antes de confiar en que compila y pasa**. Corran `flutter pub get
+&& flutter test` (o su CI) como primer paso antes de seguir con la Fase 1.
+
+**Ajuste de alcance respecto al plan original:** §0.2 solo hablaba de
+inyectar el DAO en los *casos de uso*. En la práctica, para que los tests de
+DAO de §0.1 pudieran usar la base de datos en memoria en vez del singleton
+real (`SecureDatabaseHelperPC`), los **8 DAOs también necesitaron el mismo
+patrón** (`Future<Database> Function()? databaseProvider` opcional). Sin
+esto, un test de DAO habría llamado a `path_provider` de verdad y fallado en
+`flutter_test`. Se aplicó el mismo patrón mecánico, con el mismo argumento de
+"no rompe ningún call site existente" (todos usan el constructor sin
+argumentos).
+
+**Archivos nuevos:**
+- `lib/infraestructure/adapters/silenti_schema.dart` — DDL/seed extraídos de
+  `secure_database_helper_pc.dart` (que ahora solo los invoca).
+- `test/helpers/test_database.dart` — abre una DB en memoria con el mismo
+  schema, `singleInstance: false` para que cada test tenga su propia
+  instancia aislada aunque compartan el path `:memory:`.
+- `test/core/models/*_test.dart` — pruebas de entidad para `FinancialAsset`
+  (`BankAccount`/`InvestmentAsset`), `Operation`, `BudgetCategory`,
+  `BalanceHistory`, `User` (puro Dart, sin DB).
+- `test/infraestructure/storage/financial_assets_dao_test.dart` — prueba de
+  concepto de un test de DAO contra la DB en memoria real (incluye un test
+  que documenta explícitamente el comportamiento actual sin guardia de
+  sobregiro, `BUSINESS_LOGIC_AUDIT.md` §3.4).
+- `test/application/financial_assets/deposit_in_financial_asset_use_case_test.dart`
+  — prueba de concepto de un test de caso de uso con `mocktail`, cubriendo
+  solo comportamiento ya correcto hoy (rechazo de tipo inválido, camino
+  feliz) — deliberadamente **no** cubre el bug de §3.2 (falso éxito si el
+  activo no existe); esa prueba se agrega junto con su fix en la Fase 1.1,
+  no antes.
+
+Las pruebas de DAO/caso de uso **restantes** de la tabla de cobertura (al
+final de este documento) se escriben junto con cada fix de la Fase 1, no
+todas de una vez aquí — Fase 0 solo prueba que la infraestructura funciona.
 
 Sin esto, "generar pruebas unitarias para cada entidad y transacción" no es
 posible de forma aislada, porque hoy cada caso de uso instancia su propio

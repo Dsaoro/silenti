@@ -4,7 +4,10 @@ import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/infraestructure/storage/balance_history_dao.dart';
 
 class GetAssetChartDataUseCase extends BaseUseCase {
-  GetAssetChartDataUseCase() : super("GetAssetChartData");
+  final BalanceHistoryDAO dao;
+  GetAssetChartDataUseCase({BalanceHistoryDAO? dao})
+      : dao = dao ?? BalanceHistoryDAO(),
+        super("GetAssetChartData");
 
   Future<HandleResult<List<FlSpot>>> execute({
     required int financialAssetId,
@@ -15,8 +18,6 @@ class GetAssetChartDataUseCase extends BaseUseCase {
     HandleResult<List<FlSpot>> result = HandleResult<List<FlSpot>>();
 
     try {
-      BalanceHistoryDAO dao = BalanceHistoryDAO();
-
       // Obtener datos de la base de datos
       List<Map<String, dynamic>> chartData = await dao.getChartDataForAsset(
         financialAssetId,

@@ -1,27 +1,38 @@
 import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:silenti/core/models/balance_history.dart';
 import 'package:silenti/infraestructure/adapters/secure_database_helper_pc.dart';
 import 'package:silenti/infraestructure/storage/balance_history_dao.dart';
 
 class FinancialAssetsDao {
+  final Future<Database> Function() _databaseProvider;
+  final BalanceHistoryDAO balanceHistoryDao;
+  FinancialAssetsDao({
+    Future<Database> Function()? databaseProvider,
+    BalanceHistoryDAO? balanceHistoryDao,
+  })  : _databaseProvider =
+            databaseProvider ?? (() => SecureDatabaseHelperPC().database),
+        balanceHistoryDao = balanceHistoryDao ??
+            BalanceHistoryDAO(databaseProvider: databaseProvider);
+
   Future<int> insertAccount(Map<String, dynamic> data) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     return await db.insert('financial_assets', data);
   }
 
   Future<int> deleteAccountById(int id) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     return await db
         .delete('financial_assets', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<Map<String, dynamic>>> getAccounts() async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     return await db.query('financial_assets');
   }
 
   Future<List<Map<String, dynamic>>> getAccountById(int financialAsset) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     return await db.query(
       'financial_assets',
       where: 'id = ?',
@@ -31,7 +42,7 @@ class FinancialAssetsDao {
 
   Future<int> updateAccountById(
       int financialAsset, Map<String, dynamic> data) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     return await db.update(
       'financial_assets',
       data,
@@ -41,7 +52,7 @@ class FinancialAssetsDao {
   }
 
   Future<List<Map<String, Object?>>> getAccountBalance() async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     List<Map<String, Object?>> result = await db.rawQuery(
       'SELECT SUM(balance) as balance FROM financial_assets WHERE included = 1',
     );
@@ -52,7 +63,7 @@ class FinancialAssetsDao {
       {required int financialAsset,
       required double amount,
       int? operationId}) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     var check = await db.query(
       'financial_assets',
       where: 'id = ?',
@@ -68,7 +79,7 @@ class FinancialAssetsDao {
 
     // Actualizar balance
     var result =
-        await db.rawQuery('''UPDATE financial_assets SET balance = balance + 
+        await db.rawQuery('''UPDATE financial_assets SET balance = balance +
     $amount WHERE id=$financialAsset;''');
 
     // Obtener el nuevo balance
@@ -82,8 +93,7 @@ class FinancialAssetsDao {
       double newBalance = updatedAsset.first['balance'] as double;
 
       // Registrar en el historial
-      BalanceHistoryDAO balanceHistoryDAO = BalanceHistoryDAO();
-      await balanceHistoryDAO.insertBalanceHistory(
+      await balanceHistoryDao.insertBalanceHistory(
         BalanceHistory(
           id: 0, // Se auto-incrementa
           financialAssetId: financialAsset,
@@ -101,7 +111,7 @@ class FinancialAssetsDao {
       {required int financialAsset,
       required double amount,
       int? operationId}) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     var check = await db.query(
       'financial_assets',
       where: 'id = ?',
@@ -117,7 +127,7 @@ class FinancialAssetsDao {
 
     // Actualizar balance
     var result =
-        await db.rawQuery('''UPDATE financial_assets SET balance = balance - 
+        await db.rawQuery('''UPDATE financial_assets SET balance = balance -
     $amount WHERE id=$financialAsset;''');
 
     // Obtener el nuevo balance
@@ -131,8 +141,7 @@ class FinancialAssetsDao {
       double newBalance = updatedAsset.first['balance'] as double;
 
       // Registrar en el historial
-      BalanceHistoryDAO balanceHistoryDAO = BalanceHistoryDAO();
-      await balanceHistoryDAO.insertBalanceHistory(
+      await balanceHistoryDao.insertBalanceHistory(
         BalanceHistory(
           id: 0, // Se auto-incrementa
           financialAssetId: financialAsset,

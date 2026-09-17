@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:silenti/application/shared/base_use_case.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/core/models/balance_history.dart';
@@ -7,13 +8,24 @@ import 'package:silenti/infraestructure/storage/balance_history_dao.dart';
 import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class MigrateDatabaseUseCase extends BaseUseCase {
-  MigrateDatabaseUseCase() : super("MigrateDatabase");
+  final Future<Database> Function() databaseProvider;
+  final FinancialAssetsDao assetsDao;
+  final BalanceHistoryDAO historyDao;
+  MigrateDatabaseUseCase({
+    Future<Database> Function()? databaseProvider,
+    FinancialAssetsDao? assetsDao,
+    BalanceHistoryDAO? historyDao,
+  })  : databaseProvider =
+            databaseProvider ?? (() => SecureDatabaseHelperPC().database),
+        assetsDao = assetsDao ?? FinancialAssetsDao(),
+        historyDao = historyDao ?? BalanceHistoryDAO(),
+        super("MigrateDatabase");
 
   Future<HandleResult<bool>> execute() async {
     HandleResult<bool> result = HandleResult<bool>();
 
     try {
-      final db = await SecureDatabaseHelperPC().database;
+      final db = await databaseProvider();
 
       // Verificar si la tabla balance_history ya existe
       var tables = await db.rawQuery(
@@ -54,9 +66,6 @@ class MigrateDatabaseUseCase extends BaseUseCase {
 
   Future<void> _createInitialBalanceHistory() async {
     try {
-      FinancialAssetsDao assetsDao = FinancialAssetsDao();
-      BalanceHistoryDAO historyDao = BalanceHistoryDAO();
-
       // Obtener todos los activos financieros
       List<Map<String, dynamic>> assets = await assetsDao.getAccounts();
 

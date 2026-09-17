@@ -1,9 +1,15 @@
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:silenti/core/models/balance_history.dart';
 import 'package:silenti/infraestructure/adapters/secure_database_helper_pc.dart';
 
 class BalanceHistoryDAO {
+  final Future<Database> Function() _databaseProvider;
+  BalanceHistoryDAO({Future<Database> Function()? databaseProvider})
+      : _databaseProvider =
+            databaseProvider ?? (() => SecureDatabaseHelperPC().database);
+
   Future<int> insertBalanceHistory(BalanceHistory balanceHistory) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
     return await db.insert('balance_history', balanceHistory.toMap());
   }
 
@@ -13,7 +19,7 @@ class BalanceHistoryDAO {
     DateTime? fromDate,
     DateTime? toDate,
   }) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
 
     String whereClause = 'financialAssetId = ?';
     List<dynamic> whereArgs = [financialAssetId];
@@ -40,7 +46,7 @@ class BalanceHistoryDAO {
   }
 
   Future<List<BalanceHistory>> getLatestBalanceForAllAssets() async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
 
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
       SELECT bh1.* FROM balance_history bh1
@@ -48,7 +54,7 @@ class BalanceHistoryDAO {
         SELECT financialAssetId, MAX(date) as max_date
         FROM balance_history
         GROUP BY financialAssetId
-      ) bh2 ON bh1.financialAssetId = bh2.financialAssetId 
+      ) bh2 ON bh1.financialAssetId = bh2.financialAssetId
       AND bh1.date = bh2.max_date
     ''');
 
@@ -56,7 +62,7 @@ class BalanceHistoryDAO {
   }
 
   Future<BalanceHistory?> getLatestBalanceForAsset(int financialAssetId) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
 
     final List<Map<String, dynamic>> maps = await db.query(
       'balance_history',
@@ -77,7 +83,7 @@ class BalanceHistoryDAO {
     DateTime? toDate,
     int maxPoints = 50,
   }) async {
-    final db = await SecureDatabaseHelperPC().database;
+    final db = await _databaseProvider();
 
     String whereClause = 'financialAssetId = ?';
     List<dynamic> whereArgs = [financialAssetId];
@@ -94,12 +100,12 @@ class BalanceHistoryDAO {
 
     // Si hay muchos puntos, tomamos una muestra representativa
     final String query = '''
-      SELECT 
+      SELECT
         date,
         balance,
         ROW_NUMBER() OVER (ORDER BY date) as row_num,
         COUNT(*) OVER () as total_count
-      FROM balance_history 
+      FROM balance_history
       WHERE $whereClause
       ORDER BY date ASC
     ''';

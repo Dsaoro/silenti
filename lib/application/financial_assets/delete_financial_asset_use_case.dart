@@ -4,12 +4,13 @@ import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class DeleteFinancialAssetUseCase extends BaseUseCase {
-  DeleteFinancialAssetUseCase() : super("DeleteFinancialAsset");
+  final FinancialAssetsDao dao;
+  DeleteFinancialAssetUseCase({FinancialAssetsDao? dao})
+      : dao = dao ?? FinancialAssetsDao(),
+        super("DeleteFinancialAsset");
   Future<HandleResult<int>> execute(int id) async {
     HandleResult<int> result = HandleResult<int>();
     try {
-      FinancialAssetsDao dao = FinancialAssetsDao();
-
       var response = await dao.deleteAccountById(id);
       //TODO save log for Asset Creation
       if (kDebugMode) {

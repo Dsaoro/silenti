@@ -4,11 +4,13 @@ import 'package:silenti/core/models/user.dart';
 import 'package:silenti/infraestructure/storage/user_dao.dart';
 
 class AuthUseCase extends BaseUseCase {
-  AuthUseCase() : super("AuthUseCase");
+  final UserDAO dao;
+  AuthUseCase({UserDAO? dao})
+      : dao = dao ?? UserDAO(),
+        super("AuthUseCase");
 
   Future<HandleResult<User?>> getLocalUser() async {
     HandleResult<User?> result = HandleResult<User?>();
-    UserDAO dao = UserDAO();
     try {
       final userMap = await dao.getUser();
       if (userMap != null) {
@@ -25,7 +27,6 @@ class AuthUseCase extends BaseUseCase {
   Future<HandleResult<bool>> registerUser(
       String name, String email, String password) async {
     HandleResult<bool> result = HandleResult<bool>();
-    UserDAO dao = UserDAO();
     try {
       // In a real app we would hash the password here
       await dao.registerUser(name, email, password);
@@ -38,7 +39,6 @@ class AuthUseCase extends BaseUseCase {
 
   Future<HandleResult<User>> login(String password) async {
     HandleResult<User> result = HandleResult<User>();
-    UserDAO dao = UserDAO();
     try {
       final userMap = await dao.getUser();
       if (userMap != null) {

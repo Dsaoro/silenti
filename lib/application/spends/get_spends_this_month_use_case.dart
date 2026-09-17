@@ -3,10 +3,12 @@ import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/infraestructure/storage/operation_dao.dart';
 
 class GetSpendsThisMonthUseCase extends BaseUseCase {
-  GetSpendsThisMonthUseCase() : super("GetSpendsThisMonth");
+  final OperationDAO dao;
+  GetSpendsThisMonthUseCase({OperationDAO? dao})
+      : dao = dao ?? OperationDAO(),
+        super("GetSpendsThisMonth");
   Future<HandleResult<double>> execute() async {
     HandleResult<double> result = HandleResult<double>();
-    OperationDAO dao = OperationDAO();
     double amount = 0.0;
     var now = DateTime.now();
     try {

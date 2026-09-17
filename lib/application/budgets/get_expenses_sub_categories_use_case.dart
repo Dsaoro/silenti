@@ -4,13 +4,15 @@ import 'package:silenti/core/models/spend_sub_categories.dart';
 import 'package:silenti/infraestructure/storage/spend_sub_categories_dao.dart';
 
 class GetExpensesSubCategoriesUseCase extends BaseUseCase {
-  GetExpensesSubCategoriesUseCase() : super("GetExpensesSubCategories");
+  final SpendSubCategoriesDao dao;
+  GetExpensesSubCategoriesUseCase({SpendSubCategoriesDao? dao})
+      : dao = dao ?? SpendSubCategoriesDao(),
+        super("GetExpensesSubCategories");
 
   Future<HandleResult<List<SpendSubCategories>>> execute() async {
     HandleResult<List<SpendSubCategories>> result =
         HandleResult<List<SpendSubCategories>>();
     List<SpendSubCategories> categories = [];
-    var dao = SpendSubCategoriesDao();
     try {
       await dao.getAll().then((value) {
         for (var element in value) {
@@ -28,7 +30,6 @@ class GetExpensesSubCategoriesUseCase extends BaseUseCase {
     HandleResult<List<SpendSubCategories>> result =
         HandleResult<List<SpendSubCategories>>();
     List<SpendSubCategories> categories = [];
-    var dao = SpendSubCategoriesDao();
     try {
       await dao.getByCategoryId(id: id).then((value) {
         for (var element in value) {

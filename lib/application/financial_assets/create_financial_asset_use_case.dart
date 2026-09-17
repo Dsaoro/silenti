@@ -5,11 +5,13 @@ import 'package:silenti/core/models/financial_asset.dart';
 import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class CreateFinancialAssetUseCase extends BaseUseCase {
-  CreateFinancialAssetUseCase() : super("CreateFinancialAsset");
+  final FinancialAssetsDao dao;
+  CreateFinancialAssetUseCase({FinancialAssetsDao? dao})
+      : dao = dao ?? FinancialAssetsDao(),
+        super("CreateFinancialAsset");
   Future<HandleResult<int>> execute(FinancialAsset asset) async {
     HandleResult<int> result = HandleResult<int>();
     try {
-      FinancialAssetsDao dao = FinancialAssetsDao();
       if (kDebugMode) {
         print(asset.toMap());
       }

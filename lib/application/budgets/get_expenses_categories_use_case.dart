@@ -4,12 +4,14 @@ import 'package:silenti/core/models/budget_category.dart';
 import 'package:silenti/infraestructure/storage/budget_categories_dao.dart';
 
 class GetExpensesCategoriesUseCase extends BaseUseCase {
-  GetExpensesCategoriesUseCase() : super('GetBudgetCategories');
+  final BudgetCategoriesDAO dao;
+  GetExpensesCategoriesUseCase({BudgetCategoriesDAO? dao})
+      : dao = dao ?? BudgetCategoriesDAO(),
+        super('GetBudgetCategories');
   Future<HandleResult<List<BudgetCategory>>> execute() async {
     HandleResult<List<BudgetCategory>> result =
         HandleResult<List<BudgetCategory>>();
     List<BudgetCategory> allCategories = [];
-    var dao = BudgetCategoriesDAO();
     try {
       await dao.getBudgetExpenses().then((value) {
         for (var element in value) {

@@ -4,10 +4,12 @@ import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/infraestructure/storage/operation_dao.dart';
 
 class SaveOperationUSeCase extends BaseUseCase {
-  SaveOperationUSeCase() : super('SaveOperation');
+  final OperationDAO dao;
+  SaveOperationUSeCase({OperationDAO? dao})
+      : dao = dao ?? OperationDAO(),
+        super('SaveOperation');
   Future<HandleResult<int>> execute({required Operation operation}) async {
     HandleResult<int> result = HandleResult<int>();
-    final dao = OperationDAO();
     var operationId = await dao.insertOperation(
       operation.toMap(),
     );

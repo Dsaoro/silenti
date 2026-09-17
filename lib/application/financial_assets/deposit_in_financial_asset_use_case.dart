@@ -6,7 +6,14 @@ import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class DepositInFinancialAssetUseCase extends BaseUseCase {
-  DepositInFinancialAssetUseCase() : super("DepositInFinancialAssetUseCase");
+  final FinancialAssetsDao dao;
+  final SaveOperationUSeCase saveOperationUseCase;
+  DepositInFinancialAssetUseCase({
+    FinancialAssetsDao? dao,
+    SaveOperationUSeCase? saveOperationUseCase,
+  })  : dao = dao ?? FinancialAssetsDao(),
+        saveOperationUseCase = saveOperationUseCase ?? SaveOperationUSeCase(),
+        super("DepositInFinancialAssetUseCase");
   Future<HandleResult<bool>> execute(Operation operation) async {
     HandleResult<bool> result = HandleResult<bool>();
     if (operation.type != "income") {
@@ -15,7 +22,7 @@ class DepositInFinancialAssetUseCase extends BaseUseCase {
     }
 
     // Primero guardamos la operación para obtener el ID
-    var saveOperationResponse = await SaveOperationUSeCase().execute(
+    var saveOperationResponse = await saveOperationUseCase.execute(
       operation: operation,
     );
 
@@ -25,7 +32,6 @@ class DepositInFinancialAssetUseCase extends BaseUseCase {
     }
 
     // Luego actualizamos el balance del activo financiero con el ID de la operación
-    FinancialAssetsDao dao = FinancialAssetsDao();
     var depositResponse = await dao.deposit(
       financialAsset: operation.financialAsset,
       amount: operation.amount,

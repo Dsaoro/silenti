@@ -1,10 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:silenti/application/shared/base_use_case.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/infraestructure/adapters/secure_database_helper_pc.dart';
 
 class GetTotalBalanceChartDataUseCase extends BaseUseCase {
-  GetTotalBalanceChartDataUseCase() : super("GetTotalBalanceChartData");
+  final Future<Database> Function() databaseProvider;
+  GetTotalBalanceChartDataUseCase({Future<Database> Function()? databaseProvider})
+      : databaseProvider =
+            databaseProvider ?? (() => SecureDatabaseHelperPC().database),
+        super("GetTotalBalanceChartData");
 
   Future<HandleResult<List<FlSpot>>> execute({
     DateTime? fromDate,
@@ -15,7 +20,7 @@ class GetTotalBalanceChartDataUseCase extends BaseUseCase {
 
     try {
       // Obtener el historial de balances de todos los activos
-      final db = await SecureDatabaseHelperPC().database;
+      final db = await databaseProvider();
 
       String whereClause = "1=1"; // Siempre verdadero
       List<dynamic> whereArgs = [];

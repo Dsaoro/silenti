@@ -5,11 +5,13 @@ import 'package:silenti/core/models/budget_category.dart';
 import 'package:silenti/infraestructure/storage/budget_categories_dao.dart';
 
 class UpdateBudgetCategoryUseCase extends BaseUseCase {
-  UpdateBudgetCategoryUseCase() : super('UpdateBudgetCategory');
+  final BudgetCategoriesDAO dao;
+  UpdateBudgetCategoryUseCase({BudgetCategoriesDAO? dao})
+      : dao = dao ?? BudgetCategoriesDAO(),
+        super('UpdateBudgetCategory');
 
   Future<HandleResult<int>> execute({required BudgetCategory category}) async {
     HandleResult<int> result = HandleResult<int>();
-    BudgetCategoriesDAO dao = BudgetCategoriesDAO();
     try {
       var response = await dao.updateBudgetCategory(category.toMap());
       if (response > 0) {
