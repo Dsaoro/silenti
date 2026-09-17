@@ -164,6 +164,15 @@ generate — don't assume running `build_runner` produces DI wiring today.
 
 ## Related Docs
 
+- `WORK_PLAN.md` — the execution plan that turns `BUSINESS_LOGIC_AUDIT.md`'s
+  findings and `PRD.md`'s MVP scope into sequenced, testable work: a testing
+  foundation (in-memory SQLite for DAO tests, optional-constructor DAO
+  injection for use-case tests with `mocktail`), then the PRD-blocking bug
+  fixes, then new PRD stories (income categories, budget-deficit view,
+  periodic-expense planner), then non-blocking cleanup. Includes a full
+  entity/DAO/use-case test coverage table. Check this before starting any
+  fix from `BUSINESS_LOGIC_AUDIT.md` — it says which phase it belongs to and
+  what test proves it's done.
 - `PRD.md` — the product requirements doc, elicited directly with the client
   (see its §9 for the Q&A trail). Defines the MVP scope (monthly budget +
   transaction log + periodic-expense planner/calendar with OS push
