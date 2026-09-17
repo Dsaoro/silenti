@@ -19,7 +19,7 @@ cambia un patrón que hoy se repite en ~20 archivos (ver §0.2).
    usuario en sus datos (dinero mal contado > UX incorrecta > deuda
    técnica).
 3. Luego las historias del PRD que son trabajo nuevo, no un fix (categorías
-   de ingreso reales, snapshot mensual, planeador/calendario).
+   de ingreso reales, snapshot mensual, planeador con vista de timeline).
 4. Al final, la limpieza no bloqueante (§10 de `PRD.md` la marca
    explícitamente como "no bloquea el MVP").
 
@@ -223,7 +223,7 @@ Cada uno cita el hallazgo de `BUSINESS_LOGIC_AUDIT.md` y la historia de
 - **Test:** cambiar el monto de una categoría a mitad de mes no debe alterar
   el snapshot de meses anteriores ya creado.
 
-### 2.3 Planeador de gastos periódicos (calendario + notificación push)
+### 2.3 Planeador de gastos periódicos (timeline + notificación push)
 **Historia:** H3.1–H3.4 — la pieza más grande de trabajo nuevo, con la única
 dependencia externa nueva del MVP.
 - Modelo nuevo `ScheduledExpense` (`core/models`): categoría, nombre, día de
@@ -232,7 +232,9 @@ dependencia externa nueva del MVP.
   `BUSINESS_LOGIC_AUDIT.md` §3.11) en vez de crear una tabla nueva, si su
   forma se ajusta razonablemente — a validar en el diseño detallado.
 - DAO + caso de uso CRUD, siguiendo el patrón existente.
-- Vista de calendario del mes en `presentation/` (pantalla nueva).
+- Vista de timeline de vencimientos del mes en `presentation/` (pantalla
+  nueva) — H3.2 ya no pide un calendario tipo grilla, sino una lista
+  cronológica de próximos vencimientos.
 - Integración de `flutter_local_notifications` (dependencia nueva en
   `pubspec.yaml`) + permisos de notificación en Android
   (`AndroidManifest.xml`) + programación de la notificación al crear/editar
