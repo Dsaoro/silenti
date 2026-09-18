@@ -7,42 +7,42 @@ import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class DepositInFinancialAssetUseCase extends BaseUseCase {
   final FinancialAssetsDao dao;
-  final SaveOperationUSeCase saveOperationUseCase;
-  DepositInFinancialAssetUseCase({
-    FinancialAssetsDao? dao,
-    SaveOperationUSeCase? saveOperationUseCase,
-  })  : dao = dao ?? FinancialAssetsDao(),
-        saveOperationUseCase = saveOperationUseCase ?? SaveOperationUSeCase(),
+  DepositInFinancialAssetUseCase({FinancialAssetsDao? dao})
+      : dao = dao ?? FinancialAssetsDao(),
         super("DepositInFinancialAssetUseCase");
+
   Future<HandleResult<bool>> execute(Operation operation) async {
     HandleResult<bool> result = HandleResult<bool>();
-    if (operation.type != "income") {
+    if (operation.type != Operation.income) {
       result.setError("Operation type must be 'income' for deposits");
       return result;
     }
 
-    // Primero guardamos la operación para obtener el ID
-    var saveOperationResponse = await saveOperationUseCase.execute(
-      operation: operation,
-    );
-
-    if (!saveOperationResponse.status) {
-      result.setError("Failed to save operation");
+    final validationError = validateOperationForSave(operation);
+    if (validationError != null) {
+      result.setError(validationError);
       return result;
     }
 
-    // Luego actualizamos el balance del activo financiero con el ID de la operación
-    var depositResponse = await dao.deposit(
+    // Inserta la operación, actualiza el saldo y registra el historial de
+    // forma atómica (BUSINESS_LOGIC_AUDIT.md #3.3).
+    final applied = await dao.applyOperation(
+      operationData: operation.toMap(),
       financialAsset: operation.financialAsset,
       amount: operation.amount,
-      operationId:
-          saveOperationResponse.model, // Usar el ID de la operación guardada
+      isDeposit: true,
     );
 
+    if (applied == null) {
+      // El activo no existe: no se escribió nada (BUSINESS_LOGIC_AUDIT.md
+      // #3.2 — antes esto se reportaba como éxito de todas formas).
+      result.setError("Financial asset not found");
+      return result;
+    }
+
     if (kDebugMode) {
-      print("Response from deposit ${depositResponse.toString()}");
       print(
-          "Operation stored successfully with ID: ${saveOperationResponse.model}");
+          "Deposit applied: operationId=${applied.operationId} newBalance=${applied.newBalance}");
     }
 
     result.setData(true);

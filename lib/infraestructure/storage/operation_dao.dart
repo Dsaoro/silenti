@@ -79,16 +79,20 @@ class OperationDAO {
     return 0.0;
   }
 
+  /// Total spent in [month]/[year]. Always returns exactly one row with an
+  /// `amount` key (0 when there are no operations that month) —
+  /// deliberately not `GROUP BY`, which returns zero rows for an empty
+  /// month and used to make callers crash on `.first`
+  /// (BUSINESS_LOGIC_AUDIT.md #3.6).
   Future<List<Map<String, Object?>>> getSpendByMonth(
       {required int month, required int year}) async {
     final db = await _databaseProvider();
     final monthStr = month.toString().padLeft(2, '0');
     List<Map<String, Object?>> result = await db.rawQuery(
       '''
-      SELECT SUM(amount) as amount
+      SELECT COALESCE(SUM(amount), 0) as amount
       FROM Operations
       WHERE strftime('%m', date) = ? AND strftime('%Y', date) = ?
-      GROUP BY strftime('%m-%Y', date)
       ''',
       [monthStr, year.toString()],
     );

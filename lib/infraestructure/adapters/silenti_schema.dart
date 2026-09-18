@@ -15,7 +15,6 @@ class SilentiSchema {
     await db.execute(_createFinancialAssetsTable);
     await db.execute(_createProfitsTable);
     await db.execute(_createBudgetCategoriesTable);
-    await db.execute(_createSubCategories);
     await db.execute(_createOperationsTable);
     await db.execute(_createBalanceHistoryTable);
     await db.execute(_createNotificationsTable);
@@ -96,15 +95,14 @@ class SilentiSchema {
     VALUES ('spent','various', 0, 'monthly', CURRENT_TIMESTAMP)
   ''';
 
-  static const String _createSubCategories = '''
-  CREATE TABLE spend_sub_categories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    category INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    amount REAL NOT NULL,
-    FOREIGN KEY (category) REFERENCES budget_categories(id)
-  )
-  ''';
+  // `spend_sub_categories` used to be created here as a separate flat
+  // sub-category table, parallel to and disconnected from
+  // `budget_categories.parentId` (BUSINESS_LOGIC_AUDIT.md #3.9). It's
+  // retired: subcategories are now just budget_categories rows with a
+  // parentId, built into a 2-level tree by buildCategoryTree(). Existing
+  // installs that already created the old table keep it around unused;
+  // there's no user data at risk to migrate (BUSINESS_LOGIC_AUDIT.md #3.9 /
+  // WORK_PLAN.md 1.5 — the project has no shipped users yet).
 
   static const String _createOperationsTable = '''
   CREATE TABLE operations (

@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
-import 'package:silenti/application/budgets/get_expenses_sub_categories_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/financial_assets/withdraw_from_financial_asset_use_case.dart';
+import 'package:silenti/core/models/budget_category.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/generated/l10n.dart';
 import 'package:silenti/presentation/components/silenti_date_picker.dart';
@@ -29,7 +29,10 @@ class _SpendFormState extends State<SpendForm> {
 
   bool _isLoading = true;
   final Map<int, String> _assets = {};
-  // int currentSelectedIndex = 0;
+  // Categories with their subcategories already attached (2 levels,
+  // BUSINESS_LOGIC_AUDIT.md #3.9) — the subcategory dropdown is built from
+  // this, no separate DB call needed.
+  List<BudgetCategory> _categoryTree = [];
   final Map<int, String> _categories = {0: S.current.select};
   Map<int, String> _subCategories = {0: S.current.select};
 
@@ -55,25 +58,30 @@ class _SpendFormState extends State<SpendForm> {
   _getCategories() async {
     var response = await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
-      for (var category in response.model!) {
+      _categoryTree = response.model!;
+      for (var category in _categoryTree) {
         _categories.addEntries([MapEntry(category.id, category.name)]);
       }
     }
   }
 
-  _getSubCategories() async {
-    var response = await GetExpensesSubCategoriesUseCase().byId(id: category);
-    if (response.status) {
-      for (var category in response.model!) {
-        _subCategories.addEntries([MapEntry(category.id, category.name)]);
+  void _onCategoryChanged(int? value) {
+    setState(() {
+      category = value ?? 0;
+      subCategory = 0;
+      _subCategories = {0: S.current.select};
+      final selected = _categoryTree.where((c) => c.id == category);
+      if (selected.isNotEmpty) {
+        for (var sub in selected.first.subcategories) {
+          _subCategories[sub.id] = sub.name;
+        }
       }
-    }
+    });
   }
 
   _getDataFromDB() async {
     await _requestAssets();
     await _getCategories();
-    await _getSubCategories();
     setState(() {
       _toggleLoading();
     });
@@ -88,8 +96,11 @@ class _SpendFormState extends State<SpendForm> {
       financialAsset: financialAssetId,
       amount: amount,
       date: date,
+      // A selected subcategory is a more precise categorization than its
+      // parent — both are real budget_categories rows now
+      // (BUSINESS_LOGIC_AUDIT.md #3.9), so it's the one saved when present.
       description: description,
-      category: category,
+      category: subCategory != 0 ? subCategory : category,
       type: Operation.expense,
     );
     var depositResponse =
@@ -117,7 +128,6 @@ class _SpendFormState extends State<SpendForm> {
 
   @override
   Widget build(BuildContext context) {
-    _subCategories = {};
     return Container(
       padding: EdgeInsets.all(16),
       width: MediaQuery.of(context).size.width * 0.8,
@@ -257,11 +267,7 @@ class _SpendFormState extends State<SpendForm> {
                             ),
                           )
                           .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          category = value ?? 0;
-                        });
-                      },
+                      onChanged: _onCategoryChanged,
                     ),
                   ),
                 ]),
@@ -286,36 +292,31 @@ class _SpendFormState extends State<SpendForm> {
                     SizedBox(
                       height: 8,
                     ),
-                    FutureBuilder(
-                      future: _getSubCategories(),
-                      builder: (context, snapshot) {
-                        return Container(
-                          padding: EdgeInsets.all(8),
-                          width: MediaQuery.of(context).size.width * 0.37,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: DropdownButton(
-                            borderRadius: BorderRadius.circular(4),
-                            elevation: 2,
-                            alignment: Alignment.centerLeft,
-                            value: subCategory,
-                            items: _categories.entries
-                                .map(
-                                  (entry) => DropdownMenuItem(
-                                    value: entry.key,
-                                    child: Text(entry.value),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                subCategory = value ?? 0;
-                              });
-                            },
-                          ),
-                        );
-                      },
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      width: MediaQuery.of(context).size.width * 0.37,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButton(
+                        borderRadius: BorderRadius.circular(4),
+                        elevation: 2,
+                        alignment: Alignment.centerLeft,
+                        value: subCategory,
+                        items: _subCategories.entries
+                            .map(
+                              (entry) => DropdownMenuItem(
+                                value: entry.key,
+                                child: Text(entry.value),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            subCategory = value ?? 0;
+                          });
+                        },
+                      ),
                     ),
                   ],
                 ),

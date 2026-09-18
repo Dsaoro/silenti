@@ -7,42 +7,42 @@ import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 class WithdrawFromFinancialAssetUseCase extends BaseUseCase {
   final FinancialAssetsDao dao;
-  final SaveOperationUSeCase saveOperationUseCase;
-  WithdrawFromFinancialAssetUseCase({
-    FinancialAssetsDao? dao,
-    SaveOperationUSeCase? saveOperationUseCase,
-  })  : dao = dao ?? FinancialAssetsDao(),
-        saveOperationUseCase = saveOperationUseCase ?? SaveOperationUSeCase(),
+  WithdrawFromFinancialAssetUseCase({FinancialAssetsDao? dao})
+      : dao = dao ?? FinancialAssetsDao(),
         super("WithdrawFromFinancialAssetUseCase");
+
   Future<HandleResult<bool>> execute(Operation operation) async {
     HandleResult<bool> result = HandleResult<bool>();
-    if (operation.type != "spent") {
+    if (operation.type != Operation.expense) {
       result.setError("Operation type must be 'spent' for withdrawals");
       return result;
     }
 
-    // Primero guardamos la operación para obtener el ID
-    var saveOperationResponse = await saveOperationUseCase.execute(
-      operation: operation,
-    );
-
-    if (!saveOperationResponse.status) {
-      result.setError("Failed to save operation");
+    final validationError = validateOperationForSave(operation);
+    if (validationError != null) {
+      result.setError(validationError);
       return result;
     }
 
-    // Luego actualizamos el balance del activo financiero con el ID de la operación
-    var withdrawResponse = await dao.withdraw(
+    // Inserta la operación, actualiza el saldo y registra el historial de
+    // forma atómica (BUSINESS_LOGIC_AUDIT.md #3.3).
+    final applied = await dao.applyOperation(
+      operationData: operation.toMap(),
       financialAsset: operation.financialAsset,
       amount: operation.amount,
-      operationId:
-          saveOperationResponse.model, // Usar el ID de la operación guardada
+      isDeposit: false,
     );
 
+    if (applied == null) {
+      // El activo no existe: no se escribió nada (BUSINESS_LOGIC_AUDIT.md
+      // #3.2 — antes esto se reportaba como éxito de todas formas).
+      result.setError("Financial asset not found");
+      return result;
+    }
+
     if (kDebugMode) {
-      print("Response from withdraw ${withdrawResponse.toString()}");
       print(
-          "Operation stored successfully with ID: ${saveOperationResponse.model}");
+          "Withdraw applied: operationId=${applied.operationId} newBalance=${applied.newBalance}");
     }
 
     result.setData(true);

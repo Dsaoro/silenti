@@ -9,23 +9,16 @@ class GetSpendsThisMonthUseCase extends BaseUseCase {
         super("GetSpendsThisMonth");
   Future<HandleResult<double>> execute() async {
     HandleResult<double> result = HandleResult<double>();
-    double amount = 0.0;
     var now = DateTime.now();
     try {
-      await dao.getSpendByMonth(month: now.month, year: now.year).then(
-        (value) {
-          if (value.first.keys.contains('amount')) {
-            amount = double.parse(value.first['amount'].toString());
-            result.setData(amount);
-            return result;
-          } else {
-            amount = 0.0;
-          }
-        },
-      );
+      final rows = await dao.getSpendByMonth(month: now.month, year: now.year);
+      // getSpendByMonth always returns exactly one row now
+      // (BUSINESS_LOGIC_AUDIT.md #3.6) — a month with no operations is 0.0,
+      // a valid successful result, not an error.
+      final amount = double.parse(rows.first['amount'].toString());
+      result.setData(amount);
     } catch (e) {
       result.setError(e.toString());
-      return result;
     }
     return result;
   }

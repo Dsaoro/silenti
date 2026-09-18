@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
+import 'package:silenti/application/budgets/get_income_categories_use_case.dart';
 import 'package:silenti/application/financial_assets/deposit_in_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/core/models/operation.dart';
@@ -18,8 +18,7 @@ class IncomeForm extends StatefulWidget {
 
 class _IncomeFormState extends State<IncomeForm> {
   bool _isLoading = true;
-  int category = 1;
-  int subCategory = 0;
+  int category = 0;
   double amount = 0.0;
   int financialAssetId = 1;
   String description = "";
@@ -37,7 +36,6 @@ class _IncomeFormState extends State<IncomeForm> {
       category: category,
       type: Operation.income,
     );
-    //TODO make deposit into account
     var depositResponse =
         await DepositInFinancialAssetUseCase().execute(operation);
     if (!depositResponse.status) {
@@ -61,10 +59,12 @@ class _IncomeFormState extends State<IncomeForm> {
   }
 
   _getCategories() async {
-    var response = await GetExpensesCategoriesUseCase().execute();
+    // BUSINESS_LOGIC_AUDIT.md #3.5: income used to be categorized against
+    // expense categories — this is the real income category list.
+    var response = await GetIncomeCategoriesUseCase().execute();
     if (response.status) {
       _categories.clear();
-      _categories.addEntries([MapEntry(0, "Select cat...")]);
+      _categories.addEntries([MapEntry(0, S.current.select)]);
       for (var category in response.model!) {
         _categories.addEntries([
           MapEntry(
@@ -246,7 +246,7 @@ class _IncomeFormState extends State<IncomeForm> {
                       borderRadius: BorderRadius.circular(4),
                       elevation: 2,
                       alignment: Alignment.centerLeft,
-                      value: subCategory,
+                      value: category,
                       items: _categories.entries.isNotEmpty
                           ? _categories.entries
                               .map(
@@ -259,11 +259,13 @@ class _IncomeFormState extends State<IncomeForm> {
                           : [
                               DropdownMenuItem(
                                 value: 0,
-                                child: Text("None"),
+                                child: Text(S.current.select),
                               ),
                             ],
                       onChanged: (value) {
-                        subCategory = value ?? 0;
+                        setState(() {
+                          category = value ?? 0;
+                        });
                       },
                     ),
                   ),

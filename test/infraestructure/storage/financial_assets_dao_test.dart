@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/infraestructure/storage/financial_assets_dao.dart';
 
 import '../../helpers/test_database.dart';
@@ -28,46 +29,83 @@ void main() {
     });
   }
 
-  group('FinancialAssetsDao.deposit', () {
-    test('increases the balance and records a balance_history row', () async {
+  Map<String, dynamic> operationData({
+    required int financialAsset,
+    double amount = 500,
+    String type = Operation.income,
+    int category = 1,
+  }) {
+    return Operation(
+      id: 0,
+      financialAsset: financialAsset,
+      amount: amount,
+      date: DateTime(2026, 1, 1),
+      description: 'test',
+      category: category,
+      type: type,
+    ).toMap();
+  }
+
+  group('FinancialAssetsDao.applyOperation (deposit)', () {
+    test(
+        'atomically inserts the operation, updates the balance and records balance_history',
+        () async {
       final assetId = await seedAccount(balance: 1000);
 
-      final result = await dao.deposit(financialAsset: assetId, amount: 500);
+      final applied = await dao.applyOperation(
+        operationData: operationData(financialAsset: assetId, amount: 500),
+        financialAsset: assetId,
+        amount: 500,
+        isDeposit: true,
+      );
 
-      expect(result, isNotEmpty);
+      expect(applied, isNotNull);
+      expect(applied!.newBalance, 1500.0);
 
       final updated = await dao.getAccountById(assetId);
       expect(updated.first['balance'], 1500.0);
+
+      final operations = await db.query('Operations');
+      expect(operations, hasLength(1));
+      expect(operations.first['id'], applied.operationId);
 
       final history = await db.query('balance_history',
           where: 'financialAssetId = ?', whereArgs: [assetId]);
       expect(history, hasLength(1));
       expect(history.first['balance'], 1500.0);
+      expect(history.first['operationId'], applied.operationId);
     });
 
-    test('returns an empty list and writes no history when the asset does not exist',
-        () async {
-      final result =
-          await dao.deposit(financialAsset: 999999, amount: 500);
+    test(
+        'returns null and writes nothing (no operation, no balance change, no history) '
+        'when the asset does not exist', () async {
+      final applied = await dao.applyOperation(
+        operationData: operationData(financialAsset: 999999, amount: 500),
+        financialAsset: 999999,
+        amount: 500,
+        isDeposit: true,
+      );
 
-      expect(result, isEmpty);
-
-      final history = await db.query('balance_history');
-      expect(history, isEmpty);
+      expect(applied, isNull);
+      expect(await db.query('Operations'), isEmpty);
+      expect(await db.query('balance_history'), isEmpty);
     });
   });
 
-  group('FinancialAssetsDao.withdraw', () {
-    test('decreases the balance and records a balance_history row', () async {
+  group('FinancialAssetsDao.applyOperation (withdraw)', () {
+    test('decreases the balance and records balance_history', () async {
       final assetId = await seedAccount(balance: 1000);
 
-      await dao.withdraw(financialAsset: assetId, amount: 300);
+      final applied = await dao.applyOperation(
+        operationData: operationData(
+            financialAsset: assetId, amount: 300, type: Operation.expense),
+        financialAsset: assetId,
+        amount: 300,
+        isDeposit: false,
+      );
 
-      final updated = await dao.getAccountById(assetId);
-      expect(updated.first['balance'], 700.0);
-
-      final history = await db.query('balance_history',
-          where: 'financialAssetId = ?', whereArgs: [assetId]);
+      expect(applied!.newBalance, 700.0);
+      final history = await db.query('balance_history');
       expect(history, hasLength(1));
     });
 
@@ -75,12 +113,17 @@ void main() {
         () async {
       final assetId = await seedAccount(balance: 100);
 
-      await dao.withdraw(financialAsset: assetId, amount: 500);
+      final applied = await dao.applyOperation(
+        operationData: operationData(
+            financialAsset: assetId, amount: 500, type: Operation.expense),
+        financialAsset: assetId,
+        amount: 500,
+        isDeposit: false,
+      );
 
-      final updated = await dao.getAccountById(assetId);
       // BUSINESS_LOGIC_AUDIT.md #3.4: documents current behavior, not a
       // desired one — revisit this test if/when an overdraft guard is added.
-      expect(updated.first['balance'], -400.0);
+      expect(applied!.newBalance, -400.0);
     });
   });
 

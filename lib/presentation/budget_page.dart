@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:silenti/application/budgets/add_budget_category_use_case.dart';
 import 'package:silenti/application/budgets/delete_budget_category_use_case.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
+import 'package:silenti/application/budgets/get_income_categories_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
 import 'package:silenti/core/models/budget_category.dart';
@@ -32,6 +33,10 @@ class BudgetPage extends StatefulWidget {
 class _BudgetPageState extends State<BudgetPage> {
   bool _isLoading = true;
   bool _isEditing = false;
+  // Which category type is currently being managed
+  // (BUSINESS_LOGIC_AUDIT.md #3.5: budget_page.dart used to only ever
+  // create/list 'spent' categories; income categories had no UI at all).
+  bool _isIncomeTab = false;
   List<BudgetCategory> categories = [];
   List<Operation> operations = [];
   int currentSelectedIndex = 0;
@@ -167,7 +172,9 @@ class _BudgetPageState extends State<BudgetPage> {
                     id: 0,
                     parentId: parent.id,
                     name: "",
-                    type: CategoryType.spent,
+                    // A subcategory inherits its parent's type — it can't
+                    // be an income subcategory under an expense category.
+                    type: parent.type,
                     firstTime: DateTime.now(),
                     frequency: parent.frequency),
                 buttonText: S.current.register,
@@ -240,10 +247,57 @@ class _BudgetPageState extends State<BudgetPage> {
   }
 
   _requestBudgetCategories() async {
-    var response = await GetExpensesCategoriesUseCase().execute();
+    var response = _isIncomeTab
+        ? await GetIncomeCategoriesUseCase().execute()
+        : await GetExpensesCategoriesUseCase().execute();
     if (response.status) {
       categories = response.model!;
+    } else {
+      categories = [];
     }
+  }
+
+  void _toggleCategoryTab(bool showIncome) {
+    if (_isIncomeTab == showIncome) return;
+    setState(() {
+      _isIncomeTab = showIncome;
+      _isLoading = true;
+      currentSelectedIndex = 0;
+    });
+    _getDataFromDB();
+  }
+
+  Widget _buildTypeToggle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                  !_isIncomeTab ? SilentiColors.primary : null,
+                ),
+              ),
+              onPressed: () => _toggleCategoryTab(false),
+              child: Text(S.current.spent),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                  _isIncomeTab ? SilentiColors.primary : null,
+                ),
+              ),
+              onPressed: () => _toggleCategoryTab(true),
+              child: Text(S.current.income),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   _requestBudgetOperations(int budgetId) async {
@@ -394,7 +448,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     amount: 50000,
                     id: 0,
                     name: "",
-                    type: CategoryType.spent,
+                    type: _isIncomeTab ? CategoryType.income : CategoryType.spent,
                     firstTime: DateTime.now(),
                     frequency: "monthly"),
                 buttonText: S.current.register,
@@ -700,6 +754,8 @@ class _BudgetPageState extends State<BudgetPage> {
     }
     List<Widget> children = [
       SizedBox(height: 16),
+      _buildTypeToggle(),
+      const SizedBox(height: 8),
       _buildTopRowList(categories),
       const SizedBox(height: 16),
       _buildGraphItem(),

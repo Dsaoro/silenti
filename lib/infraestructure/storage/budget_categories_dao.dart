@@ -69,4 +69,22 @@ class BudgetCategoriesDAO {
       orderBy: 'id DESC',
     );
   }
+
+  Future<List<Map<String, dynamic>>> getChildren(int parentId) async {
+    final db = await _databaseProvider();
+    return await db.query(
+      'budget_categories',
+      where: 'parentId = ?',
+      whereArgs: [parentId],
+    );
+  }
+
+  Future<int> deleteBudgetCategory(int id) async {
+    final db = await _databaseProvider();
+    return await db.delete(
+      'budget_categories',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

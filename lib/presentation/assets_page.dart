@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:silenti/application/financial_assets/create_financial_asset_use_case.dart';
 import 'package:silenti/application/financial_assets/delete_financial_asset_use_case.dart';
+import 'package:silenti/application/financial_assets/financial_assets_update_use_case.dart';
 import 'package:silenti/application/financial_assets/get_financial_assets.dart';
 import 'package:silenti/application/financial_assets/get_asset_chart_data_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
@@ -167,6 +168,29 @@ class _AssetsPageState extends State<AssetsPage> {
         contentType: ContentType.failure,
         title: "Error",
         message: "Account ${asset.name} couldn´t be deleted, please try again.",
+        // ignore: use_build_context_synchronously
+      ).pop(context);
+    }
+  }
+
+  _updateAsset(FinancialAsset asset) async {
+    var response = await FinancialAssetsUpdateUseCase().execute(asset);
+    if (response.status) {
+      setState(() {
+        _isEditing = false;
+      });
+      await _getDataFromDB();
+      NotificationPopper(
+        contentType: ContentType.success,
+        title: "Sucess",
+        message: "Account ${asset.name} updated.",
+        // ignore: use_build_context_synchronously
+      ).pop(context);
+    } else {
+      NotificationPopper(
+        contentType: ContentType.failure,
+        title: "Error",
+        message: "Account ${asset.name} couldn´t be updated, please try again.",
         // ignore: use_build_context_synchronously
       ).pop(context);
     }
@@ -467,9 +491,7 @@ class _AssetsPageState extends State<AssetsPage> {
             child: AssetForm(
               onSave: (value) {
                 if (value is FinancialAsset) {
-                  if (kDebugMode) {
-                    print("asset in edting mode:\n${value.toMap()}");
-                  }
+                  _updateAsset(value);
                 }
               },
               asset: asset,

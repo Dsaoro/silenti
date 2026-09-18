@@ -3,7 +3,6 @@ import 'package:silenti/application/shared/base_use_case.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/core/models/operation.dart';
 import 'package:silenti/infraestructure/storage/operation_dao.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class GetOperations extends BaseUseCase {
   final OperationDAO dao;
@@ -25,11 +24,9 @@ class GetOperations extends BaseUseCase {
       result.setError(e.toString());
       return result;
     }
-    if (operations.isNotEmpty) {
-      result.setData(operations);
-    } else {
-      result.setError("No operations found");
-    }
+    // An empty list is a valid state (a brand-new asset with no
+    // transactions yet), not an error (BUSINESS_LOGIC_AUDIT.md #3.6).
+    result.setData(operations);
     return result;
   }
 
@@ -50,11 +47,7 @@ class GetOperations extends BaseUseCase {
       result.setError(e.toString());
       return result;
     }
-    if (operations.isNotEmpty) {
-      result.setData(operations);
-    } else {
-      result.setError("No operations found");
-    }
+    result.setData(operations);
     return result;
   }
 
@@ -75,11 +68,7 @@ class GetOperations extends BaseUseCase {
       result.setError(e.toString());
       return result;
     }
-    if (operations.isNotEmpty) {
-      result.setData(operations);
-    } else {
-      result.setError("No operations found");
-    }
+    result.setData(operations);
     return result;
   }
 
@@ -101,11 +90,7 @@ class GetOperations extends BaseUseCase {
       }
       return result;
     }
-    if (operations.isNotEmpty) {
-      result.setData(operations);
-    } else {
-      result.setError("No operations found");
-    }
+    result.setData(operations);
     return result;
   }
 

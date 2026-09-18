@@ -130,10 +130,66 @@ tarea que bloquea a todas las demás.
 
 ---
 
-## Fase 1 — Corregir los hallazgos que el PRD marca como bloqueantes del MVP
+## Fase 1 — Corregir los hallazgos que el PRD marca como bloqueantes del MVP ✅ Ejecutada
 
-Cada uno cita el hallazgo de `BUSINESS_LOGIC_AUDIT.md` y la historia de
-`PRD.md` que depende de él.
+**Estado:** los 8 ítems (1.1–1.8) están implementados con sus pruebas. Igual
+que en la Fase 0, este entorno no tiene el SDK de Flutter, así que no pude
+correr `flutter test` — verificación manual (relectura de cada archivo tras
+editarlo + balance de `{}`/`()` en todo lo tocado). **Corran `flutter pub get
+&& flutter test` antes de dar esto por bueno.**
+
+**Cambios de diseño respecto al plan original:**
+- **1.1 y 1.2 se implementaron juntos.** El plan sugería una `db.transaction()`
+  dentro de `FinancialAssetsDao` como una opción; se tomó esa opción:
+  `FinancialAssetsDao.applyOperation(...)` reemplaza por completo a los
+  antiguos `deposit()`/`withdraw()`, insertando la `Operation`, actualizando
+  el saldo y escribiendo `balance_history` dentro de una sola
+  `db.transaction()`, devolviendo `null` (sin escribir nada) si el activo no
+  existe. `DepositInFinancialAssetUseCase`/`WithdrawFromFinancialAssetUseCase`
+  ya no llaman a `SaveOperationUSeCase` (no puede participar en la misma
+  transacción) — la llaman directo. **`SaveOperationUSeCase` queda sin
+  ningún llamador en el flujo real** (antes solo lo usaban estos dos casos de
+  uso); se conserva porque sigue siendo una unidad correcta y con test, pero
+  es candidata a revisar en Fase 3 (¿se elimina o se le da un uso real?).
+- **1.8 se resolvió con una función compartida** `validateOperationForSave()`
+  en `save_operation_use_case.dart`, usada por `SaveOperationUSeCase` y por
+  los dos casos de uso de depósito/retiro (ya que estos dejaron de pasar por
+  `SaveOperationUSeCase`, ver punto anterior).
+- **1.4 necesitó un selector Gasto/Ingreso en `budget_page.dart`** (no
+  existía ninguna pestaña ni toggle) — se agregó como dos botones simples
+  (`_buildTypeToggle()`), no un `TabBar` nuevo, para no rehacer el layout de
+  3 pestañas ya existente en esa pantalla.
+- **1.4 reveló un bug adicional no listado en el audit**: en
+  `income_form.dart`, el dropdown de categoría estaba enlazado a la variable
+  `subCategory` (nunca usada al guardar) en vez de `category` — el usuario
+  podía "elegir" una categoría en la UI y la operación se guardaba siempre
+  con el valor por defecto (`category = 1`). Se corrigió al mismo tiempo que
+  se cambió la fuente de datos a `GetIncomeCategoriesUseCase`, porque no
+  tenía sentido cablear el dropdown correcto hacia datos de ingreso reales
+  sin arreglar a qué variable apunta.
+- **1.5**: se asumió que el proyecto no tiene usuarios reales con datos en
+  `spend_sub_categories` que preservar (no se recibió respuesta a la
+  pregunta abierta del plan) — se retiró la tabla del `onCreate` para bases
+  nuevas, pero **no se agregó una migración que la elimine en instalaciones
+  existentes** (quedaría como tabla huérfana, inofensiva). Avisar si esto es
+  incorrecto.
+- **1.5 también corrige** que `Operation.category` ahora guarda el id de la
+  subcategoría (no el de la categoría padre) cuando el usuario selecciona
+  una en `spend_form.dart` — antes era imposible que apuntara ahí porque las
+  subcategorías vivían en una tabla/espacio de ids completamente distinto.
+
+**Hallazgo nuevo, fuera de alcance de estos 8 ítems (no corregido):** en
+`budget_page.dart`, el formulario de edición de una categoría de
+**primer nivel** (`_buildDetailsTable()`) tiene el mismo problema que tenía
+`assets_page.dart` antes de 1.7 — su `BudgetForm.onSave` solo hace un
+`print()` de depuración, nunca llama a `UpdateBudgetCategoryUseCase` (la
+edición de **subcategorías**, vía `_showEditSubcategoryDialog`, sí funciona).
+No estaba en la lista de 8 hallazgos de la auditoría original ni en el
+alcance de esta fase — queda para decidir si entra en un Fase 1.9 o en el
+backlog de Fase 3.
+
+Cada uno de los 8 ítems originales cita el hallazgo de
+`BUSINESS_LOGIC_AUDIT.md` y la historia de `PRD.md` que depende de él.
 
 ### 1.1 Deposit/Withdraw no deben reportar éxito si el activo no existe
 **Corrige:** §3.2 · **Historia:** H2.2
