@@ -70,6 +70,17 @@ class BudgetCategoriesDAO {
     );
   }
 
+  Future<Map<String, dynamic>?> getById(int id) async {
+    final db = await _databaseProvider();
+    final rows = await db.query(
+      'budget_categories',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    return rows.isEmpty ? null : rows.first;
+  }
+
   Future<List<Map<String, dynamic>>> getChildren(int parentId) async {
     final db = await _databaseProvider();
     return await db.query(

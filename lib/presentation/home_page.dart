@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:silenti/application/budgets/ensure_monthly_budget_snapshot_use_case.dart';
 import 'package:silenti/application/shared/handle_result.dart';
 import 'package:silenti/application/storage/open_secure_database_use_case.dart';
 import 'package:silenti/application/storage/migrate_database_use_case.dart';
@@ -67,6 +68,10 @@ class _HomePageState extends State<HomePage> {
           print("Migration error: ${migrationResult.message}");
         }
       }
+
+      // PRD.md H1.6 / WORK_PLAN.md 2.2: freeze last month's budgeted
+      // amounts once per session, before anything edits them further.
+      await EnsureMonthlyBudgetSnapshotUseCase().execute();
 
       return db;
     } catch (e) {

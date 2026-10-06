@@ -15,6 +15,7 @@ class SilentiSchema {
     await db.execute(_createFinancialAssetsTable);
     await db.execute(_createProfitsTable);
     await db.execute(_createBudgetCategoriesTable);
+    await db.execute(_createBudgetCategorySnapshotTable);
     await db.execute(_createOperationsTable);
     await db.execute(_createBalanceHistoryTable);
     await db.execute(_createNotificationsTable);
@@ -93,6 +94,24 @@ class SilentiSchema {
   static const String _initBudgetCategories = '''
   INSERT INTO budget_categories (type, name, amount, frequency, firstTime)
     VALUES ('spent','various', 0, 'monthly', CURRENT_TIMESTAMP)
+  ''';
+
+  // PRD.md H1.6: a category's budget applies month to month until the user
+  // changes it, but each past month must keep comparing against whatever
+  // was actually budgeted *then*, even if the live amount changes later.
+  // One row per (categoryId, year, month), written the first time that
+  // month is touched (see EnsureMonthlyBudgetSnapshotUseCase) — see that
+  // use case's doc comment for the precision this minimal design accepts.
+  static const String _createBudgetCategorySnapshotTable = '''
+  CREATE TABLE budget_category_snapshot (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoryId INTEGER NOT NULL,
+    year INTEGER NOT NULL,
+    month INTEGER NOT NULL,
+    amount REAL NOT NULL,
+    UNIQUE(categoryId, year, month),
+    FOREIGN KEY (categoryId) REFERENCES budget_categories(id) ON DELETE CASCADE
+  )
   ''';
 
   // `spend_sub_categories` used to be created here as a separate flat
