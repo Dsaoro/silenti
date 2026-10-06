@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:silenti/application/budgets/add_budget_category_use_case.dart';
 import 'package:silenti/application/budgets/delete_budget_category_use_case.dart';
 import 'package:silenti/application/budgets/get_expenses_categories_use_case.dart';
+import 'package:silenti/application/budgets/get_budget_summary_use_case.dart';
 import 'package:silenti/application/budgets/get_income_categories_use_case.dart';
 import 'package:silenti/application/operations/get_operations_use_case.dart';
 import 'package:silenti/core/enums/silenti_colors.dart';
@@ -37,6 +38,7 @@ class _BudgetPageState extends State<BudgetPage> {
   // (BUSINESS_LOGIC_AUDIT.md #3.5: budget_page.dart used to only ever
   // create/list 'spent' categories; income categories had no UI at all).
   bool _isIncomeTab = false;
+  BudgetSummary? _summary;
   List<BudgetCategory> categories = [];
   List<Operation> operations = [];
   int currentSelectedIndex = 0;
@@ -235,6 +237,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
   _getDataFromDB() async {
     await _requestBudgetCategories();
+    await _requestBudgetSummary();
     if (categories.isNotEmpty) {
       if (currentSelectedIndex >= categories.length) {
         currentSelectedIndex = 0;
@@ -255,6 +258,49 @@ class _BudgetPageState extends State<BudgetPage> {
     } else {
       categories = [];
     }
+  }
+
+  _requestBudgetSummary() async {
+    var response = await GetBudgetSummaryUseCase().execute();
+    if (response.status) {
+      _summary = response.model;
+    }
+  }
+
+  Widget _buildSummaryBar() {
+    final summary = _summary;
+    if (summary == null) return const SizedBox.shrink();
+    final isDeficit = summary.deficit < 0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "${S.current.income}: \$${summary.totalIncome.toStringAsFixed(0)}",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              "${S.current.spent}: \$${summary.totalExpense.toStringAsFixed(0)}",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              // A deficit (expense > income) is purely informative —
+              // PRD.md §5 — it never blocks saving a budget.
+              "${isDeficit ? '-' : ''}\$${summary.deficit.abs().toStringAsFixed(0)}",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDeficit ? Colors.red : Colors.green,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _toggleCategoryTab(bool showIncome) {
@@ -754,6 +800,8 @@ class _BudgetPageState extends State<BudgetPage> {
     }
     List<Widget> children = [
       SizedBox(height: 16),
+      _buildSummaryBar(),
+      const SizedBox(height: 8),
       _buildTypeToggle(),
       const SizedBox(height: 8),
       _buildTopRowList(categories),
