@@ -19,6 +19,7 @@ class SilentiSchema {
     await db.execute(_createOperationsTable);
     await db.execute(_createBalanceHistoryTable);
     await db.execute(_createNotificationsTable);
+    await db.execute(_createScheduledExpensesTable);
   }
 
   static Future<void> seedInitialData(Database db) async {
@@ -174,5 +175,22 @@ class SilentiSchema {
   static const String _initBalanceHistory = '''
   INSERT INTO balance_history (financialAssetId, balance, date, operationId)
     VALUES (1, 0, CURRENT_TIMESTAMP, 1)
+  ''';
+
+  // PRD.md H3.1-H3.4 / WORK_PLAN.md 2.3: a new table rather than
+  // reusing `notifications` — the plan's own tentative suggestion didn't
+  // fit once designed in detail. `notifications` is a one-off log tied to
+  // an Operation_id; a scheduled expense is a recurring *rule* (category,
+  // day of month, reminder lead time) with no Operation of its own yet.
+  static const String _createScheduledExpensesTable = '''
+  CREATE TABLE scheduled_expenses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoryId INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    dueDay INTEGER NOT NULL,
+    reminderDaysBefore INTEGER NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (categoryId) REFERENCES budget_categories(id)
+  )
   ''';
 }

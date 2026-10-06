@@ -26,6 +26,12 @@ dependencies:
   get_it: ^9.2.0
   injectable: ^2.7.1+4
   flutter_riverpod: ^2.6.1
+  # PRD.md H3.3 / WORK_PLAN.md 2.3: OS push reminders for scheduled
+  # expenses. Version pins are a best guess (no Flutter SDK available to
+  # `flutter pub get` and confirm) — run `flutter pub get` and adjust if
+  # either fails to resolve.
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_test:

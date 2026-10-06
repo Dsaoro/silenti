@@ -297,7 +297,68 @@ Cada uno de los 8 ítems originales cita el hallazgo de
 
 ---
 
-## Fase 2 — Trabajo nuevo del PRD (no son fixes, son historias sin construir aún)
+## Fase 2 — Trabajo nuevo del PRD (no son fixes, son historias sin construir aún) ✅ Ejecutada
+
+**Estado:** los 3 ítems (2.1-2.3) están implementados con sus pruebas, salvo
+lo explícitamente marcado como pendiente abajo. Igual que en las fases
+anteriores, no hay SDK de Flutter en este entorno — **`flutter pub get &&
+flutter test` sigue siendo el primer paso obligatorio**, y para 2.3
+específicamente es más que una formalidad (ver abajo).
+
+**2.1** — Sin sorpresas: `GetBudgetSummaryUseCase` + barra de resumen en
+`budget_page.dart`, tal como estaba planeado.
+
+**2.2** — Implementado tal como lo proponía el plan (tabla
+`budget_category_snapshot`, `EnsureMonthlyBudgetSnapshotUseCase` corriendo
+una vez por sesión en `home_page.dart`, `GetBudgetedAmountForMonthUseCase`
+para leer el monto correcto según si el mes es pasado/actual/futuro).
+**Nadie en la UI llama todavía a `GetBudgetedAmountForMonthUseCase`** —
+`budget_page.dart` sigue mostrando solo el mes actual; el mecanismo y sus
+tests están listos para cuando se construya una vista de "meses
+anteriores". La limitación de precisión que el propio plan anticipaba
+(si la app no se abre during un mes completo y el monto cambia más de una
+vez antes de la siguiente apertura, solo se captura el último valor) queda
+documentada en el docstring del caso de uso, no resuelta — habría
+requerido un modelo temporal completo, fuera de alcance de un "diseño
+mínimo".
+
+**2.3 — la pieza de mayor riesgo de todo el plan de trabajo.** Implementado
+completo (modelo `ScheduledExpense` con la lógica de fechas pura y
+testeada, tabla `scheduled_expenses`, DAO, los 4 casos de uso CRUD, página
+de timeline + formulario, cuarta pestaña de navegación en
+`home_page.dart`), con una desviación de diseño y un riesgo real sin
+verificar:
+
+- **Desviación:** el plan sugería tentativamente reutilizar la tabla
+  `notifications` ya existente. Al diseñarlo en detalle no calzaba:
+  `notifications` es un log de avisos ya enviados, ligado a un
+  `Operation_id`; un gasto programado es una *regla recurrente* (categoría,
+  día del mes, días de aviso) sin ninguna operación todavía. Se creó
+  `scheduled_expenses` como tabla nueva en su lugar.
+- **Riesgo sin verificar:** `lib/infraestructure/adapters/local_notifications_service.dart`
+  usa `flutter_local_notifications` + `timezone`, agregados a `pubspec.yaml`
+  con versiones que son la mejor estimación posible **sin haber podido
+  correr `flutter pub get` ni compilar nada** en este entorno (no hay SDK
+  de Flutter instalado aquí, igual que en las fases anteriores). La forma
+  de la llamada a `zonedSchedule(...)` corresponde a versiones recientes del
+  plugin, pero su API cambia entre versiones mayores. **Este es el primer
+  archivo a revisar si el build falla después de `flutter pub get`.**
+  También se agregaron los permisos de Android
+  (`POST_NOTIFICATIONS`, `SCHEDULE_EXACT_ALARM`, `RECEIVE_BOOT_COMPLETED`) a
+  `AndroidManifest.xml`.
+- Como ya anticipaba el plan: que la notificación realmente llegue del
+  sistema operativo con la app cerrada **no es algo que un test unitario
+  pueda probar** — queda como caso de prueba manual en un dispositivo real
+  antes de considerar esta historia completa. Lo que sí tiene test
+  automatizado es la lógica pura de fechas (`nextDueDate`/`nextReminderDate`,
+  incluyendo el recorte a fin de mes y el cambio de año) y el CRUD completo.
+- **No se usó ninguna clave `S.current` nueva** para los textos de esta
+  pantalla (título de la pestaña, formulario, mensajes) — son strings
+  literales en español. Agregar claves nuevas a los `.arb` habría requerido
+  correr `dart run intl_utils:generate`, que tampoco se pudo ejecutar aquí
+  sin el SDK de Dart. Es inconsistente con el resto de la app (que sí usa
+  `S.current.*`), pero evita un `S.current.xxx` que no existiría todavía en
+  el código generado y rompería la compilación con certeza.
 
 ### 2.1 Vista de presupuesto vs. ingreso proyectado (déficit informativo)
 **Historia:** H1.4

@@ -9,6 +9,7 @@ import 'package:silenti/presentation/budget_page.dart';
 import 'package:silenti/presentation/assets_page.dart';
 import 'package:silenti/presentation/home_page_content.dart';
 import 'package:silenti/presentation/operation_alert.dart';
+import 'package:silenti/presentation/scheduled_expenses_page.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 // import 'package:sqflite_sqlcipher/sqflite.dart';
 
@@ -138,6 +139,20 @@ class _HomePageState extends State<HomePage> {
             ),
             label: S.current.budget,
           ),
+          NavigationDestination(
+            icon: const Icon(Icons.event_repeat_outlined),
+            selectedIcon: Icon(
+              Icons.event_repeat,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            // PRD.md H3.1-H3.4 / WORK_PLAN.md 2.3: no existing S.current
+            // key fits "periodic expenses" — l10n ARB files weren't
+            // regenerated in this environment (no Dart SDK to run
+            // `dart run intl_utils:generate`), so this is a literal
+            // string rather than a new S.current getter that wouldn't
+            // exist in the generated code yet.
+            label: "Periódicos",
+          ),
         ],
       ),
       body: <Widget>[
@@ -145,6 +160,7 @@ class _HomePageState extends State<HomePage> {
         AssetsPage(),
         home,
         BudgetPage(),
+        const ScheduledExpensesPage(),
       ][currentPageIndex],
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.onSurface.withAlpha(200),
